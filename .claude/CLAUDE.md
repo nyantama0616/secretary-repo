@@ -1,4 +1,4 @@
-# nextjs-template2
+# secretary-repo
 
 pnpm workspaces を使ったモノレポである。
 
