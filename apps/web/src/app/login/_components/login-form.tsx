@@ -4,7 +4,7 @@ import { valibotResolver } from '@hookform/resolvers/valibot';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as v from 'valibot';
@@ -19,6 +19,8 @@ type FormValues = v.InferOutput<typeof LoginFormSchema>;
 
 export const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') ?? ROUTES.dailyReports;
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -47,7 +49,7 @@ export const LoginForm = () => {
         return;
       }
 
-      router.push(ROUTES.dailyReports);
+      router.push(callbackUrl);
     } finally {
       setIsPending(false);
     }

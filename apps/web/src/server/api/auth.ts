@@ -3,8 +3,9 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 
 import { API_KEY } from '@/config';
+import { AUTH_COOKIE_NAME } from '@/server/api/auth-constants';
 
-export const AUTH_COOKIE_NAME = 'api_key';
+export { AUTH_COOKIE_NAME } from '@/server/api/auth-constants';
 
 export const verifyApiKey = (provided: string): boolean => {
   const expectedHash = sha256(API_KEY);
