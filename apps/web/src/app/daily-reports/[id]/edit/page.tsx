@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 
+import { ensureFound } from '@/lib/ensure-found';
 import { formatDate } from '@/lib/format';
 import { createCaller } from '@/server/api';
 
@@ -9,10 +11,13 @@ export const generateMetadata = async ({
   params,
 }: DailyReportEditPageProps): Promise<Metadata> => {
   const { id } = await params;
-  const caller = createCaller({});
-  const report = await caller.dailyReport.detail({ id });
 
-  return { title: `日報編集 ${formatDate(report.date)}` };
+  try {
+    const report = await fetchDailyReport(id);
+    return { title: `日報編集 ${formatDate(report.date)}` };
+  } catch {
+    return { title: '日報編集' };
+  }
 };
 
 type DailyReportEditPageProps = {
@@ -21,8 +26,14 @@ type DailyReportEditPageProps = {
 
 const DailyReportEditPage = async ({ params }: DailyReportEditPageProps) => {
   const { id } = await params;
+  await ensureFound(() => fetchDailyReport(id));
 
   return <DailyReportEditForm id={id} />;
 };
 
 export default DailyReportEditPage;
+
+const fetchDailyReport = cache((id: string) => {
+  const caller = createCaller({});
+  return caller.dailyReport.detail({ id });
+});

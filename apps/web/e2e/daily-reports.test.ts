@@ -46,6 +46,14 @@ test.describe('日報詳細', () => {
     ).toBeVisible();
     await expect(page.getByText('明日はテストを書く')).toBeVisible();
   });
+
+  test('存在しないIDにアクセスすると、404ページが表示される', async ({
+    page,
+  }) => {
+    const response = await page.goto('/daily-reports/nonexistent');
+
+    expect(response?.status()).toBe(404);
+  });
 });
 
 test.describe('日報編集', () => {
