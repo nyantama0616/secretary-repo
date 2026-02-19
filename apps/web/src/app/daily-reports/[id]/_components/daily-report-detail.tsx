@@ -1,7 +1,11 @@
 'use client';
 
+import { Button } from '@repo/ui/button';
+import Link from 'next/link';
+
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
+import { ROUTES } from '@/constants/routes';
 import { formatDate, formatTime } from '@/lib/format';
 import { useQuery, useTRPC } from '@/trpc/client';
 
@@ -35,7 +39,12 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
 
   return (
     <div className="grid gap-4 p-8">
-      <h1 className="text-2xl font-bold">{formatDate(report.date)}</h1>
+      <div className="flex items-center gap-4">
+        <h1 className="text-2xl font-bold">{formatDate(report.date)}</h1>
+        <Button variant="outline" asChild>
+          <Link href={ROUTES.dailyReportEdit(id)}>編集</Link>
+        </Button>
+      </div>
       <dl className="grid gap-4">
         <DetailItem label="サマリー" value={report.summary} />
         <DetailItem label="予定" value={report.plan} />

@@ -48,6 +48,45 @@ test.describe('日報詳細', () => {
   });
 });
 
+test.describe('日報編集', () => {
+  test('詳細画面から編集ページに遷移し、日報を更新すると、詳細に反映される', async ({
+    page,
+  }) => {
+    await page.goto('/daily-reports');
+    await page
+      .getByRole('link', {
+        name: /機能Aの主要部分を実装し、集中して作業できた/,
+      })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: '日報編集' }),
+    ).toBeVisible();
+
+    await page.getByLabel('サマリー').fill('編集後のサマリー');
+    await page.getByRole('button', { name: '更新' }).click();
+
+    await expect(page).toHaveURL(/\/daily-reports\/[\w-]+$/);
+    await expect(page.getByText('編集後のサマリー')).toBeVisible();
+  });
+
+  test('編集フォームに既存の値がプリフィルされている', async ({ page }) => {
+    await page.goto('/daily-reports');
+    await page
+      .getByRole('link', {
+        name: /機能Aの主要部分を実装し、集中して作業できた/,
+      })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(page.getByLabel('予定')).toHaveValue('機能Aの実装を進める');
+    await expect(page.getByLabel('良かった点')).toHaveValue(
+      '集中して作業できた',
+    );
+  });
+});
+
 test.describe('日報作成', () => {
   test('フォームから日報を作成すると、一覧に反映される', async ({
     page,
