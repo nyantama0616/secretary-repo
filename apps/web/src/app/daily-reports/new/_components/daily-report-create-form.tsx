@@ -135,7 +135,7 @@ const toErrorMessage = (
   date: string,
 ): string => {
   if (error.data?.code === 'CONFLICT') {
-    return `${formatDate(date)}の日報はすでに存在します`;
+    return `${formatDate(new Date(date))}の日報はすでに存在します`;
   }
   return '日報の作成に失敗しました';
 };

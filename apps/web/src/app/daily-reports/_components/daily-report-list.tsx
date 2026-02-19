@@ -70,10 +70,10 @@ const DailyReportCard = ({
   wakeUpTime,
   bedTime,
 }: {
-  date: string;
+  date: Date;
   summary: string | null;
-  wakeUpTime: string | null;
-  bedTime: string | null;
+  wakeUpTime: Date | null;
+  bedTime: Date | null;
 }) => {
   const timeLabel = buildTimeLabel(wakeUpTime, bedTime);
 
@@ -91,8 +91,8 @@ const DailyReportCard = ({
 };
 
 const buildTimeLabel = (
-  wakeUpTime: string | null,
-  bedTime: string | null,
+  wakeUpTime: Date | null,
+  bedTime: Date | null,
 ): string | null => {
   if (!wakeUpTime && !bedTime) return null;
   const parts: string[] = [];

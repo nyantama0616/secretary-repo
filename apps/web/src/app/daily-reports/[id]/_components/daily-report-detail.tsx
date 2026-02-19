@@ -68,8 +68,8 @@ const DetailItem = ({
 };
 
 const buildTimeLabel = (
-  wakeUpTime: string | null,
-  bedTime: string | null,
+  wakeUpTime: Date | null,
+  bedTime: Date | null,
 ): string | null => {
   if (!wakeUpTime && !bedTime) return null;
   const parts: string[] = [];

@@ -12,8 +12,7 @@ export const generateMetadata = async ({
   const caller = createCaller({});
   const report = await caller.dailyReport.detail({ id });
 
-  // NOTE: createCaller は HTTP を経由しないため、date は Date オブジェクトで届く
-  return { title: `日報 ${formatDate(report.date.toISOString())}` };
+  return { title: `日報 ${formatDate(report.date)}` };
 };
 
 type DailyReportDetailPageProps = {

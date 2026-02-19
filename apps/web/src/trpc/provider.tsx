@@ -7,6 +7,7 @@ import { useState } from 'react';
 import type { AppRouter } from '@/server/api';
 
 import { TRPCProvider } from './client';
+import { dateTransformer } from './transformer';
 
 export const TRPCReactProvider = ({
   children,
@@ -16,7 +17,12 @@ export const TRPCReactProvider = ({
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
-      links: [httpBatchLink({ url: '/api/trpc' })],
+      links: [
+        httpBatchLink({
+          url: '/api/trpc',
+          transformer: dateTransformer,
+        }),
+      ],
     }),
   );
 

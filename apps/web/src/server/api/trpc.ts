@@ -7,8 +7,11 @@ import {
   NotFoundError,
   ValidationError,
 } from '@/server/domain/error/domain-errors';
+import { dateTransformer } from '@/trpc/transformer';
 
-const t = initTRPC.create();
+const t = initTRPC.create({
+  transformer: dateTransformer,
+});
 
 export const router = t.router;
 export const createCallerFactory = t.createCallerFactory;
