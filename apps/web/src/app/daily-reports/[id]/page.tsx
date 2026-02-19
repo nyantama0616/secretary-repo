@@ -35,7 +35,7 @@ const DailyReportDetailPage = async ({
 
 export default DailyReportDetailPage;
 
-const fetchDailyReport = cache((id: string) => {
-  const caller = createServerCaller();
+const fetchDailyReport = cache(async (id: string) => {
+  const caller = await createServerCaller();
   return caller.dailyReport.detail({ id });
 });

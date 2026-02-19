@@ -33,7 +33,7 @@ const DailyReportEditPage = async ({ params }: DailyReportEditPageProps) => {
 
 export default DailyReportEditPage;
 
-const fetchDailyReport = cache((id: string) => {
-  const caller = createServerCaller();
+const fetchDailyReport = cache(async (id: string) => {
+  const caller = await createServerCaller();
   return caller.dailyReport.detail({ id });
 });
