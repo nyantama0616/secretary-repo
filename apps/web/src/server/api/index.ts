@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { dailyReportRouter } from '@/server/api/routers/daily-report';
 import { createCallerFactory, router } from '@/server/api/trpc';
 
