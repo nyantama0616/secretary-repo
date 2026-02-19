@@ -5,7 +5,8 @@ import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 
-const caller = createCaller({});
+const caller = createCaller({ isAuthenticated: true });
+const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 
 const TEST_DAILY_REPORTS = [
   {
@@ -33,6 +34,16 @@ const TEST_DAILY_REPORTS = [
     notes: '体調不良のため早退',
   },
 ];
+
+describe('認証', () => {
+  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
+    await expect(unauthenticatedCaller.dailyReport.list()).rejects.toThrow(
+      expect.objectContaining({
+        code: 'UNAUTHORIZED',
+      }),
+    );
+  });
+});
 
 describe('dailyReport.list', () => {
   it('日報一覧を返す', async () => {

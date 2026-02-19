@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-import { publicProcedure, router } from '@/server/api/trpc';
+import { protectedProcedure, router } from '@/server/api/trpc';
 import {
   createDailyReportUseCase,
   getDailyReportUseCase,
@@ -12,14 +12,14 @@ import { GetDailyReportInputSchema } from '@/server/usecase/daily-report/get-dai
 import { UpdateDailyReportInputSchema } from '@/server/usecase/daily-report/update-daily-report';
 
 export const dailyReportRouter = router({
-  list: publicProcedure.query(() => getDailyReportsUseCase.execute()),
-  detail: publicProcedure
+  list: protectedProcedure.query(() => getDailyReportsUseCase.execute()),
+  detail: protectedProcedure
     .input(v.parser(GetDailyReportInputSchema))
     .query(({ input }) => getDailyReportUseCase.execute(input)),
-  create: publicProcedure
+  create: protectedProcedure
     .input(v.parser(CreateDailyReportInputSchema))
     .mutation(({ input }) => createDailyReportUseCase.execute(input)),
-  update: publicProcedure
+  update: protectedProcedure
     .input(v.parser(UpdateDailyReportInputSchema))
     .mutation(({ input }) => updateDailyReportUseCase.execute(input)),
 });
