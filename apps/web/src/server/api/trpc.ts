@@ -5,6 +5,7 @@ import {
   AlreadyExistsError,
   DomainError,
   NotFoundError,
+  UnauthorizedError,
   ValidationError,
 } from '@/server/domain/error/domain-errors';
 import { dateTransformer } from '@/trpc/transformer';
@@ -35,6 +36,13 @@ export const publicProcedure = t.procedure.use(
 
 // NOTE: DomainError のサブクラスに応じた TRPCError を throw する。該当しない場合は何もしない
 const throwDomainTRPCError = (cause: unknown): void => {
+  if (cause instanceof UnauthorizedError) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: cause.message,
+      cause,
+    });
+  }
   if (cause instanceof NotFoundError) {
     throw new TRPCError({
       code: 'NOT_FOUND',

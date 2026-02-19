@@ -27,3 +27,10 @@ export class AlreadyExistsError extends DomainError {
     this.name = 'AlreadyExistsError';
   }
 }
+
+export class UnauthorizedError extends DomainError {
+  constructor(message = '認証が必要です', options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'UnauthorizedError';
+  }
+}
