@@ -32,7 +32,7 @@ test.describe('ユーザー管理', () => {
     await page.getByLabel('メールアドレス').fill('tanaka@example.com');
     await page.getByRole('button', { name: '作成' }).click();
 
-    await expect(page.getByText('User already exists')).toBeVisible();
+    await expect(page.getByText(/ユーザーは既に存在します/)).toBeVisible();
     await expect(page).toHaveURL('/users/new');
   });
 });

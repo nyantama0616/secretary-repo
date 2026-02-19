@@ -18,7 +18,7 @@ export class CreateUserUseCase {
     const existing = await this.userRepository.findByEmail(input.email);
 
     if (existing) {
-      throw new AlreadyExistsError('User', input.email);
+      throw new AlreadyExistsError('ユーザー', input.email);
     }
 
     const user = createUser({

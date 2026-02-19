@@ -19,7 +19,7 @@ export class GetDailyReportUseCase {
     const dailyReport = await this.dailyReportRepository.findById(input.id);
 
     if (!dailyReport) {
-      throw new NotFoundError('DailyReport', input.id);
+      throw new NotFoundError('日報', input.id);
     }
 
     return dailyReport;

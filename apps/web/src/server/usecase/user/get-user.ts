@@ -17,7 +17,7 @@ export class GetUserUseCase {
     const user = await this.userRepository.findById(input.id);
 
     if (!user) {
-      throw new NotFoundError('User', input.id);
+      throw new NotFoundError('ユーザー', input.id);
     }
 
     return user;

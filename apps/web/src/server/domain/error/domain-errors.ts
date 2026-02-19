@@ -9,7 +9,7 @@ export class DomainError extends Error {
 
 export class NotFoundError extends DomainError {
   constructor(entity: string, id: string, options?: ErrorOptions) {
-    super(`${entity} not found: ${id}`, options);
+    super(`${entity}が見つかりません: ${id}`, options);
     this.name = 'NotFoundError';
   }
 }
@@ -23,7 +23,7 @@ export class ValidationError extends DomainError {
 
 export class AlreadyExistsError extends DomainError {
   constructor(entity: string, identifier: string, options?: ErrorOptions) {
-    super(`${entity} already exists: ${identifier}`, options);
+    super(`${entity}は既に存在します: ${identifier}`, options);
     this.name = 'AlreadyExistsError';
   }
 }
