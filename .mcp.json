@@ -3,6 +3,10 @@
     "next-devtools": {
       "command": "npx",
       "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "secretary": {
+      "type": "http",
+      "url": "http://localhost:3200/mcp"
     }
   }
 }

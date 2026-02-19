@@ -3,7 +3,7 @@
 # DB + 開発サーバーを起動する（Ctrl+C で両方停止する）
 dev:
 	docker compose up -d
-	trap 'docker compose down' EXIT && pnpm dev
+	trap 'docker compose down; kill 0' EXIT && pnpm --filter web mcp & pnpm dev
 
 # DB を停止する
 down:

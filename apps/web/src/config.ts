@@ -26,6 +26,7 @@ const envSchema = v.object({
   API_KEY: v.pipe(v.string(), v.minLength(1)),
   CI: v.optional(v.string()),
   NEXT_DIST_DIR: v.optional(v.string(), '.next'),
+  MCP_PORT: v.optional(v.pipe(v.string(), v.transform(Number), v.integer()), '3200'),
 });
 
 const env = v.parse(envSchema, {
@@ -36,6 +37,7 @@ const env = v.parse(envSchema, {
   API_KEY: process.env.API_KEY,
   CI: process.env.CI,
   NEXT_DIST_DIR: process.env.NEXT_DIST_DIR,
+  MCP_PORT: process.env.MCP_PORT,
 });
 
 export const LOG_LEVEL = env.LOG_LEVEL;
@@ -47,3 +49,4 @@ export const DATABASE_URL_TEST = env.DATABASE_URL_TEST;
 export const API_KEY = env.API_KEY;
 export const IS_CI = env.CI !== undefined;
 export const NEXT_DIST_DIR = env.NEXT_DIST_DIR;
+export const MCP_PORT = env.MCP_PORT;
