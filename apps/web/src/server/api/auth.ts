@@ -1,5 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 
+import { cookies } from 'next/headers';
+
 import { API_KEY } from '@/config';
 
 export const AUTH_COOKIE_NAME = 'api_key';
@@ -29,6 +31,11 @@ export const extractApiKey = (req: Request): string | null => {
   }
 
   return null;
+};
+
+export const isLoggedIn = async (): Promise<boolean> => {
+  const cookieStore = await cookies();
+  return cookieStore.has(AUTH_COOKIE_NAME);
 };
 
 // NOTE: 入力長に依存しない定数時間比較を実現するため、SHA-256 でハッシュ化してから比較する

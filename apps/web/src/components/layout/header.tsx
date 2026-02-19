@@ -1,13 +1,18 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { ROUTES } from "@/constants/routes";
-import { SITE_NAME } from "@/constants/site";
+import { ROUTES } from '@/constants/routes';
+import { SITE_NAME } from '@/constants/site';
+import { isLoggedIn } from '@/server/api/auth';
+
+import { AuthButton } from './auth-button';
 
 const NAV_ITEMS = [
-  { href: ROUTES.dailyReports, label: "日報一覧" },
+  { href: ROUTES.dailyReports, label: '日報一覧' },
 ] as const;
 
-export const Header = () => {
+export const Header = async () => {
+  const loggedIn = await isLoggedIn();
+
   return (
     <header className="border-b">
       <div className="flex h-14 items-center gap-6 px-6">
@@ -25,6 +30,9 @@ export const Header = () => {
             </Link>
           ))}
         </nav>
+        <div className="ml-auto">
+          <AuthButton isLoggedIn={loggedIn} />
+        </div>
       </div>
     </header>
   );
