@@ -10,7 +10,7 @@ const eslintConfig = [
   ...nextConfig,
   ...reactConfig,
   {
-    files: ['src/server/infrastructure/db/seed.ts', 'e2e/seed.ts'],
+    files: ['src/server/infrastructure/db/seed.ts', 'src/mcp/index.ts', 'e2e/seed.ts'],
     rules: {
       'no-console': 'off',
     },

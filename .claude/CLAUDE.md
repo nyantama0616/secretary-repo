@@ -25,7 +25,7 @@ pnpm workspaces を使ったモノレポである。
 ## コマンド
 
 ```bash
-make dev                              # DB + 開発サーバーを起動する（Ctrl+C で両方停止する）
+make dev                              # DB + 開発サーバー + MCP サーバーを起動する（Ctrl+C で全て停止する）
 make down                             # DB を停止する
 make db                               # DB のみ起動する
 make db-down                          # DB を停止し、データも削除する

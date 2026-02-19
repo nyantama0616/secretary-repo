@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx --env-file=.env src/server/infrastructure/db/seed.ts",
-    "db:seed:e2e": "tsx e2e/seed.ts"
+    "db:seed:e2e": "tsx e2e/seed.ts",
+    "mcp": "tsx src/mcp/index.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",
