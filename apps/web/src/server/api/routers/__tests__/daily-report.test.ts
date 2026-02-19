@@ -1,8 +1,7 @@
-import { randomUUID } from 'node:crypto';
-
 import { describe, expect, it } from 'vitest';
 
 import { createCaller } from '@/server/api';
+import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 
@@ -97,7 +96,7 @@ describe('dailyReport.detail', () => {
   });
 
   it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
-    const nonExistentId = randomUUID();
+    const nonExistentId = generateId();
 
     await expect(
       caller.dailyReport.detail({ id: nonExistentId }),
@@ -177,7 +176,7 @@ describe('dailyReport.update', () => {
   });
 
   it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
-    const nonExistentId = randomUUID();
+    const nonExistentId = generateId();
 
     await expect(
       caller.dailyReport.update({ id: nonExistentId, summary: 'テスト' }),

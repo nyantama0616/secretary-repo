@@ -1,7 +1,9 @@
-import { date, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { date, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+
+import { generateId } from '@/server/domain/id';
 
 export const dailyReports = pgTable('daily_reports', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: text('id').primaryKey().$defaultFn(generateId),
   date: date('date', { mode: 'date' }).notNull().unique(),
   plan: text('plan'),
   summary: text('summary'),

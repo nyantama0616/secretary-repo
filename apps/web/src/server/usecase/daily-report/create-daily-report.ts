@@ -6,6 +6,7 @@ import {
 } from '@/server/domain/daily-report/daily-report';
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { AlreadyExistsError } from '@/server/domain/error/domain-errors';
+import { generateId } from '@/server/domain/id';
 
 export const CreateDailyReportInputSchema = v.object({
   date: v.date(),
@@ -40,7 +41,7 @@ export class CreateDailyReportUseCase {
     }
 
     const dailyReport = createDailyReport({
-      id: crypto.randomUUID(),
+      id: generateId(),
       date: input.date,
       plan: input.plan ?? null,
       summary: input.summary ?? null,
