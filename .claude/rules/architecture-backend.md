@@ -60,6 +60,30 @@ API → UseCase → Domain ← Infrastructure
 - tRPC ルーターは UseCase を呼び出すだけ。ビジネスロジックを持たない
 - ドメインエラーから `TRPCError` への変換は `trpc.ts` の middleware が行う
 
+### 認証
+
+共有 API Key 方式のシングルユーザー認証である。認証ロジックは `server/api/auth.ts` に集約する。
+
+#### フロー
+
+1. ユーザーがログインフォームに API Key を入力する
+2. `POST /api/auth/login` で環境変数 `API_KEY` と照合する（SHA-256 + `timingSafeEqual`）
+3. 認証成功時、API Key を Cookie（httpOnly, secure, sameSite=lax）に保存する
+4. tRPC ハンドラが Cookie から API Key を抽出・検証し、`isAuthenticated` を tRPC コンテキストに設定する
+
+#### 認証の検証ポイント
+
+- **Next.js middleware**（`src/middleware.ts`）: Cookie の存在を確認し、未認証なら `/login` へリダイレクトする
+- **tRPC HTTP ハンドラ**（`src/app/api/trpc/[trpc]/route.ts`）: Cookie の API Key を検証し、tRPC コンテキストに `isAuthenticated` を設定する
+- **createServerCaller**（`server/api/index.ts`）: Server Component 用。Cookie の API Key を検証し、HTTP ハンドラと同じ認証ロジックを適用する
+- **protectedProcedure**（`server/api/trpc.ts`）: `isAuthenticated: false` なら `TRPCError(UNAUTHORIZED)` を throw する
+
+#### ルール
+
+- 認証が必要な tRPC プロシージャは `protectedProcedure` を使う
+- 認証ロジック（検証・抽出）は `server/api/auth.ts` に閉じる。ルーターや UseCase に認証の詳細を漏らさない
+- 環境変数 `API_KEY` は `config.ts` 経由で参照する
+
 ### エラーハンドリング
 
 #### Domain 層
