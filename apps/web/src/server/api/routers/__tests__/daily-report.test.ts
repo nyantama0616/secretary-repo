@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { describe, expect, it } from 'vitest';
 
 import { createCaller } from '@/server/api';
@@ -64,5 +66,45 @@ describe('dailyReport.list', () => {
     const result = await caller.dailyReport.list();
 
     expect(result).toStrictEqual([]);
+  });
+});
+
+describe('dailyReport.detail', () => {
+  const testDailyReport = TEST_DAILY_REPORTS[0];
+
+  it('指定したIDの日報を返す', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(testDailyReport)
+      .returning();
+
+    const result = await caller.dailyReport.detail({ id: inserted.id });
+
+    expect(result).toStrictEqual({
+      id: inserted.id,
+      date: testDailyReport.date,
+      plan: testDailyReport.plan,
+      summary: testDailyReport.summary,
+      wakeUpTime: testDailyReport.wakeUpTime,
+      bedTime: testDailyReport.bedTime,
+      goodPoints: testDailyReport.goodPoints,
+      badPoints: testDailyReport.badPoints,
+      learnings: testDailyReport.learnings,
+      nextActions: testDailyReport.nextActions,
+      notes: testDailyReport.notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = randomUUID();
+
+    await expect(
+      caller.dailyReport.detail({ id: nonExistentId }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
   });
 });
