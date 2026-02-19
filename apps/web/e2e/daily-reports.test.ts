@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test.describe('日報一覧', () => {
   test('一覧ページを開くと、日報が表示される', async ({ page }) => {

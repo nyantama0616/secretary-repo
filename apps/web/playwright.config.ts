@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { DATABASE_URL_TEST, IS_CI } from './src/config';
+import { API_KEY, DATABASE_URL_TEST, IS_CI } from './src/config';
 
 // NOTE: 開発中の dev サーバー（3000番）と並行起動できるよう、E2E 用は別ポートを使う
 const e2ePort = 3100;
@@ -30,6 +30,7 @@ export default defineConfig({
     env: {
       // NOTE: next dev は NODE_ENV=development を強制するため、DATABASE_URL を直接テスト DB の URL で上書きする
       DATABASE_URL: DATABASE_URL_TEST!,
+      API_KEY,
       // NOTE: 開発用の .next/ とロックファイルが競合しないよう、E2E 用は別ディレクトリを使う
       NEXT_DIST_DIR: '.next-e2e',
     },
