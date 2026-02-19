@@ -19,6 +19,30 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .where(eq(dailyReports.id, id));
     return rows[0] ? toDailyReport(rows[0]) : null;
   }
+
+  async findByDate(date: Date): Promise<DailyReport | null> {
+    const rows = await db
+      .select()
+      .from(dailyReports)
+      .where(eq(dailyReports.date, date));
+    return rows[0] ? toDailyReport(rows[0]) : null;
+  }
+
+  async save(dailyReport: DailyReport): Promise<void> {
+    await db.insert(dailyReports).values({
+      id: dailyReport.id,
+      date: dailyReport.date,
+      plan: dailyReport.plan,
+      summary: dailyReport.summary,
+      wakeUpTime: dailyReport.wakeUpTime,
+      bedTime: dailyReport.bedTime,
+      goodPoints: dailyReport.goodPoints,
+      badPoints: dailyReport.badPoints,
+      learnings: dailyReport.learnings,
+      nextActions: dailyReport.nextActions,
+      notes: dailyReport.notes,
+    });
+  }
 }
 
 const toDailyReport = (

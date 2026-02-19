@@ -108,3 +108,70 @@ describe('dailyReport.detail', () => {
     );
   });
 });
+
+describe('dailyReport.create', () => {
+  const newDailyReport = {
+    date: new Date('2026-02-19'),
+    plan: '日報作成機能の実装',
+    summary: '日報作成機能を実装した',
+    wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
+    bedTime: new Date('2026-02-19T23:30:00+09:00'),
+    goodPoints: 'TDDで進められた',
+    badPoints: '設計に時間がかかった',
+    learnings: 'Valibotのoptionalの使い方',
+    nextActions: 'E2Eテストを書く',
+    notes: '特になし',
+  };
+
+  it('日報を作成する', async () => {
+    const result = await caller.dailyReport.create(newDailyReport);
+
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      date: newDailyReport.date,
+      plan: newDailyReport.plan,
+      summary: newDailyReport.summary,
+      wakeUpTime: newDailyReport.wakeUpTime,
+      bedTime: newDailyReport.bedTime,
+      goodPoints: newDailyReport.goodPoints,
+      badPoints: newDailyReport.badPoints,
+      learnings: newDailyReport.learnings,
+      nextActions: newDailyReport.nextActions,
+      notes: newDailyReport.notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('日付のみで日報を作成できる', async () => {
+    const result = await caller.dailyReport.create({
+      date: new Date('2026-02-20'),
+    });
+
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      date: new Date('2026-02-20'),
+      plan: null,
+      summary: null,
+      wakeUpTime: null,
+      bedTime: null,
+      goodPoints: null,
+      badPoints: null,
+      learnings: null,
+      nextActions: null,
+      notes: null,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('同じ日付の日報が存在する場合、CONFLICT エラーを返す', async () => {
+    await db.insert(dailyReports).values({
+      date: newDailyReport.date,
+    });
+
+    await expect(caller.dailyReport.create(newDailyReport)).rejects.toThrow(
+      expect.objectContaining({
+        code: 'CONFLICT',
+      }),
+    );
+  });
+});
