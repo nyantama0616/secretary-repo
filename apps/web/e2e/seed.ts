@@ -2,11 +2,6 @@ import { sql } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
-import { users } from '@/server/infrastructure/db/schema/users';
-
-const SEED_USERS = [
-  { name: '田中太郎', email: 'tanaka@example.com' },
-];
 
 const SEED_DAILY_REPORTS = [
   {
@@ -32,11 +27,7 @@ const SEED_DAILY_REPORTS = [
 const main = async () => {
   console.log('Seeding for E2E...');
   await db.transaction(async (tx) => {
-    // NOTE: TRUNCATE CASCADE により外部キー制約の順序を気にせず全テーブルを削除できる
-    await tx.execute(sql`TRUNCATE ${users} CASCADE`);
     await tx.execute(sql`TRUNCATE ${dailyReports} CASCADE`);
-
-    await tx.insert(users).values(SEED_USERS);
     await tx.insert(dailyReports).values(SEED_DAILY_REPORTS);
   });
   console.log('Seeding for E2E completed.');

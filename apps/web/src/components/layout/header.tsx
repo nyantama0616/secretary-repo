@@ -4,8 +4,6 @@ import { ROUTES } from "@/constants/routes";
 import { SITE_NAME } from "@/constants/site";
 
 const NAV_ITEMS = [
-  { href: ROUTES.users, label: "Users" },
-  { href: ROUTES.userCreate, label: "Create User" },
   { href: ROUTES.dailyReports, label: "日報一覧" },
 ] as const;
 

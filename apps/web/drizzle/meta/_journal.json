@@ -29,6 +29,13 @@
       "when": 1771497640133,
       "tag": "0003_known_scarlet_witch",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771499798643,
+      "tag": "0004_unique_scorpion",
+      "breakpoints": true
     }
   ]
 }
