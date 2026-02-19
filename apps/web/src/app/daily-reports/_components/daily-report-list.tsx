@@ -1,7 +1,10 @@
 'use client';
 
+import Link from 'next/link';
+
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
+import { ROUTES } from '@/constants/routes';
 import { formatDate, formatTime } from '@/lib/format';
 import { useQuery, useTRPC } from '@/trpc/client';
 
@@ -41,13 +44,14 @@ export const DailyReportList = () => {
       <h1 className="text-2xl font-bold">日報一覧</h1>
       <div className="grid gap-3">
         {dailyReports.map((report) => (
-          <DailyReportCard
-            key={report.id}
-            date={report.date}
-            summary={report.summary}
-            wakeUpTime={report.wakeUpTime}
-            bedTime={report.bedTime}
-          />
+          <Link key={report.id} href={ROUTES.dailyReportDetail(report.id)}>
+            <DailyReportCard
+              date={report.date}
+              summary={report.summary}
+              wakeUpTime={report.wakeUpTime}
+              bedTime={report.bedTime}
+            />
+          </Link>
         ))}
       </div>
     </div>
@@ -68,7 +72,7 @@ const DailyReportCard = ({
   const timeLabel = buildTimeLabel(wakeUpTime, bedTime);
 
   return (
-    <div className="rounded-lg border p-4">
+    <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
       <p className="font-semibold">{formatDate(date)}</p>
       {summary && (
         <p className="mt-1 text-sm text-muted-foreground">{summary}</p>
