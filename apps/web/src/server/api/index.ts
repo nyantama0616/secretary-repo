@@ -1,8 +1,10 @@
+import { dailyReportRouter } from '@/server/api/routers/daily-report';
 import { userRouter } from '@/server/api/routers/user';
 import { createCallerFactory, router } from '@/server/api/trpc';
 
 export const appRouter = router({
   user: userRouter,
+  dailyReport: dailyReportRouter,
 });
 
 export type AppRouter = typeof appRouter;
