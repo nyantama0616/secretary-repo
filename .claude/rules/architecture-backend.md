@@ -45,6 +45,7 @@ API → UseCase → Domain ← Infrastructure
 #### Domain 層
 - エンティティは Valibot スキーマ + `v.brand()` で定義する
 - Repository はインターフェース（`interface`）として定義する
+- ID は `domain/id.ts` の `generateId()` で生成する（nanoid）。UUID は使わない
 
 #### UseCase 層
 - クラスとして定義し、`execute()` メソッドで実行する
@@ -89,6 +90,7 @@ server/
 ├── usecase/
 │   └── {domain}/            # ドメインごとにディレクトリを分ける
 ├── domain/
+│   ├── id.ts                # ID 生成（nanoid）
 │   ├── error/               # ドメインエラー
 │   └── {domain}/            # エンティティ + Repository インターフェース
 └── infrastructure/
