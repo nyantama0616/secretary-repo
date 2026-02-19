@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@repo/ui/button';
 import Link from 'next/link';
 
 import { ErrorDisplay } from '@/components/feedback/error-display';
@@ -41,7 +42,12 @@ export const DailyReportList = () => {
 
   return (
     <div className="grid gap-4 p-8">
-      <h1 className="text-2xl font-bold">日報一覧</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">日報一覧</h1>
+        <Button asChild>
+          <Link href={ROUTES.dailyReportCreate}>日報を作成</Link>
+        </Button>
+      </div>
       <div className="grid gap-3">
         {dailyReports.map((report) => (
           <Link key={report.id} href={ROUTES.dailyReportDetail(report.id)}>

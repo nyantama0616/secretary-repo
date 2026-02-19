@@ -7,12 +7,18 @@ import {
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { AlreadyExistsError } from '@/server/domain/error/domain-errors';
 
+// NOTE: tRPC はトランスフォーマー未設定のため、HTTP 経由では Date が文字列として届く
+const dateOrString = v.pipe(
+  v.union([v.date(), v.string()]),
+  v.transform((value) => (value instanceof Date ? value : new Date(value))),
+);
+
 export const CreateDailyReportInputSchema = v.object({
-  date: v.date(),
+  date: dateOrString,
   plan: v.optional(v.pipe(v.string(), v.minLength(1))),
   summary: v.optional(v.pipe(v.string(), v.minLength(1))),
-  wakeUpTime: v.optional(v.date()),
-  bedTime: v.optional(v.date()),
+  wakeUpTime: v.optional(dateOrString),
+  bedTime: v.optional(dateOrString),
   goodPoints: v.optional(v.pipe(v.string(), v.minLength(1))),
   badPoints: v.optional(v.pipe(v.string(), v.minLength(1))),
   learnings: v.optional(v.pipe(v.string(), v.minLength(1))),
@@ -34,7 +40,7 @@ export class CreateDailyReportUseCase {
 
     if (existing) {
       throw new AlreadyExistsError(
-        'DailyReport',
+        '日報',
         input.date.toISOString(),
       );
     }

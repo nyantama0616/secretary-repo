@@ -47,3 +47,45 @@ test.describe('日報詳細', () => {
     await expect(page.getByText('明日はテストを書く')).toBeVisible();
   });
 });
+
+test.describe('日報作成', () => {
+  test('フォームから日報を作成すると、一覧に反映される', async ({
+    page,
+  }) => {
+    await page.goto('/daily-reports/new');
+    await page.getByLabel('日付').fill('2026-02-20');
+    await page.getByLabel('予定').fill('リファクタリング');
+    await page.getByLabel('サマリー').fill('リファクタリングを完了した');
+    await page.getByRole('button', { name: '作成' }).click();
+
+    await expect(page).toHaveURL('/daily-reports');
+    await expect(
+      page.getByText('リファクタリングを完了した'),
+    ).toBeVisible();
+  });
+
+  test('一覧の「日報を作成」ボタンから作成ページに遷移できる', async ({
+    page,
+  }) => {
+    await page.goto('/daily-reports');
+    await page.getByRole('link', { name: '日報を作成' }).click();
+
+    await expect(page).toHaveURL('/daily-reports/new');
+    await expect(
+      page.getByRole('heading', { name: '日報作成' }),
+    ).toBeVisible();
+  });
+
+  test('同じ日付の日報が存在する場合、エラーが表示される', async ({
+    page,
+  }) => {
+    await page.goto('/daily-reports/new');
+    await page.getByLabel('日付').fill('2026-02-17');
+    await page.getByRole('button', { name: '作成' }).click();
+
+    await expect(
+      page.getByText(/の日報はすでに存在します/),
+    ).toBeVisible();
+    await expect(page).toHaveURL('/daily-reports/new');
+  });
+});

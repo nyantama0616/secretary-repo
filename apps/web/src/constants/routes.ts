@@ -4,4 +4,5 @@ export const ROUTES = {
   userCreate: '/users/new',
   dailyReports: '/daily-reports',
   dailyReportDetail: (id: string) => `/daily-reports/${id}`,
+  dailyReportCreate: '/daily-reports/new',
 } as const;
