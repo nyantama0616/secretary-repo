@@ -23,6 +23,7 @@ const envSchema = v.object({
     process.env.NODE_ENV === 'test'
       ? v.pipe(v.string(), v.url())
       : v.optional(v.pipe(v.string(), v.url())),
+  API_KEY: v.pipe(v.string(), v.minLength(1)),
   CI: v.optional(v.string()),
   NEXT_DIST_DIR: v.optional(v.string(), '.next'),
 });
@@ -32,6 +33,7 @@ const env = v.parse(envSchema, {
   NODE_ENV: process.env.NODE_ENV,
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_URL_TEST: process.env.DATABASE_URL_TEST,
+  API_KEY: process.env.API_KEY,
   CI: process.env.CI,
   NEXT_DIST_DIR: process.env.NEXT_DIST_DIR,
 });
@@ -42,5 +44,6 @@ export const NODE_ENV = env.NODE_ENV;
 export const DATABASE_URL =
   env.NODE_ENV === 'test' ? env.DATABASE_URL_TEST! : env.DATABASE_URL;
 export const DATABASE_URL_TEST = env.DATABASE_URL_TEST;
+export const API_KEY = env.API_KEY;
 export const IS_CI = env.CI !== undefined;
 export const NEXT_DIST_DIR = env.NEXT_DIST_DIR;

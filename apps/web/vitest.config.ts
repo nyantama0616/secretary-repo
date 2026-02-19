@@ -6,6 +6,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, './src'),
+      // NOTE: server-only は Next.js のビルド時にのみ機能するため、Vitest では空モジュールに置き換える
+      'server-only': path.resolve(import.meta.dirname, './src/test/server-only-mock.ts'),
     },
   },
   test: {

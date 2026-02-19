@@ -3,7 +3,7 @@ import { cache } from 'react';
 
 import { ensureFound } from '@/lib/ensure-found';
 import { formatDate } from '@/lib/format';
-import { createCaller } from '@/server/api';
+import { createServerCaller } from '@/server/api';
 
 import { DailyReportEditForm } from './_components/daily-report-edit-form';
 
@@ -33,7 +33,7 @@ const DailyReportEditPage = async ({ params }: DailyReportEditPageProps) => {
 
 export default DailyReportEditPage;
 
-const fetchDailyReport = cache((id: string) => {
-  const caller = createCaller({});
+const fetchDailyReport = cache(async (id: string) => {
+  const caller = await createServerCaller();
   return caller.dailyReport.detail({ id });
 });
