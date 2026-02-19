@@ -1,0 +1,33 @@
+import Link from "next/link";
+
+import { ROUTES } from "@/constants/routes";
+import { SITE_NAME } from "@/constants/site";
+
+const NAV_ITEMS = [
+  { href: ROUTES.users, label: "Users" },
+  { href: ROUTES.userCreate, label: "Create User" },
+] as const;
+
+export const Header = () => {
+  return (
+    <header className="border-b">
+      <div className="flex h-14 items-center gap-6 px-6">
+        <Link href="/" className="text-lg font-bold">
+          {SITE_NAME}
+        </Link>
+        <nav className="flex gap-4">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+};
+

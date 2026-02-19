@@ -1,0 +1,22 @@
+{
+  "name": "nextjs-template2",
+  "private": true,
+  "packageManager": "pnpm@10.26.1",
+  "scripts": {
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "lint:fix": "pnpm -r run lint:fix",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "eslint": "catalog:",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  },
+  "lint-staged": {
+    "apps/web/**/*.{js,jsx,ts,tsx,mjs}": [
+      "pnpm --filter web exec eslint --fix"
+    ]
+  }
+}

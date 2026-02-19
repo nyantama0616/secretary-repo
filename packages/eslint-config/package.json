@@ -1,0 +1,20 @@
+{
+  "name": "@repo/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./base": "./base.mjs",
+    "./react": "./react.mjs",
+    "./next": "./next.mjs",
+    "./prettier": "./prettier.json"
+  },
+  "dependencies": {
+    "eslint-config-prettier": "^10.1.8",
+    "typescript-eslint": "^8.35.1"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": ">=16"
+  }
+}
