@@ -50,6 +50,7 @@ export const LoginForm = () => {
       }
 
       router.push(callbackUrl);
+      router.refresh();
     } finally {
       setIsPending(false);
     }
