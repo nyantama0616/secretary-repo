@@ -5,6 +5,7 @@ const DailyReportSchema = v.pipe(
     id: v.string(),
     date: v.date(),
     plan: v.nullable(v.string()),
+    summary: v.nullable(v.string()),
     wakeUpTime: v.nullable(v.date()),
     bedTime: v.nullable(v.date()),
     goodPoints: v.nullable(v.string()),

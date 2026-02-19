@@ -10,6 +10,7 @@ const TEST_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
     plan: '機能Aの実装を進める',
+    summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
     goodPoints: '集中して作業できた',
@@ -21,6 +22,7 @@ const TEST_DAILY_REPORTS = [
   {
     date: new Date('2026-02-18'),
     plan: 'テストを書く',
+    summary: null,
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     bedTime: null,
     goodPoints: null,
@@ -44,6 +46,7 @@ describe('dailyReport.list', () => {
           id: expect.any(String),
           date: r.date,
           plan: r.plan,
+          summary: r.summary,
           wakeUpTime: r.wakeUpTime,
           bedTime: r.bedTime,
           goodPoints: r.goodPoints,

@@ -44,7 +44,7 @@ export const DailyReportList = () => {
           <DailyReportCard
             key={report.id}
             date={report.date}
-            plan={report.plan}
+            summary={report.summary}
             wakeUpTime={report.wakeUpTime}
             bedTime={report.bedTime}
           />
@@ -56,12 +56,12 @@ export const DailyReportList = () => {
 
 const DailyReportCard = ({
   date,
-  plan,
+  summary,
   wakeUpTime,
   bedTime,
 }: {
   date: string;
-  plan: string | null;
+  summary: string | null;
   wakeUpTime: string | null;
   bedTime: string | null;
 }) => {
@@ -70,8 +70,8 @@ const DailyReportCard = ({
   return (
     <div className="rounded-lg border p-4">
       <p className="font-semibold">{formatDate(date)}</p>
-      {plan && (
-        <p className="mt-1 text-sm text-muted-foreground">{plan}</p>
+      {summary && (
+        <p className="mt-1 text-sm text-muted-foreground">{summary}</p>
       )}
       {timeLabel && (
         <p className="mt-1 text-sm text-muted-foreground">{timeLabel}</p>

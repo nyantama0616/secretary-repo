@@ -18,6 +18,7 @@ const toDailyReport = (
     id: row.id,
     date: row.date,
     plan: row.plan,
+    summary: row.summary,
     wakeUpTime: row.wakeUpTime,
     bedTime: row.bedTime,
     goodPoints: row.goodPoints,

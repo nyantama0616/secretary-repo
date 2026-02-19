@@ -14,6 +14,7 @@ const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
     plan: '機能Aの実装を進める',
+    summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
     goodPoints: '集中して作業できた',
@@ -24,6 +25,7 @@ const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-18'),
     plan: 'テストを書く',
+    summary: 'テストの基本を学んだが体調不良で早退した',
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     goodPoints: 'テストの書き方が分かってきた',
     notes: '体調不良のため早退',
@@ -31,6 +33,7 @@ const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-19'),
     plan: 'コードレビューと修正',
+    summary: 'レビューで良い指摘をもらい修正を完了した',
     wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
     bedTime: new Date('2026-02-19T23:30:00+09:00'),
     goodPoints: 'レビューで良い指摘をもらえた',

@@ -4,6 +4,7 @@ export const dailyReports = pgTable('daily_reports', {
   id: uuid('id').primaryKey().defaultRandom(),
   date: date('date', { mode: 'date' }).notNull().unique(),
   plan: text('plan'),
+  summary: text('summary'),
   wakeUpTime: timestamp('wake_up_time', { withTimezone: true }),
   bedTime: timestamp('bed_time', { withTimezone: true }),
   goodPoints: text('good_points'),

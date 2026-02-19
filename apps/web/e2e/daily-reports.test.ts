@@ -7,8 +7,8 @@ test.describe('日報一覧', () => {
     await expect(
       page.getByRole('heading', { name: '日報一覧' }),
     ).toBeVisible();
-    await expect(page.getByText('機能Aの実装を進める')).toBeVisible();
-    await expect(page.getByText('テストを書く')).toBeVisible();
+    await expect(page.getByText('機能Aの主要部分を実装し、集中して作業できた')).toBeVisible();
+    await expect(page.getByText('テストの基本を学んだが体調不良で早退した')).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションから日報一覧に遷移できる', async ({
