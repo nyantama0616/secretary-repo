@@ -109,6 +109,86 @@ describe('dailyReport.detail', () => {
   });
 });
 
+describe('dailyReport.update', () => {
+  const updateInput = {
+    plan: '更新後の計画',
+    summary: '更新後のまとめ',
+    wakeUpTime: new Date('2026-02-19T08:00:00+09:00'),
+    bedTime: new Date('2026-02-19T00:00:00+09:00'),
+    goodPoints: '更新後のよかったこと',
+    badPoints: '更新後の改善点',
+    learnings: '更新後の学び',
+    nextActions: '更新後のネクストアクション',
+    notes: '更新後のメモ',
+  };
+
+  it('日報を更新する', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+
+    const result = await caller.dailyReport.update({
+      id: inserted.id,
+      ...updateInput,
+    });
+
+    expect(result).toStrictEqual({
+      id: inserted.id,
+      date: TEST_DAILY_REPORTS[0].date,
+      plan: updateInput.plan,
+      summary: updateInput.summary,
+      wakeUpTime: updateInput.wakeUpTime,
+      bedTime: updateInput.bedTime,
+      goodPoints: updateInput.goodPoints,
+      badPoints: updateInput.badPoints,
+      learnings: updateInput.learnings,
+      nextActions: updateInput.nextActions,
+      notes: updateInput.notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('一部のフィールドのみ更新できる', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+
+    const result = await caller.dailyReport.update({
+      id: inserted.id,
+      summary: '更新後のまとめ',
+    });
+
+    expect(result).toStrictEqual({
+      id: inserted.id,
+      date: TEST_DAILY_REPORTS[0].date,
+      plan: TEST_DAILY_REPORTS[0].plan,
+      summary: '更新後のまとめ',
+      wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
+      bedTime: TEST_DAILY_REPORTS[0].bedTime,
+      goodPoints: TEST_DAILY_REPORTS[0].goodPoints,
+      badPoints: TEST_DAILY_REPORTS[0].badPoints,
+      learnings: TEST_DAILY_REPORTS[0].learnings,
+      nextActions: TEST_DAILY_REPORTS[0].nextActions,
+      notes: TEST_DAILY_REPORTS[0].notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = randomUUID();
+
+    await expect(
+      caller.dailyReport.update({ id: nonExistentId, summary: 'テスト' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
 describe('dailyReport.create', () => {
   const newDailyReport = {
     date: new Date('2026-02-19'),

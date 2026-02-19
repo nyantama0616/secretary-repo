@@ -43,6 +43,24 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       notes: dailyReport.notes,
     });
   }
+
+  async update(dailyReport: DailyReport): Promise<void> {
+    await db
+      .update(dailyReports)
+      .set({
+        date: dailyReport.date,
+        plan: dailyReport.plan,
+        summary: dailyReport.summary,
+        wakeUpTime: dailyReport.wakeUpTime,
+        bedTime: dailyReport.bedTime,
+        goodPoints: dailyReport.goodPoints,
+        badPoints: dailyReport.badPoints,
+        learnings: dailyReport.learnings,
+        nextActions: dailyReport.nextActions,
+        notes: dailyReport.notes,
+      })
+      .where(eq(dailyReports.id, dailyReport.id));
+  }
 }
 
 const toDailyReport = (

@@ -3,6 +3,7 @@ import { DrizzleUserRepository } from '@/server/infrastructure/db/drizzle-user-r
 import { CreateDailyReportUseCase } from '@/server/usecase/daily-report/create-daily-report';
 import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-report';
 import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-reports';
+import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
 import { CreateUserUseCase } from '@/server/usecase/user/create-user';
 import { GetUserUseCase } from '@/server/usecase/user/get-user';
 import { GetUsersUseCase } from '@/server/usecase/user/get-users';
@@ -22,5 +23,8 @@ export const getDailyReportUseCase = new GetDailyReportUseCase(
   dailyReportRepository,
 );
 export const createDailyReportUseCase = new CreateDailyReportUseCase(
+  dailyReportRepository,
+);
+export const updateDailyReportUseCase = new UpdateDailyReportUseCase(
   dailyReportRepository,
 );
