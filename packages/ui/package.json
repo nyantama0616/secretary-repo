@@ -12,6 +12,7 @@
     "./input": "./src/components/input.tsx",
     "./label": "./src/components/label.tsx",
     "./spinner": "./src/components/spinner.tsx",
+    "./textarea": "./src/components/textarea.tsx",
     "./lib/utils": "./src/lib/utils.ts"
   },
   "dependencies": {
