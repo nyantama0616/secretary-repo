@@ -56,13 +56,14 @@
 
 **優先度:** Must
 
-- [OpenClaw](https://openclaw.ai/)（AIエージェント）がこのアプリを操作することを前提とした設計にする
+- [OpenClaw](https://openclaw.ai/)（AIエージェント、モデル: Sonnet 4.5）がこのアプリを操作することを前提とした設計にする
 - OpenClaw はチャットアプリ（Telegram, Discord 等）経由でシステムを操作する AI エージェントである
 - これにより、利用者は Web UI を直接操作するだけでなく、チャットを通じて AI にアプリ操作を委任できる
 - 設計上の要件:
-  - バックエンドは API ファーストで設計し、すべての操作を API 経由で実行可能にする
-  - API は OpenClaw が解釈・操作しやすいよう、RESTful かつ一貫した設計にする
-  - Web UI は API のクライアントの1つという位置づけにする
+  - OpenClaw とアプリの接続には MCP（Model Context Protocol）を採用する
+  - アプリの操作を MCP ツールとして公開し、OpenClaw が呼び出せるようにする
+  - Web UI は tRPC 経由、OpenClaw は MCP 経由で、同じビジネスロジック（UseCase 層）を共有する
+- MCP サーバーのアーキテクチャ（UseCase を直接呼ぶ共有パッケージ方式 or tRPC を HTTP で呼ぶアダプタ方式）は、Task CRUD 実装後に MCP を試作して決定する
 
 ---
 
