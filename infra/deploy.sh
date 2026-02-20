@@ -6,9 +6,6 @@ WEB_DIR="${APP_DIR}/apps/web"
 
 cd "$APP_DIR"
 
-echo "=== git pull ==="
-git pull origin main
-
 echo "=== pnpm install ==="
 pnpm install --frozen-lockfile
 
