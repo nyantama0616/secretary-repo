@@ -1,0 +1,98 @@
+'use client';
+
+import { Badge } from '@repo/ui/badge';
+import type { ComponentProps } from 'react';
+
+import { ErrorDisplay } from '@/components/feedback/error-display';
+import { Loading } from '@/components/feedback/loading';
+import { formatDate } from '@/lib/format';
+import type { TaskStatus } from '@/server/domain/task/task';
+import { useQuery, useTRPC } from '@/trpc/client';
+
+const STATUS_CONFIG: Record<
+  TaskStatus,
+  { label: string; variant: ComponentProps<typeof Badge>['variant'] }
+> = {
+  not_started: { label: '未着手', variant: 'secondary' },
+  in_progress: { label: '着手中', variant: 'default' },
+  done: { label: '完了', variant: 'outline' },
+  cancelled: { label: '中止', variant: 'destructive' },
+};
+
+type TaskDetailProps = {
+  id: string;
+};
+
+export const TaskDetail = ({ id }: TaskDetailProps) => {
+  const trpc = useTRPC();
+  const {
+    data: task,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery(trpc.task.detail.queryOptions({ id }));
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError || !task) {
+    return (
+      <ErrorDisplay
+        message="タスクの取得に失敗しました"
+        onRetry={refetch}
+      />
+    );
+  }
+
+  return (
+    <div className="grid gap-4 p-8">
+      <div>
+        <h1 className="text-2xl font-bold">{task.title}</h1>
+        <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+          <Badge variant={STATUS_CONFIG[task.status].variant}>
+            {STATUS_CONFIG[task.status].label}
+          </Badge>
+          {task.dailyReportDate && (
+            <span>{formatDate(task.dailyReportDate)}</span>
+          )}
+        </div>
+      </div>
+      <dl className="grid gap-4">
+        <DetailItem label="説明" value={task.description} />
+        <DetailItem
+          label="期限"
+          value={task.deadline ? formatDate(task.deadline) : null}
+        />
+        <DetailItem
+          label="見積もり"
+          value={
+            task.estimatedMinutes !== null
+              ? `${task.estimatedMinutes}分`
+              : null
+          }
+        />
+        {task.status === 'cancelled' && (
+          <DetailItem label="中止理由" value={task.incompletionReason} />
+        )}
+      </dl>
+    </div>
+  );
+};
+
+const DetailItem = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | null;
+}) => {
+  if (!value) return null;
+
+  return (
+    <div>
+      <dt className="text-sm text-muted-foreground">{label}</dt>
+      <dd className="mt-1 whitespace-pre-wrap">{value}</dd>
+    </div>
+  );
+};

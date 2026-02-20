@@ -1,10 +1,12 @@
 'use client';
 
 import { Badge } from '@repo/ui/badge';
+import Link from 'next/link';
 import type { ComponentProps } from 'react';
 
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
+import { ROUTES } from '@/constants/routes';
 import { formatDate } from '@/lib/format';
 import type { TaskStatus } from '@/server/domain/task/task';
 import { useQuery, useTRPC } from '@/trpc/client';
@@ -48,6 +50,7 @@ export const TaskList = () => {
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
+              href={ROUTES.taskDetail(task.id)}
               title={task.title}
               status={task.status}
               dailyReportDate={task.dailyReportDate}
@@ -60,16 +63,18 @@ export const TaskList = () => {
 };
 
 const TaskCard = ({
+  href,
   title,
   status,
   dailyReportDate,
 }: {
+  href: string;
   title: string;
   status: TaskStatus;
   dailyReportDate: Date | null;
 }) => {
   return (
-    <div className="rounded-lg border p-4">
+    <Link href={href} className="block rounded-lg border p-4 transition-colors hover:bg-muted/50">
       <p className="font-semibold">{title}</p>
       <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
         <Badge className="w-14" variant={STATUS_CONFIG[status].variant}>
@@ -79,6 +84,6 @@ const TaskCard = ({
           <span>{formatDate(dailyReportDate)}</span>
         )}
       </div>
-    </div>
+    </Link>
   );
 };

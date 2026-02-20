@@ -30,4 +30,36 @@ test.describe('タスク一覧', () => {
       page.getByRole('heading', { name: 'タスク一覧' }),
     ).toBeVisible();
   });
+
+  test('タスクをクリックすると、詳細ページに遷移する', async ({ page }) => {
+    await page.goto('/tasks');
+    await page.getByText('tRPC ルーターを実装する').click();
+
+    await expect(
+      page.getByRole('heading', { name: 'tRPC ルーターを実装する' }),
+    ).toBeVisible();
+  });
+});
+
+test.describe('タスク詳細', () => {
+  test('タスクの詳細情報が表示される', async ({ page }) => {
+    await page.goto('/tasks');
+    await page.getByText('tRPC ルーターを実装する').click();
+
+    await expect(
+      page.getByRole('heading', { name: 'tRPC ルーターを実装する' }),
+    ).toBeVisible();
+    await expect(page.getByText('未着手')).toBeVisible();
+    await expect(page.getByText('タスク一覧APIを実装する')).toBeVisible();
+    await expect(page.getByText('120分')).toBeVisible();
+    await expect(page.getByText('2026/02/20（金）')).toBeVisible();
+  });
+
+  test('存在しないタスクにアクセスすると、404ページが表示される', async ({
+    page,
+  }) => {
+    const response = await page.goto('/tasks/nonexistent-id');
+
+    expect(response?.status()).toBe(404);
+  });
 });
