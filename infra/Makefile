@@ -1,4 +1,4 @@
-.PHONY: init plan apply phase1 phase2 phase3 phase4 phase5
+.PHONY: init plan apply phase1 phase2 phase3 phase4 phase5 phase6
 
 # Terraform
 init:
@@ -25,3 +25,6 @@ phase4:
 
 phase5:
 	cd ansible && ansible-playbook -i inventory.ini phase5-process.yml
+
+phase6:
+	cd ansible && ansible-playbook -i inventory.ini phase6-verify.yml

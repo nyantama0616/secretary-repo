@@ -25,7 +25,8 @@ MCP のみ外部に公開し、web と db は localhost に閉じる。
 
 ### 外部からの接続
 
-OpenClaw（別 LXC）が `http://<secretary-ip>:3001` で MCP サーバーにアクセスする。
+- OpenClaw（別 LXC）が `http://<secretary-ip>:3001` で MCP サーバーにアクセスする
+- web への外部アクセスは Proxmox ホスト上のリバースプロキシ（Caddy）経由で行う。リバースプロキシの設定はこのリポジトリの責務外であり、Proxmox ホストの設定を管理する別リポジトリで管理する
 
 ## 手動セットアップ手順
 
