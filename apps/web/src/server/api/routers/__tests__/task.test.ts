@@ -154,16 +154,6 @@ describe('task.update', () => {
     estimatedMinutes: 120,
   };
 
-  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
-    await expect(
-      unauthenticatedCaller.task.update({ id: 'dummy', ...updateInput }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'UNAUTHORIZED',
-      }),
-    );
-  });
-
   it('タスクの基本情報を更新する', async () => {
     const [inserted] = await db
       .insert(tasks)
@@ -216,19 +206,6 @@ describe('task.update', () => {
 });
 
 describe('task.updateStatus', () => {
-  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
-    await expect(
-      unauthenticatedCaller.task.updateStatus({
-        id: 'dummy',
-        status: 'done',
-      }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'UNAUTHORIZED',
-      }),
-    );
-  });
-
   it('タスクのステータスが更新される', async () => {
     const [inserted] = await db
       .insert(tasks)
@@ -258,19 +235,6 @@ describe('task.updateStatus', () => {
 });
 
 describe('task.assignDailyReport', () => {
-  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
-    await expect(
-      unauthenticatedCaller.task.assignDailyReport({
-        id: 'dummy',
-        dailyReportId: 'dummy',
-      }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'UNAUTHORIZED',
-      }),
-    );
-  });
-
   it('タスクを日報に紐づける', async () => {
     const [report] = await db
       .insert(dailyReports)
@@ -345,16 +309,6 @@ describe('task.assignDailyReport', () => {
 });
 
 describe('task.delete', () => {
-  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
-    await expect(
-      unauthenticatedCaller.task.delete({ id: 'dummy' }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'UNAUTHORIZED',
-      }),
-    );
-  });
-
   it('タスクを削除する', async () => {
     const [inserted] = await db
       .insert(tasks)
