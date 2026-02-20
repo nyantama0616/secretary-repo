@@ -27,7 +27,7 @@ phase5:
 	cd ansible && ansible-playbook -i inventory.ini phase5-process.yml
 
 phase6:
-	cd ansible && ansible-playbook -i inventory.ini phase6-verify.yml
+	cd ansible && ansible-playbook -i inventory.ini phase6-backup.yml
 
 phase7:
-	cd ansible && ansible-playbook -i inventory.ini phase7-backup.yml
+	cd ansible && ansible-playbook -i inventory.ini phase7-verify.yml

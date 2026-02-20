@@ -1,4 +1,4 @@
-- name: "Phase 7: DB バックアップの設定"
+- name: "Phase 6: DB バックアップの設定"
   hosts: secretary
   vars:
     app_user: secretary
