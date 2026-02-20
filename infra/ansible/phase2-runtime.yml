@@ -25,6 +25,8 @@
       shell: corepack enable pnpm
       args:
         creates: /usr/local/bin/pnpm
+      environment:
+        COREPACK_ENABLE_AUTO_INSTALL: "1"
 
     # PostgreSQL
     - name: PostgreSQL APT リポジトリキーが登録されている

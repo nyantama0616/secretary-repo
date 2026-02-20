@@ -1,0 +1,99 @@
+- name: "Phase 4: アプリのデプロイ"
+  hosts: secretary
+  vars:
+    app_user: secretary
+    app_dir: /home/secretary/secretary-repo
+    repo_url: "{{ lookup('env', 'REPO_URL') }}"
+    db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
+    api_key: "{{ lookup('env', 'API_KEY') }}"
+    mcp_port: "3001"
+
+  tasks:
+    - name: Deploy Key が生成されている
+      community.crypto.openssh_keypair:
+        path: "/home/{{ app_user }}/.ssh/deploy_key"
+        type: ed25519
+        comment: deploy-secretary
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+
+    - name: GitHub 用の SSH 設定が存在する
+      copy:
+        dest: "/home/{{ app_user }}/.ssh/config"
+        content: |
+          Host github.com
+            IdentityFile ~/.ssh/deploy_key
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
+
+    - name: Deploy Key の公開鍵を表示する
+      command: cat /home/{{ app_user }}/.ssh/deploy_key.pub
+      register: deploy_key_pub
+      changed_when: false
+
+    - name: GitHub に Deploy Key を登録してください
+      pause:
+        prompt: |
+          以下の公開鍵を GitHub リポジトリの Settings → Deploy keys に登録してください。
+          登録後、Enter を押してください。
+
+          {{ deploy_key_pub.stdout }}
+
+    - name: GitHub のホストキーが known_hosts に登録されている
+      known_hosts:
+        name: github.com
+        key: "{{ lookup('pipe', 'ssh-keyscan github.com 2>/dev/null') }}"
+        path: "/home/{{ app_user }}/.ssh/known_hosts"
+        state: present
+      become: true
+      become_user: "{{ app_user }}"
+
+    - name: リポジトリがクローンされている
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: main
+        key_file: "/home/{{ app_user }}/.ssh/deploy_key"
+        accept_hostkey: true
+      become: true
+      become_user: "{{ app_user }}"
+      environment:
+        GIT_SSH_COMMAND: "ssh -i /home/{{ app_user }}/.ssh/deploy_key -o StrictHostKeyChecking=no"
+
+    - name: 依存パッケージがインストールされている
+      shell: pnpm install --frozen-lockfile
+      args:
+        chdir: "{{ app_dir }}"
+      become: true
+      become_user: "{{ app_user }}"
+      environment:
+        COREPACK_ENABLE_AUTO_INSTALL: "1"
+
+    - name: アプリの .env が配置されている
+      copy:
+        dest: "{{ app_dir }}/apps/web/.env"
+        content: |
+          NODE_ENV=production
+          DATABASE_URL=postgresql://secretary:{{ db_password }}@localhost:5432/secretary
+          API_KEY={{ api_key }}
+          MCP_PORT={{ mcp_port }}
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
+
+    - name: マイグレーションが実行されている
+      shell: pnpm --filter web db:migrate
+      args:
+        chdir: "{{ app_dir }}"
+      become: true
+      become_user: "{{ app_user }}"
+
+    - name: アプリがビルドされている
+      shell: pnpm build
+      args:
+        chdir: "{{ app_dir }}"
+      become: true
+      become_user: "{{ app_user }}"
+      environment:
+        NODE_ENV: production
