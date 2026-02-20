@@ -145,3 +145,45 @@ describe('task.detail', () => {
     );
   });
 });
+
+describe('task.updateStatus', () => {
+  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
+    await expect(
+      unauthenticatedCaller.task.updateStatus({
+        id: 'dummy',
+        status: 'done',
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'UNAUTHORIZED',
+      }),
+    );
+  });
+
+  it('タスクのステータスが更新される', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.updateStatus({
+      id: inserted.id,
+      status: 'in_progress',
+    });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.status).toBe('in_progress');
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.updateStatus({ id: nonExistentId, status: 'done' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

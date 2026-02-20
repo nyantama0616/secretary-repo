@@ -2,7 +2,10 @@ import { eq } from 'drizzle-orm';
 
 import type { Task } from '@/server/domain/task/task';
 import { createTask } from '@/server/domain/task/task';
-import type { TaskRepository } from '@/server/domain/task/task-repository';
+import type {
+  TaskRepository,
+  TaskUpdatableFields,
+} from '@/server/domain/task/task-repository';
 import { db } from '@/server/infrastructure/db/client';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
@@ -15,6 +18,10 @@ export class DrizzleTaskRepository implements TaskRepository {
   async findById(id: string): Promise<Task | null> {
     const [row] = await db.select().from(tasks).where(eq(tasks.id, id));
     return row ? toTask(row) : null;
+  }
+
+  async update(id: string, fields: TaskUpdatableFields): Promise<void> {
+    await db.update(tasks).set(fields).where(eq(tasks.id, id));
   }
 }
 
