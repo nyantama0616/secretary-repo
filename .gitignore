@@ -1,2 +1,5 @@
 node_modules
 .DS_Store
+
+# CI SSH key (public key is committed, private key must not be)
+infra/ci_deploy_key

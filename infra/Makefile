@@ -1,4 +1,4 @@
-.PHONY: init plan apply phase1 phase2 phase3 phase4 phase5 phase6 phase7
+.PHONY: init plan apply phase1 phase2 phase3 phase4 phase5 phase6 phase7 setup-ci
 
 # Terraform
 init:
@@ -31,3 +31,7 @@ phase6:
 
 phase7:
 	cd ansible && ansible-playbook -i inventory.ini phase7-verify.yml
+
+# CI
+setup-ci:
+	set -a && . ./.env && set +a && bash setup-ci.sh

@@ -40,10 +40,17 @@
         group: "{{ app_user }}"
         mode: "0700"
 
-    - name: SSH 公開鍵が配置されている
-      copy:
-        src: ~/.ssh/id_ed25519.pub
-        dest: "/home/{{ app_user }}/.ssh/authorized_keys"
-        owner: "{{ app_user }}"
-        group: "{{ app_user }}"
-        mode: "0600"
+    - name: 開発者の SSH 公開鍵が配置されている
+      authorized_key:
+        user: "{{ app_user }}"
+        key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+        state: present
+        exclusive: false
+
+    - name: CI 用の SSH 公開鍵が配置されている
+      authorized_key:
+        user: "{{ app_user }}"
+        key: "{{ lookup('file', playbook_dir + '/../ci_deploy_key.pub') }}"
+        state: present
+        exclusive: false
+      when: lookup('fileglob', playbook_dir + '/../ci_deploy_key.pub') | length > 0
