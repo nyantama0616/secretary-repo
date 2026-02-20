@@ -58,6 +58,12 @@ const SEED_TASKS = [
     sortOrder: 3,
     estimatedMinutes: 60,
   },
+  {
+    title: '旧APIの廃止対応',
+    status: 'cancelled' as const,
+    sortOrder: 4,
+    incompletionReason: '仕様変更により不要になった',
+  },
 ];
 
 const main = async () => {
