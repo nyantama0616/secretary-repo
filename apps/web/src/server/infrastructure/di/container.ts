@@ -6,6 +6,7 @@ import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-r
 import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-reports';
 import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
+import { DeleteTaskUseCase } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
 import { GetTasksUseCase } from '@/server/usecase/task/get-tasks';
 import { UpdateTaskUseCase } from '@/server/usecase/task/update-task';
@@ -43,6 +44,7 @@ export const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
 export const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
   taskRepository,
 );
+export const deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
 export const assignDailyReportUseCase = new AssignDailyReportUseCase(
   taskRepository,
   dailyReportRepository,

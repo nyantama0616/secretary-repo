@@ -343,3 +343,42 @@ describe('task.assignDailyReport', () => {
     );
   });
 });
+
+describe('task.delete', () => {
+  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
+    await expect(
+      unauthenticatedCaller.task.delete({ id: 'dummy' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'UNAUTHORIZED',
+      }),
+    );
+  });
+
+  it('タスクを削除する', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.delete({ id: inserted.id });
+
+    await expect(caller.task.detail({ id: inserted.id })).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.delete({ id: nonExistentId }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

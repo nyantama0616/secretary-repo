@@ -23,6 +23,10 @@ export class DrizzleTaskRepository implements TaskRepository {
   async update(id: string, fields: TaskUpdatableFields): Promise<void> {
     await db.update(tasks).set(fields).where(eq(tasks.id, id));
   }
+
+  async delete(id: string): Promise<void> {
+    await db.delete(tasks).where(eq(tasks.id, id));
+  }
 }
 
 const toTask = (row: typeof tasks.$inferSelect): Task => {
