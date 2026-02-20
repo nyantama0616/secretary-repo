@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-const TaskStatusSchema = v.picklist([
+export const TaskStatusSchema = v.picklist([
   'not_started',
   'in_progress',
   'done',

@@ -1,11 +1,12 @@
 import * as v from 'valibot';
 
 import { NotFoundError } from '@/server/domain/error/domain-errors';
+import { TaskStatusSchema } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
 export const UpdateTaskStatusInputSchema = v.object({
   id: v.string(),
-  status: v.picklist(['not_started', 'in_progress', 'done', 'cancelled']),
+  status: TaskStatusSchema,
 });
 
 type UpdateTaskStatusInput = v.InferOutput<typeof UpdateTaskStatusInputSchema>;
