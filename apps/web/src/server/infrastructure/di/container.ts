@@ -27,4 +27,7 @@ export const deleteDailyReportUseCase = new DeleteDailyReportUseCase(
 
 const taskRepository = new DrizzleTaskRepository();
 
-export const getTasksUseCase = new GetTasksUseCase(taskRepository);
+export const getTasksUseCase = new GetTasksUseCase(
+  taskRepository,
+  dailyReportRepository,
+);

@@ -2,27 +2,26 @@ import { describe, expect, it } from 'vitest';
 
 import { createCaller } from '@/server/api';
 import { db } from '@/server/infrastructure/db/client';
+import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const caller = createCaller({ isAuthenticated: true });
 const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 
+const TEST_DAILY_REPORT = {
+  date: new Date('2026-02-17'),
+};
+
 const TEST_TASKS = [
   {
     title: 'tRPC ルーターを実装する',
-    description: 'タスク一覧APIを実装する',
     status: 'not_started' as const,
     sortOrder: 1,
-    deadline: new Date('2026-02-20T18:00:00+09:00'),
-    estimatedMinutes: 120,
   },
   {
     title: 'テストを書く',
-    description: null,
     status: 'done' as const,
     sortOrder: 2,
-    deadline: null,
-    estimatedMinutes: null,
   },
 ];
 
@@ -47,18 +46,34 @@ describe('task.list', () => {
       expect.arrayContaining(
         TEST_TASKS.map((t) => ({
           id: expect.any(String),
-          dailyReportId: null,
           title: t.title,
-          description: t.description,
           status: t.status,
-          sortOrder: t.sortOrder,
-          deadline: t.deadline,
-          estimatedMinutes: t.estimatedMinutes,
-          incompletionReason: null,
-          createdAt: expect.any(Date),
+          dailyReportDate: null,
         })),
       ),
     );
+  });
+
+  it('日報に紐づくタスクは日報の日付を含む', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+    await db.insert(tasks).values({
+      title: '日報に紐づくタスク',
+      status: 'not_started',
+      sortOrder: 1,
+      dailyReportId: report.id,
+    });
+
+    const result = await caller.task.list();
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        title: '日報に紐づくタスク',
+        dailyReportDate: TEST_DAILY_REPORT.date,
+      }),
+    ]);
   });
 
   it('タスクが存在しない場合、空配列を返す', async () => {

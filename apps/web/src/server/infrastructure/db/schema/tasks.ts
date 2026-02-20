@@ -5,7 +5,9 @@ import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 
 export const tasks = pgTable('tasks', {
   id: text('id').primaryKey().$defaultFn(generateId),
-  dailyReportId: text('daily_report_id').references(() => dailyReports.id),
+  dailyReportId: text('daily_report_id').references(() => dailyReports.id, {
+    onDelete: 'set null',
+  }),
   title: text('title').notNull(),
   description: text('description'),
   status: text('status', {
