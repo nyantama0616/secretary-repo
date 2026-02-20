@@ -43,7 +43,8 @@ resource "proxmox_virtual_environment_container" "secretary" {
 
     ip_config {
       ipv4 {
-        address = "dhcp"
+        address = "100.64.1.150/24"
+        gateway = "100.64.1.1"
       }
     }
   }

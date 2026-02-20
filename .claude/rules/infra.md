@@ -11,6 +11,10 @@
 - 機密値（APIトークン等）は `sensitive = true` を付ける
 - リソース名・変数名はスネークケースで書く
 
+## Ansible の規約
+
+- タスクの `name` は宣言的（状態を記述する）に書く（例: 「パッケージが最新である」）
+
 ## セキュリティ
 
 - `terraform.tfvars`、`*.tfstate`、`.terraform/` は `.gitignore` に含める

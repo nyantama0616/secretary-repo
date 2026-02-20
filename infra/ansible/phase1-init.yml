@@ -1,0 +1,48 @@
+- name: "Phase 1: LXC の初期設定"
+  hosts: secretary
+  vars:
+    app_user: secretary
+
+  tasks:
+    - name: パッケージが最新である
+      apt:
+        update_cache: true
+        upgrade: dist
+
+    - name: 基本ツールがインストールされている
+      apt:
+        name:
+          - curl
+          - git
+          - sudo
+        state: present
+
+    - name: アプリ用ユーザーが存在する
+      user:
+        name: "{{ app_user }}"
+        shell: /bin/bash
+        create_home: true
+        groups: sudo
+        append: true
+
+    - name: パスワードなし sudo が許可されている
+      copy:
+        dest: "/etc/sudoers.d/{{ app_user }}"
+        content: "{{ app_user }} ALL=(ALL) NOPASSWD:ALL"
+        mode: "0440"
+
+    - name: SSH ディレクトリが存在する
+      file:
+        path: "/home/{{ app_user }}/.ssh"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0700"
+
+    - name: SSH 公開鍵が配置されている
+      copy:
+        src: ~/.ssh/id_ed25519.pub
+        dest: "/home/{{ app_user }}/.ssh/authorized_keys"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
