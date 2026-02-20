@@ -199,6 +199,32 @@ describe('dailyReport.update', () => {
   });
 });
 
+describe('dailyReport.delete', () => {
+  it('日報を削除する', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+
+    await caller.dailyReport.delete({ id: inserted.id });
+
+    const result = await caller.dailyReport.list();
+    expect(result).toHaveLength(0);
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.dailyReport.delete({ id: nonExistentId }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
 describe('dailyReport.create', () => {
   const newDailyReport = {
     date: new Date('2026-02-19'),

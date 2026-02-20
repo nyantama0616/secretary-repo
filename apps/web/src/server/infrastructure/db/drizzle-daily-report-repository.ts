@@ -61,6 +61,10 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       })
       .where(eq(dailyReports.id, dailyReport.id));
   }
+
+  async delete(id: string): Promise<void> {
+    await db.delete(dailyReports).where(eq(dailyReports.id, id));
+  }
 }
 
 const toDailyReport = (
