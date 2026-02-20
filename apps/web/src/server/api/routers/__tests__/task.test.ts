@@ -256,3 +256,90 @@ describe('task.updateStatus', () => {
     );
   });
 });
+
+describe('task.assignDailyReport', () => {
+  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
+    await expect(
+      unauthenticatedCaller.task.assignDailyReport({
+        id: 'dummy',
+        dailyReportId: 'dummy',
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'UNAUTHORIZED',
+      }),
+    );
+  });
+
+  it('タスクを日報に紐づける', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.assignDailyReport({
+      id: inserted.id,
+      dailyReportId: report.id,
+    });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.dailyReportDate).toStrictEqual(TEST_DAILY_REPORT.date);
+  });
+
+  it('dailyReportId に null を渡すと紐づけを解除する', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+    const [inserted] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[0], dailyReportId: report.id })
+      .returning();
+
+    await caller.task.assignDailyReport({
+      id: inserted.id,
+      dailyReportId: null,
+    });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.dailyReportDate).toBeNull();
+  });
+
+  it('タスクが存在しない場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.assignDailyReport({
+        id: nonExistentId,
+        dailyReportId: null,
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+
+  it('日報が存在しない場合、NOT_FOUND エラーを返す', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.assignDailyReport({
+        id: inserted.id,
+        dailyReportId: nonExistentId,
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

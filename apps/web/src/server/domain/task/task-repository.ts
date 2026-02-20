@@ -3,7 +3,12 @@ import type { Task } from '@/server/domain/task/task';
 export type TaskUpdatableFields = Partial<
   Pick<
     Task,
-    'title' | 'description' | 'status' | 'deadline' | 'estimatedMinutes'
+    | 'title'
+    | 'description'
+    | 'status'
+    | 'deadline'
+    | 'estimatedMinutes'
+    | 'dailyReportId'
   >
 >;
 
