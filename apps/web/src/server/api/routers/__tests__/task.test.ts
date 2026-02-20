@@ -146,6 +146,75 @@ describe('task.detail', () => {
   });
 });
 
+describe('task.update', () => {
+  const updateInput = {
+    title: '更新後のタイトル',
+    description: '更新後の説明',
+    deadline: new Date('2026-03-01'),
+    estimatedMinutes: 120,
+  };
+
+  it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
+    await expect(
+      unauthenticatedCaller.task.update({ id: 'dummy', ...updateInput }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'UNAUTHORIZED',
+      }),
+    );
+  });
+
+  it('タスクの基本情報を更新する', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.update({ id: inserted.id, ...updateInput });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated).toEqual(
+      expect.objectContaining({
+        title: updateInput.title,
+        description: updateInput.description,
+        deadline: updateInput.deadline,
+        estimatedMinutes: updateInput.estimatedMinutes,
+      }),
+    );
+  });
+
+  it('一部のフィールドのみ更新できる', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.update({ id: inserted.id, title: '変更後のタイトル' });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated).toEqual(
+      expect.objectContaining({
+        title: '変更後のタイトル',
+        description: TEST_TASKS[0].description,
+        deadline: TEST_TASKS[0].deadline,
+        estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
+      }),
+    );
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.update({ id: nonExistentId, title: 'テスト' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
 describe('task.updateStatus', () => {
   it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
     await expect(

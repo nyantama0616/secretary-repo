@@ -7,6 +7,7 @@ import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-
 import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
 import { GetTasksUseCase } from '@/server/usecase/task/get-tasks';
+import { UpdateTaskUseCase } from '@/server/usecase/task/update-task';
 import { UpdateTaskStatusUseCase } from '@/server/usecase/task/update-task-status';
 
 const dailyReportRepository = new DrizzleDailyReportRepository();
@@ -37,6 +38,7 @@ export const getTaskDetailUseCase = new GetTaskDetailUseCase(
   taskRepository,
   dailyReportRepository,
 );
+export const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
 export const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
   taskRepository,
 );
