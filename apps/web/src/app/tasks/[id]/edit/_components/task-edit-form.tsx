@@ -1,6 +1,17 @@
 'use client';
 
 import { valibotResolver } from '@hookform/resolvers/valibot';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@repo/ui/alert-dialog';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
@@ -92,6 +103,21 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
     }),
   );
 
+  const {
+    mutate: deleteMutate,
+    isPending: isDeleting,
+    error: deleteError,
+  } = useMutation(
+    trpc.task.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.task.list.queryKey(),
+        });
+        router.push(ROUTES.tasks);
+      },
+    }),
+  );
+
   const onSubmit = (data: FormValues) => {
     mutate({
       id,
@@ -145,6 +171,35 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
           {isPending ? '保存中...' : '保存する'}
         </Button>
       </form>
+      <div className="flex max-w-lg items-center gap-4">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" disabled={isDeleting}>
+              削除
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>タスクを削除しますか？</AlertDialogTitle>
+              <AlertDialogDescription>
+                この操作は取り消せません。
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>キャンセル</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                onClick={() => deleteMutate({ id })}
+              >
+                削除する
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        {deleteError && (
+          <p className="text-sm text-destructive">タスクの削除に失敗しました</p>
+        )}
+      </div>
     </div>
   );
 };

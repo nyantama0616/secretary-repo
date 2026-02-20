@@ -104,3 +104,20 @@ test.describe('タスク編集', () => {
     await expect(page.getByText('更新後の説明')).toBeVisible();
   });
 });
+
+test.describe('タスク削除', () => {
+  test('編集画面からタスクを削除すると、一覧から消える', async ({ page }) => {
+    await page.goto('/tasks');
+    await page.getByText('テストを書く').click();
+    await page.getByRole('link', { name: '編集' }).click();
+    await page.getByRole('button', { name: '削除' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'タスクを削除しますか？' }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: '削除する' }).click();
+
+    await expect(page).toHaveURL('/tasks');
+    await expect(page.getByText('テストを書く')).not.toBeVisible();
+  });
+});
