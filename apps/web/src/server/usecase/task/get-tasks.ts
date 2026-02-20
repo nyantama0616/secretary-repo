@@ -23,20 +23,17 @@ export class GetTasksUseCase {
         tasks.map((t) => t.dailyReportId).filter((id) => id !== null),
       ),
     ];
-    const dailyReports = await Promise.all(
-      dailyReportIds.map((id) => this.dailyReportRepository.findById(id)),
-    );
-    const dateById = new Map(
-      dailyReports
-        .filter((r) => r !== null)
-        .map((r) => [r.id, r.date]),
-    );
+    const dailyReports =
+      await this.dailyReportRepository.findByIds(dailyReportIds);
+    const dateById = new Map(dailyReports.map((r) => [r.id, r.date]));
 
     return tasks.map((t) => ({
       id: t.id,
       title: t.title,
       status: t.status,
-      dailyReportDate: t.dailyReportId ? (dateById.get(t.dailyReportId) ?? null) : null,
+      dailyReportDate: t.dailyReportId
+        ? (dateById.get(t.dailyReportId) ?? null)
+        : null,
     }));
   }
 }

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 
 import type { DailyReport } from '@/server/domain/daily-report/daily-report';
 import { createDailyReport } from '@/server/domain/daily-report/daily-report';
@@ -18,6 +18,15 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .from(dailyReports)
       .where(eq(dailyReports.id, id));
     return rows[0] ? toDailyReport(rows[0]) : null;
+  }
+
+  async findByIds(ids: string[]): Promise<DailyReport[]> {
+    if (ids.length === 0) return [];
+    const rows = await db
+      .select()
+      .from(dailyReports)
+      .where(inArray(dailyReports.id, ids));
+    return rows.map(toDailyReport);
   }
 
   async findByDate(date: Date): Promise<DailyReport | null> {
