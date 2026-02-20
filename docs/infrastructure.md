@@ -72,9 +72,11 @@ Phase 3, 4 で必要になる。
 
 | 変数 | 説明 |
 |---|---|
-| `DB_PASSWORD` | PostgreSQL のパスワード |
+| `DB_PASSWORD` | PostgreSQL のパスワード（英数字のみ） |
 | `REPO_URL` | GitHub リポジトリの SSH URL |
-| `API_KEY` | アプリの API キー |
+| `API_KEY` | アプリの API キー（英数字のみ） |
+
+`DB_PASSWORD` と `API_KEY` に記号を含めてはならない。Makefile でシェルの `. ./.env` により読み込んでおり、`#` や `$` などがシェルに解釈されて値が壊れるためである。
 
 ### フェーズ一覧
 
