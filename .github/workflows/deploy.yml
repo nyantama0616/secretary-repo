@@ -27,4 +27,4 @@ jobs:
           proxy_username: nyantama
           proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
           command_timeout: 10m
-          script: echo "SSH connection successful"
+          script: bash ~/secretary-repo/infra/deploy.sh
