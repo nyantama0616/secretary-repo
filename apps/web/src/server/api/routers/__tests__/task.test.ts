@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createCaller } from '@/server/api';
+import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
@@ -17,6 +18,9 @@ const TEST_TASKS = [
     title: 'tRPC ルーターを実装する',
     status: 'not_started' as const,
     sortOrder: 1,
+    description: 'tRPC ルーターの実装タスク',
+    deadline: new Date('2026-02-20'),
+    estimatedMinutes: 60,
   },
   {
     title: 'テストを書く',
@@ -80,5 +84,64 @@ describe('task.list', () => {
     const result = await caller.task.list();
 
     expect(result).toStrictEqual([]);
+  });
+});
+
+describe('task.detail', () => {
+  it('指定したIDのタスク詳細を返す', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    const result = await caller.task.detail({ id: inserted.id });
+
+    expect(result).toStrictEqual({
+      id: inserted.id,
+      title: TEST_TASKS[0].title,
+      description: TEST_TASKS[0].description,
+      status: TEST_TASKS[0].status,
+      deadline: TEST_TASKS[0].deadline,
+      estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
+      incompletionReason: null,
+      dailyReportDate: null,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('日報に紐づくタスクは日報の日付を含む', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+    const [inserted] = await db
+      .insert(tasks)
+      .values({
+        title: '日報に紐づくタスク',
+        status: 'not_started',
+        sortOrder: 1,
+        dailyReportId: report.id,
+      })
+      .returning();
+
+    const result = await caller.task.detail({ id: inserted.id });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        dailyReportDate: TEST_DAILY_REPORT.date,
+      }),
+    );
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.detail({ id: nonExistentId }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
   });
 });

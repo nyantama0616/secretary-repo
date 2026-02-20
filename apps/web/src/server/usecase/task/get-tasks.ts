@@ -2,7 +2,7 @@ import type { DailyReportRepository } from '@/server/domain/daily-report/daily-r
 import type { TaskStatus } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
-export type TaskListItem = {
+type TaskListItem = {
   id: string;
   title: string;
   status: TaskStatus;
