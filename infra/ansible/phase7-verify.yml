@@ -1,0 +1,64 @@
+- name: "Phase 7: 動作確認"
+  hosts: secretary
+  vars:
+    app_user: secretary
+
+  tasks:
+    - name: PostgreSQL が起動している
+      command: systemctl is-active postgresql
+      changed_when: false
+
+    - name: pm2 プロセスが起動している
+      shell: pm2 jlist
+      become: true
+      become_user: "{{ app_user }}"
+      register: pm2_status
+      changed_when: false
+
+    - name: web プロセスが online である
+      assert:
+        that: pm2_status.stdout | from_json | selectattr('name', 'eq', 'secretary-web') | map(attribute='pm2_env') | map(attribute='status') | first == 'online'
+
+    - name: mcp プロセスが online である
+      assert:
+        that: pm2_status.stdout | from_json | selectattr('name', 'eq', 'secretary-mcp') | map(attribute='pm2_env') | map(attribute='status') | first == 'online'
+
+    - name: web が応答している
+      uri:
+        url: http://localhost:3000
+        status_code: 200
+      register: web_response
+
+    - name: mcp が応答している
+      uri:
+        url: http://localhost:3001/mcp
+        method: GET
+        status_code: [400]
+
+    - name: mcp が外部から応答している（0.0.0.0 バインド確認）
+      wait_for:
+        port: 3001
+        host: 0.0.0.0
+        timeout: 5
+
+    - name: バックアップスクリプトが実行できる
+      shell: /home/{{ app_user }}/backups/backup.sh
+      become: true
+      become_user: "{{ app_user }}"
+
+    - name: バックアップファイルが作成されている
+      shell: ls -1 /home/{{ app_user }}/backups/*.sql.gz | wc -l
+      register: backup_count
+      changed_when: false
+
+    - name: バックアップファイルが1つ以上存在する
+      assert:
+        that: backup_count.stdout | int >= 1
+
+    - name: バックアップファイルが破損していない
+      shell: gzip -t /home/{{ app_user }}/backups/*.sql.gz
+      changed_when: false
+
+    - name: cron ジョブが登録されている
+      shell: crontab -u {{ app_user }} -l | grep backup.sh
+      changed_when: false

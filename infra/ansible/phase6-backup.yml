@@ -1,0 +1,38 @@
+- name: "Phase 6: DB バックアップの設定"
+  hosts: secretary
+  vars:
+    app_user: secretary
+    backup_dir: /home/secretary/backups
+    retention_days: 7
+
+  tasks:
+    - name: バックアップディレクトリが存在する
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0700"
+
+    - name: バックアップスクリプトが配置されている
+      copy:
+        dest: "{{ backup_dir }}/backup.sh"
+        content: |
+          #!/bin/bash
+          set -euo pipefail
+          BACKUP_DIR="{{ backup_dir }}"
+          RETENTION_DAYS={{ retention_days }}
+
+          pg_dump -U secretary secretary | gzip > "$BACKUP_DIR/secretary_$(date +%Y-%m-%d_%H%M%S).sql.gz"
+          find "$BACKUP_DIR" -name "*.sql.gz" -mtime +$RETENTION_DAYS -delete
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0700"
+
+    - name: 毎日 3:00 にバックアップが実行される
+      cron:
+        name: secretary db backup
+        minute: "0"
+        hour: "3"
+        job: "{{ backup_dir }}/backup.sh"
+        user: "{{ app_user }}"

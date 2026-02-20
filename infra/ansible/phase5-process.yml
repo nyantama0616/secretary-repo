@@ -1,0 +1,58 @@
+- name: "Phase 5: プロセス管理"
+  hosts: secretary
+  vars:
+    app_user: secretary
+    app_dir: /home/secretary/secretary-repo
+
+  tasks:
+    - name: pm2 がインストールされている
+      shell: npm install -g pm2
+      args:
+        creates: /usr/bin/pm2
+
+    - name: ecosystem.config.js が配置されている
+      copy:
+        dest: "{{ app_dir }}/ecosystem.config.js"
+        content: |
+          module.exports = {
+            apps: [
+              {
+                name: "secretary-web",
+                script: "pnpm",
+                args: "--filter web start",
+                cwd: "{{ app_dir }}",
+                env: {
+                  NODE_ENV: "production",
+                },
+              },
+              {
+                name: "secretary-mcp",
+                script: "pnpm",
+                args: "--filter web mcp",
+                cwd: "{{ app_dir }}",
+                env: {
+                  NODE_ENV: "production",
+                },
+              },
+            ],
+          };
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+
+    - name: pm2 でアプリが起動している
+      shell: pm2 start ecosystem.config.js
+      args:
+        chdir: "{{ app_dir }}"
+      become: true
+      become_user: "{{ app_user }}"
+      environment:
+        COREPACK_ENABLE_AUTO_INSTALL: "1"
+
+    - name: pm2 の自動起動が設定されている
+      shell: pm2 startup systemd -u {{ app_user }} --hp /home/{{ app_user }}
+      register: pm2_startup
+
+    - name: pm2 の状態が保存されている
+      shell: pm2 save
+      become: true
+      become_user: "{{ app_user }}"
