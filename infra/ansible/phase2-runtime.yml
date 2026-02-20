@@ -27,13 +27,6 @@
         creates: /usr/local/bin/pnpm
 
     # PostgreSQL
-    - name: PostgreSQL の依存パッケージがインストールされている
-      apt:
-        name:
-          - gnupg
-          - lsb-release
-        state: present
-
     - name: PostgreSQL APT リポジトリキーが登録されている
       shell: curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg
       args:
@@ -42,7 +35,7 @@
     - name: PostgreSQL APT リポジトリが追加されている
       copy:
         dest: /etc/apt/sources.list.d/pgdg.list
-        content: "deb [signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+        content: 'deb [signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt {{ ansible_facts["distribution_release"] }}-pgdg main'
 
     - name: PostgreSQL 17 がインストールされている
       apt:

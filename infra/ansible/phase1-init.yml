@@ -14,6 +14,7 @@
         name:
           - curl
           - git
+          - gnupg
           - sudo
         state: present
 
