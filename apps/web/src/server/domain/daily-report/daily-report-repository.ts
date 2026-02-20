@@ -6,4 +6,5 @@ export interface DailyReportRepository {
   findByDate(date: Date): Promise<DailyReport | null>;
   save(dailyReport: DailyReport): Promise<void>;
   update(dailyReport: DailyReport): Promise<void>;
+  delete(id: string): Promise<void>;
 }

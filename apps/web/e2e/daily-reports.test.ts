@@ -95,6 +95,29 @@ test.describe('日報編集', () => {
   });
 });
 
+test.describe('日報削除', () => {
+  test('編集画面から日報を削除すると、一覧から消える', async ({ page }) => {
+    await page.goto('/daily-reports');
+    await page
+      .getByRole('link', {
+        name: /テストの基本を学んだが体調不良で早退した/,
+      })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+    await page.getByRole('button', { name: '削除' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: '日報を削除しますか？' }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: '削除する' }).click();
+
+    await expect(page).toHaveURL('/daily-reports');
+    await expect(
+      page.getByText('テストの基本を学んだが体調不良で早退した'),
+    ).not.toBeVisible();
+  });
+});
+
 test.describe('日報作成', () => {
   test('フォームから日報を作成すると、一覧に反映される', async ({
     page,
