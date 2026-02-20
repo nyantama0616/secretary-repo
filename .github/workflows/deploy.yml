@@ -23,6 +23,7 @@ jobs:
           username: secretary
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           proxy_host: proxmox
+          proxy_port: 23909
           proxy_username: nyantama
           proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
           command_timeout: 10m
