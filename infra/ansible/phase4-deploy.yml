@@ -97,3 +97,15 @@
       become_user: "{{ app_user }}"
       environment:
         NODE_ENV: production
+
+    - name: pm2 がインストールされているか確認する
+      command: which pm2
+      register: pm2_installed
+      changed_when: false
+      failed_when: false
+
+    - name: pm2 プロセスが再起動されている
+      shell: pm2 restart all
+      become: true
+      become_user: "{{ app_user }}"
+      when: pm2_installed.rc == 0
