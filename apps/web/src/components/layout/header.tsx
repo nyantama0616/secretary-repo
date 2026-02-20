@@ -8,6 +8,7 @@ import { AuthButton } from './auth-button';
 
 const NAV_ITEMS = [
   { href: ROUTES.dailyReports, label: '日報一覧' },
+  { href: ROUTES.tasks, label: 'タスク一覧' },
 ] as const;
 
 export const Header = async () => {

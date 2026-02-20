@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const SEED_DAILY_REPORTS = [
   {
@@ -36,11 +37,49 @@ const SEED_DAILY_REPORTS = [
   },
 ];
 
+const SEED_TASKS = [
+  {
+    title: 'tRPC ルーターを実装する',
+    description: 'タスク一覧APIを実装する',
+    status: 'not_started' as const,
+    sortOrder: 1,
+    deadline: new Date('2026-02-20T18:00:00+09:00'),
+    estimatedMinutes: 120,
+  },
+  {
+    title: 'テストを書く',
+    status: 'done' as const,
+    sortOrder: 2,
+  },
+  {
+    title: 'コードレビューの修正',
+    description: 'レビュー指摘の対応',
+    status: 'in_progress' as const,
+    sortOrder: 3,
+    estimatedMinutes: 60,
+  },
+  {
+    title: '旧APIの廃止対応',
+    status: 'cancelled' as const,
+    sortOrder: 4,
+    incompletionReason: '仕様変更により不要になった',
+  },
+];
+
 const main = async () => {
   console.log('Seeding...');
   await db.transaction(async (tx) => {
-    await tx.execute(sql`TRUNCATE ${dailyReports} CASCADE`);
-    await tx.insert(dailyReports).values(SEED_DAILY_REPORTS);
+    await tx.execute(sql`TRUNCATE ${tasks}, ${dailyReports}`);
+    const insertedReports = await tx
+      .insert(dailyReports)
+      .values(SEED_DAILY_REPORTS)
+      .returning();
+    await tx.insert(tasks).values(
+      SEED_TASKS.map((task, i) => ({
+        ...task,
+        dailyReportId: insertedReports[i % insertedReports.length].id,
+      })),
+    );
   });
   console.log('Seeding completed.');
   process.exit(0);

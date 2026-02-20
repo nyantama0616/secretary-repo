@@ -4,6 +4,7 @@ import { createCaller } from '@/server/api';
 import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const caller = createCaller({ isAuthenticated: true });
 const unauthenticatedCaller = createCaller({ isAuthenticated: false });
@@ -210,6 +211,24 @@ describe('dailyReport.delete', () => {
 
     const result = await caller.dailyReport.list();
     expect(result).toHaveLength(0);
+  });
+
+  it('紐づくタスクの dailyReportId が null になる', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+    await db.insert(tasks).values({
+      title: 'テストタスク',
+      dailyReportId: inserted.id,
+      sortOrder: 0,
+    });
+
+    await caller.dailyReport.delete({ id: inserted.id });
+
+    const result = await caller.task.list();
+    expect(result).toHaveLength(1);
+    expect(result[0].dailyReportDate).toBeNull();
   });
 
   it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {

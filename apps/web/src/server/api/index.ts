@@ -4,10 +4,12 @@ import { cookies } from 'next/headers';
 
 import { AUTH_COOKIE_NAME, verifyApiKey } from '@/server/api/auth';
 import { dailyReportRouter } from '@/server/api/routers/daily-report';
+import { taskRouter } from '@/server/api/routers/task';
 import { createCallerFactory, router } from '@/server/api/trpc';
 
 export const appRouter = router({
   dailyReport: dailyReportRouter,
+  task: taskRouter,
 });
 
 export type AppRouter = typeof appRouter;
