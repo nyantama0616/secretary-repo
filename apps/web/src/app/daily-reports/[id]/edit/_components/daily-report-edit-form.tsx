@@ -23,7 +23,7 @@ import * as v from 'valibot';
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { ROUTES } from '@/constants/routes';
-import { formatDate, formatTime } from '@/lib/format';
+import { formatDate, formatTime, toDateStr } from '@/lib/format';
 import {
   useMutation,
   useQuery,
@@ -246,9 +246,3 @@ const timeToDate = (
   return new Date(`${dateStr}T${timeStr}`);
 };
 
-const toDateStr = (date: Date): string => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-};

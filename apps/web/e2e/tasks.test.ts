@@ -62,4 +62,45 @@ test.describe('タスク詳細', () => {
 
     expect(response?.status()).toBe(404);
   });
+
+  test('編集ボタンをクリックすると、編集ページに遷移する', async ({
+    page,
+  }) => {
+    await page.goto('/tasks');
+    await page.getByText('tRPC ルーターを実装する').click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'タスクを編集' }),
+    ).toBeVisible();
+  });
+
+  test('ステータスを変更すると、詳細ページに反映される', async ({ page }) => {
+    await page.goto('/tasks');
+    await page.getByText('tRPC ルーターを実装する').click();
+
+    await page.getByRole('combobox', { name: 'ステータス' }).click();
+    await page.getByRole('option', { name: '着手中' }).click();
+
+    await expect(page.getByText('着手中')).toBeVisible();
+  });
+});
+
+test.describe('タスク編集', () => {
+  test('基本情報を編集して保存すると、詳細ページに反映される', async ({
+    page,
+  }) => {
+    await page.goto('/tasks');
+    await page.getByText('tRPC ルーターを実装する').click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await page.getByLabel('タイトル').fill('更新後のタイトル');
+    await page.getByLabel('説明').fill('更新後の説明');
+    await page.getByRole('button', { name: '保存する' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: '更新後のタイトル' }),
+    ).toBeVisible();
+    await expect(page.getByText('更新後の説明')).toBeVisible();
+  });
 });
