@@ -8,6 +8,7 @@
     "lint:fix": "eslint --fix"
   },
   "exports": {
+    "./alert-dialog": "./src/components/alert-dialog.tsx",
     "./button": "./src/components/button.tsx",
     "./input": "./src/components/input.tsx",
     "./label": "./src/components/label.tsx",
