@@ -31,15 +31,6 @@ export const DailyReportList = () => {
     );
   }
 
-  if (dailyReports.length === 0) {
-    return (
-      <div className="grid gap-4 p-8">
-        <h1 className="text-2xl font-bold">日報一覧</h1>
-        <p className="text-muted-foreground">日報がまだありません</p>
-      </div>
-    );
-  }
-
   return (
     <div className="grid gap-4 p-8">
       <div className="flex items-center justify-between">
@@ -48,18 +39,22 @@ export const DailyReportList = () => {
           <Link href={ROUTES.dailyReportCreate}>日報を作成</Link>
         </Button>
       </div>
-      <div className="grid gap-3">
-        {dailyReports.map((report) => (
-          <Link key={report.id} href={ROUTES.dailyReportDetail(report.id)}>
-            <DailyReportCard
-              date={report.date}
-              summary={report.summary}
-              wakeUpTime={report.wakeUpTime}
-              bedTime={report.bedTime}
-            />
-          </Link>
-        ))}
-      </div>
+      {dailyReports.length === 0 ? (
+        <p className="text-muted-foreground">日報がまだありません</p>
+      ) : (
+        <div className="grid gap-3">
+          {dailyReports.map((report) => (
+            <Link key={report.id} href={ROUTES.dailyReportDetail(report.id)}>
+              <DailyReportCard
+                date={report.date}
+                summary={report.summary}
+                wakeUpTime={report.wakeUpTime}
+                bedTime={report.bedTime}
+              />
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
