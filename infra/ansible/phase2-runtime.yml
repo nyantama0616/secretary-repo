@@ -39,7 +39,9 @@
 
     - name: PostgreSQL 17 がインストールされている
       apt:
-        name: postgresql-17
+        name:
+          - postgresql-17
+          - python3-psycopg2
         state: present
         update_cache: true
 

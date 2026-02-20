@@ -1,0 +1,19 @@
+- name: "Phase 3: PostgreSQL の設定"
+  hosts: secretary
+  become: true
+  become_user: postgres
+  vars:
+    db_name: secretary
+    db_user: secretary
+    db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
+
+  tasks:
+    - name: データベースユーザーが存在する
+      community.postgresql.postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+
+    - name: データベースが存在する
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ db_user }}"

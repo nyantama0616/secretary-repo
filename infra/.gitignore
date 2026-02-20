@@ -6,3 +6,5 @@
 
 # Secrets
 terraform.tfvars
+.env*
+!.env.example
