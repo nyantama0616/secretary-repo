@@ -74,16 +74,6 @@ test.describe('タスク詳細', () => {
       page.getByRole('heading', { name: 'タスクを編集' }),
     ).toBeVisible();
   });
-
-  test('ステータスを変更すると、詳細ページに反映される', async ({ page }) => {
-    await page.goto('/tasks');
-    await page.getByText('tRPC ルーターを実装する').click();
-
-    await page.getByRole('combobox', { name: 'ステータス' }).click();
-    await page.getByRole('option', { name: '着手中' }).click();
-
-    await expect(page.getByText('着手中')).toBeVisible();
-  });
 });
 
 test.describe('タスク編集', () => {

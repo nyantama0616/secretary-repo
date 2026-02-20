@@ -1,33 +1,26 @@
 'use client';
 
+import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/select';
 import Link from 'next/link';
+import type { ComponentProps } from 'react';
 
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { ROUTES } from '@/constants/routes';
 import { formatDate } from '@/lib/format';
 import type { TaskStatus } from '@/server/domain/task/task';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useTRPC,
-} from '@/trpc/client';
+import { useQuery, useTRPC } from '@/trpc/client';
 
-const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
-  { value: 'not_started', label: '未着手' },
-  { value: 'in_progress', label: '着手中' },
-  { value: 'done', label: '完了' },
-  { value: 'cancelled', label: '中止' },
-];
+const STATUS_CONFIG: Record<
+  TaskStatus,
+  { label: string; variant: ComponentProps<typeof Badge>['variant'] }
+> = {
+  not_started: { label: '未着手', variant: 'secondary' },
+  in_progress: { label: '着手中', variant: 'default' },
+  done: { label: '完了', variant: 'outline' },
+  cancelled: { label: '中止', variant: 'destructive' },
+};
 
 type TaskDetailProps = {
   id: string;
@@ -64,7 +57,9 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
         </Button>
       </div>
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <StatusSelect id={id} currentStatus={task.status} />
+        <Badge variant={STATUS_CONFIG[task.status].variant}>
+          {STATUS_CONFIG[task.status].label}
+        </Badge>
         {task.dailyReportDate && (
           <span>{formatDate(task.dailyReportDate)}</span>
         )}
@@ -88,49 +83,6 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
         )}
       </dl>
     </div>
-  );
-};
-
-const StatusSelect = ({
-  id,
-  currentStatus,
-}: {
-  id: string;
-  currentStatus: TaskStatus;
-}) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation(
-    trpc.task.updateStatus.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.task.list.queryKey(),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.task.detail.queryKey({ id }),
-        });
-      },
-    }),
-  );
-
-  const handleStatusChange = (status: TaskStatus) => {
-    mutate({ id, status });
-  };
-
-  return (
-    <Select value={currentStatus} onValueChange={handleStatusChange}>
-      <SelectTrigger size="sm" aria-label="ステータス">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {STATUS_OPTIONS.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
   );
 };
 
