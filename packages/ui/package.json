@@ -9,6 +9,7 @@
   },
   "exports": {
     "./alert-dialog": "./src/components/alert-dialog.tsx",
+    "./badge": "./src/components/badge.tsx",
     "./button": "./src/components/button.tsx",
     "./input": "./src/components/input.tsx",
     "./label": "./src/components/label.tsx",
