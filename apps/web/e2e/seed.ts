@@ -48,15 +48,10 @@ const main = async () => {
     await tx.execute(
       sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
     );
-    const [mr] = await tx
-      .insert(monthlyReports)
-      .values({ startDate: new Date('2026-02-01') })
-      .returning();
+    await tx.insert(monthlyReports).values({ startDate: new Date('2026-02-01') });
     const insertedReports = await tx
       .insert(dailyReports)
-      .values(
-        SEED_DAILY_REPORTS.map((r) => ({ ...r, monthlyReportId: mr.id })),
-      )
+      .values(SEED_DAILY_REPORTS)
       .returning();
     await tx.insert(tasks).values(
       SEED_TASKS.map((task, i) => ({

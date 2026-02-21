@@ -41,8 +41,15 @@ export class GetMonthlyReportUseCase {
       throw new NotFoundError('月報', input.id);
     }
 
+    const year = monthlyReport.startDate.getFullYear();
+    const month = monthlyReport.startDate.getMonth();
+    const nextMonthStart = new Date(year, month + 1, 1);
+
     const dailyReports =
-      await this.dailyReportRepository.findByMonthlyReportIds([input.id]);
+      await this.dailyReportRepository.findByDateRange(
+        monthlyReport.startDate,
+        nextMonthStart,
+      );
 
     return {
       id: monthlyReport.id,

@@ -50,7 +50,6 @@ export const registerDailyReportTools = (server: McpServer): void => {
     {
       description: "新しい日報を作成する",
       inputSchema: {
-        monthlyReportId: z.string().describe("紐づける月報の ID"),
         date: z.iso.date().describe("日報の日付（例: 2026-02-20）"),
         plan: optionalString,
         wakeUpTime: optionalDatetime,
@@ -60,7 +59,6 @@ export const registerDailyReportTools = (server: McpServer): void => {
     async (args) => {
       try {
         const report = await createDailyReportUseCase.execute({
-          monthlyReportId: args.monthlyReportId,
           date: new Date(args.date),
           plan: args.plan,
           wakeUpTime: args.wakeUpTime ? new Date(args.wakeUpTime) : undefined,
