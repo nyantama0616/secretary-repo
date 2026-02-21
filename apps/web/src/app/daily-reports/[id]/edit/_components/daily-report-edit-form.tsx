@@ -25,10 +25,7 @@ const DailyReportEditFormSchema = v.object({
   summary: v.optional(v.string()),
   wakeUpTime: v.optional(v.string()),
   bedTime: v.optional(v.string()),
-  goodPoints: v.optional(v.string()),
-  badPoints: v.optional(v.string()),
-  learnings: v.optional(v.string()),
-  nextActions: v.optional(v.string()),
+  review: v.optional(v.string()),
   notes: v.optional(v.string()),
 });
 
@@ -66,10 +63,7 @@ type Report = {
   summary: string | null;
   wakeUpTime: Date | null;
   bedTime: Date | null;
-  goodPoints: string | null;
-  badPoints: string | null;
-  learnings: string | null;
-  nextActions: string | null;
+  review: string | null;
   notes: string | null;
 };
 
@@ -87,10 +81,7 @@ const EditForm = ({ id, report }: { id: string; report: Report }) => {
       summary: report.summary ?? '',
       wakeUpTime: report.wakeUpTime ? formatTime(report.wakeUpTime) : '',
       bedTime: report.bedTime ? formatTime(report.bedTime) : '',
-      goodPoints: report.goodPoints ?? '',
-      badPoints: report.badPoints ?? '',
-      learnings: report.learnings ?? '',
-      nextActions: report.nextActions ?? '',
+      review: report.review ?? '',
       notes: report.notes ?? '',
     },
   });
@@ -116,10 +107,7 @@ const EditForm = ({ id, report }: { id: string; report: Report }) => {
       summary: emptyToUndefined(data.summary),
       wakeUpTime: timeToDate(dateStr, data.wakeUpTime),
       bedTime: timeToDate(dateStr, data.bedTime),
-      goodPoints: emptyToUndefined(data.goodPoints),
-      badPoints: emptyToUndefined(data.badPoints),
-      learnings: emptyToUndefined(data.learnings),
-      nextActions: emptyToUndefined(data.nextActions),
+      review: emptyToUndefined(data.review),
       notes: emptyToUndefined(data.notes),
     });
   };
@@ -148,20 +136,8 @@ const EditForm = ({ id, report }: { id: string; report: Report }) => {
           </div>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="goodPoints">良かった点</Label>
-          <Textarea id="goodPoints" rows={2} {...register('goodPoints')} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="badPoints">改善点</Label>
-          <Textarea id="badPoints" rows={2} {...register('badPoints')} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="learnings">学び</Label>
-          <Textarea id="learnings" rows={2} {...register('learnings')} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="nextActions">ネクストアクション</Label>
-          <Textarea id="nextActions" rows={2} {...register('nextActions')} />
+          <Label htmlFor="review">振り返り</Label>
+          <Textarea id="review" rows={6} {...register('review')} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="notes">メモ</Label>

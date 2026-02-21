@@ -41,10 +41,7 @@ export class CreateMonthlyReportUseCase {
       startDate: input.startDate,
       goal: input.goal ?? null,
       summary: null,
-      projectProgress: null,
-      growthChanges: null,
-      purposeActionGap: null,
-      improvements: null,
+      review: null,
       notes: null,
       createdAt: new Date(),
     });

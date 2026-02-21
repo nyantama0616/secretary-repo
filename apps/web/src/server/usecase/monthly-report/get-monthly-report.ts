@@ -15,10 +15,7 @@ type MonthlyReportDetail = {
   startDate: Date;
   goal: string | null;
   summary: string | null;
-  projectProgress: string | null;
-  growthChanges: string | null;
-  purposeActionGap: string | null;
-  improvements: string | null;
+  review: string | null;
   notes: string | null;
   createdAt: Date;
   dailyReports: {
@@ -58,10 +55,7 @@ export class GetMonthlyReportUseCase {
       startDate: monthlyReport.startDate,
       goal: monthlyReport.goal,
       summary: monthlyReport.summary,
-      projectProgress: monthlyReport.projectProgress,
-      growthChanges: monthlyReport.growthChanges,
-      purposeActionGap: monthlyReport.purposeActionGap,
-      improvements: monthlyReport.improvements,
+      review: monthlyReport.review,
       notes: monthlyReport.notes,
       createdAt: monthlyReport.createdAt,
       dailyReports: dailyReports.map((dr) => ({

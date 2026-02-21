@@ -14,10 +14,7 @@ export const UpdateDailyReportInputSchema = v.object({
   summary: v.optional(v.pipe(v.string(), v.minLength(1))),
   wakeUpTime: v.optional(v.date()),
   bedTime: v.optional(v.date()),
-  goodPoints: v.optional(v.pipe(v.string(), v.minLength(1))),
-  badPoints: v.optional(v.pipe(v.string(), v.minLength(1))),
-  learnings: v.optional(v.pipe(v.string(), v.minLength(1))),
-  nextActions: v.optional(v.pipe(v.string(), v.minLength(1))),
+  review: v.optional(v.pipe(v.string(), v.minLength(1))),
   notes: v.optional(v.pipe(v.string(), v.minLength(1))),
 });
 
@@ -44,10 +41,7 @@ export class UpdateDailyReportUseCase {
       summary: input.summary ?? existing.summary,
       wakeUpTime: input.wakeUpTime ?? existing.wakeUpTime,
       bedTime: input.bedTime ?? existing.bedTime,
-      goodPoints: input.goodPoints ?? existing.goodPoints,
-      badPoints: input.badPoints ?? existing.badPoints,
-      learnings: input.learnings ?? existing.learnings,
-      nextActions: input.nextActions ?? existing.nextActions,
+      review: input.review ?? existing.review,
       notes: input.notes ?? existing.notes,
       createdAt: existing.createdAt,
     });

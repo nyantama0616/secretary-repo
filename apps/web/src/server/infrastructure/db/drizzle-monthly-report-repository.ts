@@ -36,10 +36,7 @@ export class DrizzleMonthlyReportRepository
       startDate: monthlyReport.startDate,
       goal: monthlyReport.goal,
       summary: monthlyReport.summary,
-      projectProgress: monthlyReport.projectProgress,
-      growthChanges: monthlyReport.growthChanges,
-      purposeActionGap: monthlyReport.purposeActionGap,
-      improvements: monthlyReport.improvements,
+      review: monthlyReport.review,
       notes: monthlyReport.notes,
     });
   }
@@ -50,10 +47,7 @@ export class DrizzleMonthlyReportRepository
       .set({
         goal: monthlyReport.goal,
         summary: monthlyReport.summary,
-        projectProgress: monthlyReport.projectProgress,
-        growthChanges: monthlyReport.growthChanges,
-        purposeActionGap: monthlyReport.purposeActionGap,
-        improvements: monthlyReport.improvements,
+        review: monthlyReport.review,
         notes: monthlyReport.notes,
       })
       .where(eq(monthlyReports.id, monthlyReport.id));
@@ -69,10 +63,7 @@ const toMonthlyReport = (
     startDate: row.startDate,
     goal: row.goal,
     summary: row.summary,
-    projectProgress: row.projectProgress,
-    growthChanges: row.growthChanges,
-    purposeActionGap: row.purposeActionGap,
-    improvements: row.improvements,
+    review: row.review,
     notes: row.notes,
     createdAt: row.createdAt,
   });

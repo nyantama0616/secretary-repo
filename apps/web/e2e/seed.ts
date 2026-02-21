@@ -15,10 +15,7 @@ const SEED_DAILY_REPORTS = [
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
-    goodPoints: '集中して作業できた',
-    badPoints: '休憩を取り忘れた',
-    learnings: 'ポモドーロテクニックを試してみたい',
-    nextActions: '明日はテストを書く',
+    review: '集中して作業できた。休憩を取り忘れたので改善したい。',
   },
   {
     date: new Date('2026-02-18'),
@@ -74,10 +71,8 @@ export const seed = async () => {
           startDate: new Date('2026-02-01'),
           goal: '機能Aをリリースする',
           summary: '新機能の開発を進めた月だった',
-          projectProgress: '機能Aの実装とテストが完了した',
-          growthChanges: 'テストの書き方に慣れてきた',
-          purposeActionGap: '休憩を忘れて集中しすぎる傾向がある',
-          improvements: 'レビューを早めに出すことで手戻りを減らせる',
+          review:
+            '機能Aの実装とテストが完了した。テストの書き方に慣れてきた。レビューを早めに出すことで手戻りを減らせる。',
         },
         {
           startDate: new Date('2026-03-01'),

@@ -36,13 +36,6 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
     );
   }
 
-  const reviewMarkdown = buildReviewMarkdown({
-    projectProgress: report.projectProgress,
-    growthChanges: report.growthChanges,
-    purposeActionGap: report.purposeActionGap,
-    improvements: report.improvements,
-  });
-
   return (
     <div className="grid gap-6 p-8">
       <div className="flex items-center gap-4">
@@ -65,11 +58,11 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
         </section>
       )}
 
-      {reviewMarkdown && (
+      {report.review && (
         <section className="grid gap-2">
           <h2 className="border-b pb-2 text-lg font-semibold">振り返り</h2>
           <ViewerFrame>
-            <MarkdownViewer content={reviewMarkdown} />
+            <MarkdownViewer content={report.review} />
           </ViewerFrame>
         </section>
       )}
@@ -122,23 +115,3 @@ const DailyReportCard = ({
   );
 };
 
-// NOTE: バックエンドが振り返りフィールドを統合するまでの暫定処理である
-const buildReviewMarkdown = ({
-  projectProgress,
-  growthChanges,
-  purposeActionGap,
-  improvements,
-}: {
-  projectProgress: string | null;
-  growthChanges: string | null;
-  purposeActionGap: string | null;
-  improvements: string | null;
-}): string | null => {
-  const sections: string[] = [];
-  if (projectProgress) sections.push(`## プロジェクトの進捗\n${projectProgress}`);
-  if (growthChanges) sections.push(`## 成長と変化\n${growthChanges}`);
-  if (purposeActionGap) sections.push(`## 目的と行動のギャップ\n${purposeActionGap}`);
-  if (improvements) sections.push(`## 改善点\n${improvements}`);
-  if (sections.length === 0) return null;
-  return sections.join('\n\n');
-};

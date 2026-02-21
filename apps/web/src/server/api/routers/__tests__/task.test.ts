@@ -46,6 +46,93 @@ describe('認証', () => {
   });
 });
 
+const CREATE_TASK_INPUT = {
+  title: '新しいタスク',
+  description: 'タスクの説明',
+  deadline: new Date('2026-03-01'),
+  estimatedMinutes: 90,
+};
+
+describe('task.create', () => {
+  it('タスクを作成し、一覧に表示される', async () => {
+    const result = await caller.task.create(CREATE_TASK_INPUT);
+
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      dailyReportId: null,
+      projectId: null,
+      title: CREATE_TASK_INPUT.title,
+      description: CREATE_TASK_INPUT.description,
+      status: 'not_started',
+      sortOrder: 0,
+      deadline: CREATE_TASK_INPUT.deadline,
+      estimatedMinutes: CREATE_TASK_INPUT.estimatedMinutes,
+      incompletionReason: null,
+      createdAt: expect.any(Date),
+    });
+
+    const list = await caller.task.list();
+    expect(list).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: CREATE_TASK_INPUT.title }),
+      ]),
+    );
+  });
+
+  it('タイトルのみでタスクを作成できる', async () => {
+    const result = await caller.task.create({
+      title: CREATE_TASK_INPUT.title,
+    });
+
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      dailyReportId: null,
+      projectId: null,
+      title: CREATE_TASK_INPUT.title,
+      description: null,
+      status: 'not_started',
+      sortOrder: 0,
+      deadline: null,
+      estimatedMinutes: null,
+      incompletionReason: null,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('projectId を指定してプロジェクトに紐づける', async () => {
+    const [project] = await db
+      .insert(projects)
+      .values(TEST_PROJECT)
+      .returning();
+
+    const result = await caller.task.create({
+      title: CREATE_TASK_INPUT.title,
+      projectId: project.id,
+    });
+
+    const detail = await caller.task.detail({ id: result.id });
+    expect(detail.project).toStrictEqual({
+      id: project.id,
+      name: TEST_PROJECT.name,
+    });
+  });
+
+  it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.create({
+        title: CREATE_TASK_INPUT.title,
+        projectId: nonExistentId,
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
 describe('task.list', () => {
   it('タスク一覧を返す', async () => {
     await db.insert(tasks).values(TEST_TASKS);
