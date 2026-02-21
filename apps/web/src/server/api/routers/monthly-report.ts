@@ -2,6 +2,7 @@ import * as v from 'valibot';
 
 import { protectedProcedure, router } from '@/server/api/trpc';
 import {
+  createMonthlyReportUseCase,
   getMonthlyReportUseCase,
   getMonthlyReportsUseCase,
 } from '@/server/infrastructure/di/container';
@@ -12,4 +13,7 @@ export const monthlyReportRouter = router({
   detail: protectedProcedure
     .input(v.parser(GetMonthlyReportInputSchema))
     .query(({ input }) => getMonthlyReportUseCase.execute(input)),
+  create: protectedProcedure.mutation(() =>
+    createMonthlyReportUseCase.execute(),
+  ),
 });

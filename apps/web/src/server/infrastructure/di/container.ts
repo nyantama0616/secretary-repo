@@ -6,6 +6,7 @@ import { DeleteDailyReportUseCase } from '@/server/usecase/daily-report/delete-d
 import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-report';
 import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-reports';
 import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
+import { CreateMonthlyReportUseCase } from '@/server/usecase/monthly-report/create-monthly-report';
 import { GetMonthlyReportUseCase } from '@/server/usecase/monthly-report/get-monthly-report';
 import { GetMonthlyReportsUseCase } from '@/server/usecase/monthly-report/get-monthly-reports';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
@@ -42,6 +43,9 @@ export const getMonthlyReportsUseCase = new GetMonthlyReportsUseCase(
 export const getMonthlyReportUseCase = new GetMonthlyReportUseCase(
   monthlyReportRepository,
   dailyReportRepository,
+);
+export const createMonthlyReportUseCase = new CreateMonthlyReportUseCase(
+  monthlyReportRepository,
 );
 
 const taskRepository = new DrizzleTaskRepository();

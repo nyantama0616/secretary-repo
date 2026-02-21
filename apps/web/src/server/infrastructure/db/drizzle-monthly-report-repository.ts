@@ -21,6 +21,17 @@ export class DrizzleMonthlyReportRepository
       .where(eq(monthlyReports.id, id));
     return rows[0] ? toMonthlyReport(rows[0]) : null;
   }
+
+  async save(monthlyReport: MonthlyReport): Promise<void> {
+    await db.insert(monthlyReports).values({
+      id: monthlyReport.id,
+      projectProgress: monthlyReport.projectProgress,
+      growthChanges: monthlyReport.growthChanges,
+      purposeActionGap: monthlyReport.purposeActionGap,
+      improvements: monthlyReport.improvements,
+      notes: monthlyReport.notes,
+    });
+  }
 }
 
 const toMonthlyReport = (

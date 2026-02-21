@@ -155,3 +155,22 @@ describe('monthlyReport.detail', () => {
     );
   });
 });
+
+describe('monthlyReport.create', () => {
+  it('空の月報を作成する', async () => {
+    const result = await caller.monthlyReport.create();
+
+    expect(result).toEqual({
+      id: expect.any(String),
+      projectProgress: null,
+      growthChanges: null,
+      purposeActionGap: null,
+      improvements: null,
+      notes: null,
+      createdAt: expect.any(Date),
+    });
+
+    const detail = await caller.monthlyReport.detail({ id: result.id });
+    expect(detail.id).toBe(result.id);
+  });
+});
