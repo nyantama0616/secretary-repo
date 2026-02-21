@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: ROUTES.dailyReports, label: '日報一覧' },
   { href: ROUTES.monthlyReports, label: '月報一覧' },
   { href: ROUTES.tasks, label: 'タスク一覧' },
+  { href: ROUTES.projects, label: 'プロジェクト一覧' },
 ] as const;
 
 export const Header = async () => {

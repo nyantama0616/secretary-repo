@@ -1,10 +1,11 @@
+import type { ProjectStatus } from '@/server/domain/project/project';
 import type { ProjectRepository } from '@/server/domain/project/project-repository';
 
 type ProjectListItem = {
   id: string;
   name: string;
   purpose: string;
-  status: string;
+  status: ProjectStatus;
   deadline: Date | null;
   createdAt: Date;
 };
