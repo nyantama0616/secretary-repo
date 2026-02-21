@@ -107,11 +107,16 @@ const main = async () => {
       .insert(dailyReports)
       .values(SEED_DAILY_REPORTS)
       .returning();
-    await tx.insert(projects).values(SEED_PROJECTS);
+    const insertedProjects = await tx
+      .insert(projects)
+      .values(SEED_PROJECTS)
+      .returning();
     await tx.insert(tasks).values(
       SEED_TASKS.map((task, i) => ({
         ...task,
         dailyReportId: insertedReports[i % insertedReports.length].id,
+        // NOTE: 最初の2つのタスクを active なプロジェクトに紐付ける
+        projectId: i < 2 ? insertedProjects[0].id : null,
       })),
     );
   });
