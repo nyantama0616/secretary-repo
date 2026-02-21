@@ -88,11 +88,15 @@ export const seed = async () => {
         .insert(dailyReports)
         .values(SEED_DAILY_REPORTS)
         .returning();
-      await tx.insert(projects).values(SEED_PROJECTS);
+      const insertedProjects = await tx
+        .insert(projects)
+        .values(SEED_PROJECTS)
+        .returning();
       await tx.insert(tasks).values(
         SEED_TASKS.map((task, i) => ({
           ...task,
           dailyReportId: insertedReports[i % insertedReports.length].id,
+          projectId: i === 0 ? insertedProjects[0].id : null,
         })),
       );
     });

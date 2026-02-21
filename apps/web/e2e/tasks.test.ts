@@ -56,6 +56,13 @@ test.describe('タスク詳細', () => {
     await expect(page.getByText('タスク一覧APIを実装する')).toBeVisible();
     await expect(page.getByText('120分')).toBeVisible();
     await expect(page.getByText('2026/02/20（金）')).toBeVisible();
+    const projectLink = page.getByRole('link', { name: 'secretary-repo' });
+    await expect(projectLink).toBeVisible();
+    await projectLink.click();
+
+    await expect(
+      page.getByRole('heading', { name: 'secretary-repo' }),
+    ).toBeVisible();
   });
 
   test('存在しないタスクにアクセスすると、404ページが表示される', async ({
