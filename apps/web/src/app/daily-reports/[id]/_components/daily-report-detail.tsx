@@ -37,24 +37,52 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
 
   const timeLabel = buildTimeLabel(report.wakeUpTime, report.bedTime);
 
+  const hasReview =
+    timeLabel ||
+    report.goodPoints ||
+    report.badPoints ||
+    report.learnings ||
+    report.nextActions ||
+    report.notes;
+
   return (
-    <div className="grid gap-4 p-8">
+    <div className="grid gap-6 p-8">
       <div className="flex items-center gap-4">
         <h1 className="text-2xl font-bold">{formatDate(report.date)}</h1>
         <Button variant="outline" asChild>
           <Link href={ROUTES.dailyReportEdit(id)}>編集</Link>
         </Button>
       </div>
-      <dl className="grid gap-4">
-        <DetailItem label="サマリー" value={report.summary} />
-        <DetailItem label="予定" value={report.plan} />
-        {timeLabel && <DetailItem label="起床・就寝" value={timeLabel} />}
-        <DetailItem label="良かった点" value={report.goodPoints} />
-        <DetailItem label="改善点" value={report.badPoints} />
-        <DetailItem label="学び" value={report.learnings} />
-        <DetailItem label="ネクストアクション" value={report.nextActions} />
-        <DetailItem label="メモ" value={report.notes} />
-      </dl>
+
+      {report.summary && (
+        <section className="grid gap-2">
+          <h2 className="border-b pb-2 text-lg font-semibold">サマリー</h2>
+          <p className="whitespace-pre-wrap">{report.summary}</p>
+        </section>
+      )}
+
+      {report.plan && (
+        <section className="grid gap-2">
+          <h2 className="border-b pb-2 text-lg font-semibold">予定</h2>
+          <p className="whitespace-pre-wrap">{report.plan}</p>
+        </section>
+      )}
+
+      {hasReview && (
+        <section className="grid gap-4">
+          <h2 className="border-b pb-2 text-lg font-semibold">振り返り</h2>
+          <dl className="grid gap-4">
+            {timeLabel && (
+              <DetailItem label="起床・就寝" value={timeLabel} />
+            )}
+            <DetailItem label="良かった点" value={report.goodPoints} />
+            <DetailItem label="改善点" value={report.badPoints} />
+            <DetailItem label="学び" value={report.learnings} />
+            <DetailItem label="ネクストアクション" value={report.nextActions} />
+            <DetailItem label="メモ" value={report.notes} />
+          </dl>
+        </section>
+      )}
     </div>
   );
 };

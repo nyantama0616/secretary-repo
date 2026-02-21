@@ -46,10 +46,19 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
         <h1 className="text-2xl font-bold">{formatMonth(report.startDate)}</h1>
       </div>
 
-      <dl className="grid gap-4">
-        <DetailItem label="目標" value={report.goal} />
-        <DetailItem label="サマリー" value={report.summary} />
-      </dl>
+      {report.summary && (
+        <section className="grid gap-2">
+          <h2 className="border-b pb-2 text-lg font-semibold">サマリー</h2>
+          <p className="whitespace-pre-wrap">{report.summary}</p>
+        </section>
+      )}
+
+      {report.goal && (
+        <section className="grid gap-2">
+          <h2 className="border-b pb-2 text-lg font-semibold">目標</h2>
+          <p className="whitespace-pre-wrap">{report.goal}</p>
+        </section>
+      )}
 
       {hasReview && (
         <section className="grid gap-4">
@@ -65,13 +74,10 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
               value={report.purposeActionGap}
             />
             <DetailItem label="改善点" value={report.improvements} />
+            <DetailItem label="メモ" value={report.notes} />
           </dl>
         </section>
       )}
-
-      <dl className="grid gap-4">
-        <DetailItem label="メモ" value={report.notes} />
-      </dl>
 
       {report.dailyReports.length > 0 && (
         <section className="grid gap-3">
