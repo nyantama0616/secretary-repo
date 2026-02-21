@@ -1,4 +1,4 @@
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, gte, inArray, lt } from 'drizzle-orm';
 
 import type { DailyReport } from '@/server/domain/daily-report/daily-report';
 import { createDailyReport } from '@/server/domain/daily-report/daily-report';
@@ -29,6 +29,16 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     return rows.map(toDailyReport);
   }
 
+  async findByDateRange(start: Date, end: Date): Promise<DailyReport[]> {
+    const rows = await db
+      .select()
+      .from(dailyReports)
+      .where(
+        and(gte(dailyReports.date, start), lt(dailyReports.date, end)),
+      );
+    return rows.map(toDailyReport);
+  }
+
   async findByDate(date: Date): Promise<DailyReport | null> {
     const rows = await db
       .select()
@@ -41,7 +51,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     await db.insert(dailyReports).values({
       id: dailyReport.id,
       date: dailyReport.date,
-      plan: dailyReport.plan,
+      goal: dailyReport.goal,
       summary: dailyReport.summary,
       wakeUpTime: dailyReport.wakeUpTime,
       bedTime: dailyReport.bedTime,
@@ -58,7 +68,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .update(dailyReports)
       .set({
         date: dailyReport.date,
-        plan: dailyReport.plan,
+        goal: dailyReport.goal,
         summary: dailyReport.summary,
         wakeUpTime: dailyReport.wakeUpTime,
         bedTime: dailyReport.bedTime,
@@ -71,9 +81,6 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .where(eq(dailyReports.id, dailyReport.id));
   }
 
-  async delete(id: string): Promise<void> {
-    await db.delete(dailyReports).where(eq(dailyReports.id, id));
-  }
 }
 
 const toDailyReport = (
@@ -82,7 +89,7 @@ const toDailyReport = (
   return createDailyReport({
     id: row.id,
     date: row.date,
-    plan: row.plan,
+    goal: row.goal,
     summary: row.summary,
     wakeUpTime: row.wakeUpTime,
     bedTime: row.bedTime,

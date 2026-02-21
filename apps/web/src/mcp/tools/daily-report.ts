@@ -51,14 +51,8 @@ export const registerDailyReportTools = (server: McpServer): void => {
       description: "新しい日報を作成する",
       inputSchema: {
         date: z.iso.date().describe("日報の日付（例: 2026-02-20）"),
-        plan: optionalString,
-        summary: optionalString,
+        goal: optionalString,
         wakeUpTime: optionalDatetime,
-        bedTime: optionalDatetime,
-        goodPoints: optionalString,
-        badPoints: optionalString,
-        learnings: optionalString,
-        nextActions: optionalString,
         notes: optionalString,
       },
     },
@@ -66,14 +60,8 @@ export const registerDailyReportTools = (server: McpServer): void => {
       try {
         const report = await createDailyReportUseCase.execute({
           date: new Date(args.date),
-          plan: args.plan,
-          summary: args.summary,
+          goal: args.goal,
           wakeUpTime: args.wakeUpTime ? new Date(args.wakeUpTime) : undefined,
-          bedTime: args.bedTime ? new Date(args.bedTime) : undefined,
-          goodPoints: args.goodPoints,
-          badPoints: args.badPoints,
-          learnings: args.learnings,
-          nextActions: args.nextActions,
           notes: args.notes,
         });
         return toSuccess(JSON.stringify(report, null, 2));
@@ -89,7 +77,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
       description: "既存の日報を更新する",
       inputSchema: {
         id: z.string().describe("日報の ID"),
-        plan: optionalString,
+        goal: optionalString,
         summary: optionalString,
         wakeUpTime: optionalDatetime,
         bedTime: optionalDatetime,
@@ -104,7 +92,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
       try {
         const report = await updateDailyReportUseCase.execute({
           id: args.id,
-          plan: args.plan,
+          goal: args.goal,
           summary: args.summary,
           wakeUpTime: args.wakeUpTime ? new Date(args.wakeUpTime) : undefined,
           bedTime: args.bedTime ? new Date(args.bedTime) : undefined,

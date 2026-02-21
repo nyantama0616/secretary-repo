@@ -10,14 +10,8 @@ import { generateId } from '@/server/domain/id';
 
 export const CreateDailyReportInputSchema = v.object({
   date: v.date(),
-  plan: v.optional(v.pipe(v.string(), v.minLength(1))),
-  summary: v.optional(v.pipe(v.string(), v.minLength(1))),
+  goal: v.optional(v.pipe(v.string(), v.minLength(1))),
   wakeUpTime: v.optional(v.date()),
-  bedTime: v.optional(v.date()),
-  goodPoints: v.optional(v.pipe(v.string(), v.minLength(1))),
-  badPoints: v.optional(v.pipe(v.string(), v.minLength(1))),
-  learnings: v.optional(v.pipe(v.string(), v.minLength(1))),
-  nextActions: v.optional(v.pipe(v.string(), v.minLength(1))),
   notes: v.optional(v.pipe(v.string(), v.minLength(1))),
 });
 
@@ -43,14 +37,14 @@ export class CreateDailyReportUseCase {
     const dailyReport = createDailyReport({
       id: generateId(),
       date: input.date,
-      plan: input.plan ?? null,
-      summary: input.summary ?? null,
+      goal: input.goal ?? null,
+      summary: null,
       wakeUpTime: input.wakeUpTime ?? null,
-      bedTime: input.bedTime ?? null,
-      goodPoints: input.goodPoints ?? null,
-      badPoints: input.badPoints ?? null,
-      learnings: input.learnings ?? null,
-      nextActions: input.nextActions ?? null,
+      bedTime: null,
+      goodPoints: null,
+      badPoints: null,
+      learnings: null,
+      nextActions: null,
       notes: input.notes ?? null,
       createdAt: new Date(),
     });

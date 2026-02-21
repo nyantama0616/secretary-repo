@@ -2,12 +2,13 @@ import { sql } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
-    plan: '機能Aの実装を進める',
+    goal: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
@@ -18,7 +19,7 @@ const SEED_DAILY_REPORTS = [
   },
   {
     date: new Date('2026-02-18'),
-    plan: 'テストを書く',
+    goal: 'テストを書く',
     summary: 'テストの基本を学んだが体調不良で早退した',
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     goodPoints: 'テストの書き方が分かってきた',
@@ -26,7 +27,7 @@ const SEED_DAILY_REPORTS = [
   },
   {
     date: new Date('2026-02-19'),
-    plan: 'コードレビューと修正',
+    goal: 'コードレビューと修正',
     summary: 'レビューで良い指摘をもらい修正を完了した',
     wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
     bedTime: new Date('2026-02-19T23:30:00+09:00'),
@@ -69,7 +70,24 @@ const SEED_TASKS = [
 const main = async () => {
   console.log('Seeding...');
   await db.transaction(async (tx) => {
-    await tx.execute(sql`TRUNCATE ${tasks}, ${dailyReports}`);
+    await tx.execute(
+      sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
+    );
+    await tx.insert(monthlyReports).values([
+      {
+        startDate: new Date('2026-02-01'),
+        goal: '機能Aをリリースする',
+        summary: '新機能の開発を進めた月だった',
+        projectProgress: '機能Aの実装とテストが完了し、コードレビューも通った',
+        growthChanges: 'テストの書き方に慣れてきた。レビューの指摘から設計の考え方を学べた',
+        purposeActionGap: '休憩を忘れて集中しすぎる傾向がある。ポモドーロテクニックの導入を検討したい',
+        improvements: 'レビューを早めに出すことで手戻りを減らせる。作業の見積もり精度も改善したい',
+      },
+      {
+        startDate: new Date('2026-03-01'),
+        goal: 'テストカバレッジを80%にする',
+      },
+    ]);
     const insertedReports = await tx
       .insert(dailyReports)
       .values(SEED_DAILY_REPORTS)

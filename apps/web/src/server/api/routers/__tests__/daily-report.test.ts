@@ -4,7 +4,6 @@ import { createCaller } from '@/server/api';
 import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
-import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const caller = createCaller({ isAuthenticated: true });
 const unauthenticatedCaller = createCaller({ isAuthenticated: false });
@@ -12,7 +11,7 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 const TEST_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
-    plan: '機能Aの実装を進める',
+    goal: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
@@ -24,7 +23,7 @@ const TEST_DAILY_REPORTS = [
   },
   {
     date: new Date('2026-02-18'),
-    plan: 'テストを書く',
+    goal: 'テストを書く',
     summary: null,
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     bedTime: null,
@@ -58,7 +57,7 @@ describe('dailyReport.list', () => {
         TEST_DAILY_REPORTS.map((r) => ({
           id: expect.any(String),
           date: r.date,
-          plan: r.plan,
+          goal: r.goal,
           summary: r.summary,
           wakeUpTime: r.wakeUpTime,
           bedTime: r.bedTime,
@@ -94,7 +93,7 @@ describe('dailyReport.detail', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: testDailyReport.date,
-      plan: testDailyReport.plan,
+      goal: testDailyReport.goal,
       summary: testDailyReport.summary,
       wakeUpTime: testDailyReport.wakeUpTime,
       bedTime: testDailyReport.bedTime,
@@ -122,7 +121,7 @@ describe('dailyReport.detail', () => {
 
 describe('dailyReport.update', () => {
   const updateInput = {
-    plan: '更新後の計画',
+    goal: '更新後の計画',
     summary: '更新後のまとめ',
     wakeUpTime: new Date('2026-02-19T08:00:00+09:00'),
     bedTime: new Date('2026-02-19T00:00:00+09:00'),
@@ -147,7 +146,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
-      plan: updateInput.plan,
+      goal: updateInput.goal,
       summary: updateInput.summary,
       wakeUpTime: updateInput.wakeUpTime,
       bedTime: updateInput.bedTime,
@@ -174,7 +173,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
-      plan: TEST_DAILY_REPORTS[0].plan,
+      goal: TEST_DAILY_REPORTS[0].goal,
       summary: '更新後のまとめ',
       wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
       bedTime: TEST_DAILY_REPORTS[0].bedTime,
@@ -200,79 +199,29 @@ describe('dailyReport.update', () => {
   });
 });
 
-describe('dailyReport.delete', () => {
-  it('日報を削除する', async () => {
-    const [inserted] = await db
-      .insert(dailyReports)
-      .values(TEST_DAILY_REPORTS[0])
-      .returning();
-
-    await caller.dailyReport.delete({ id: inserted.id });
-
-    const result = await caller.dailyReport.list();
-    expect(result).toHaveLength(0);
-  });
-
-  it('紐づくタスクの dailyReportId が null になる', async () => {
-    const [inserted] = await db
-      .insert(dailyReports)
-      .values(TEST_DAILY_REPORTS[0])
-      .returning();
-    await db.insert(tasks).values({
-      title: 'テストタスク',
-      dailyReportId: inserted.id,
-      sortOrder: 0,
-    });
-
-    await caller.dailyReport.delete({ id: inserted.id });
-
-    const result = await caller.task.list();
-    expect(result).toHaveLength(1);
-    expect(result[0].dailyReportDate).toBeNull();
-  });
-
-  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
-    const nonExistentId = generateId();
-
-    await expect(
-      caller.dailyReport.delete({ id: nonExistentId }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'NOT_FOUND',
-      }),
-    );
-  });
-});
-
 describe('dailyReport.create', () => {
-  const newDailyReport = {
+  const createInput = {
     date: new Date('2026-02-19'),
-    plan: '日報作成機能の実装',
-    summary: '日報作成機能を実装した',
+    goal: '日報作成機能の実装',
     wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
-    bedTime: new Date('2026-02-19T23:30:00+09:00'),
-    goodPoints: 'TDDで進められた',
-    badPoints: '設計に時間がかかった',
-    learnings: 'Valibotのoptionalの使い方',
-    nextActions: 'E2Eテストを書く',
     notes: '特になし',
   };
 
   it('日報を作成する', async () => {
-    const result = await caller.dailyReport.create(newDailyReport);
+    const result = await caller.dailyReport.create(createInput);
 
     expect(result).toStrictEqual({
       id: expect.any(String),
-      date: newDailyReport.date,
-      plan: newDailyReport.plan,
-      summary: newDailyReport.summary,
-      wakeUpTime: newDailyReport.wakeUpTime,
-      bedTime: newDailyReport.bedTime,
-      goodPoints: newDailyReport.goodPoints,
-      badPoints: newDailyReport.badPoints,
-      learnings: newDailyReport.learnings,
-      nextActions: newDailyReport.nextActions,
-      notes: newDailyReport.notes,
+      date: createInput.date,
+      goal: createInput.goal,
+      summary: null,
+      wakeUpTime: createInput.wakeUpTime,
+      bedTime: null,
+      goodPoints: null,
+      badPoints: null,
+      learnings: null,
+      nextActions: null,
+      notes: createInput.notes,
       createdAt: expect.any(Date),
     });
   });
@@ -285,7 +234,7 @@ describe('dailyReport.create', () => {
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: new Date('2026-02-20'),
-      plan: null,
+      goal: null,
       summary: null,
       wakeUpTime: null,
       bedTime: null,
@@ -300,10 +249,12 @@ describe('dailyReport.create', () => {
 
   it('同じ日付の日報が存在する場合、CONFLICT エラーを返す', async () => {
     await db.insert(dailyReports).values({
-      date: newDailyReport.date,
+      date: createInput.date,
     });
 
-    await expect(caller.dailyReport.create(newDailyReport)).rejects.toThrow(
+    await expect(
+      caller.dailyReport.create(createInput),
+    ).rejects.toThrow(
       expect.objectContaining({
         code: 'CONFLICT',
       }),

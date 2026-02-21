@@ -88,7 +88,7 @@ test.describe('日報編集', () => {
       .click();
     await page.getByRole('link', { name: '編集' }).click();
 
-    await expect(page.getByLabel('予定')).toHaveValue('機能Aの実装を進める');
+    await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
     await expect(page.getByLabel('良かった点')).toHaveValue(
       '集中して作業できた',
     );
@@ -124,7 +124,7 @@ test.describe('日報作成', () => {
   }) => {
     await page.goto('/daily-reports/new');
     await page.getByLabel('日付').fill('2026-02-20');
-    await page.getByLabel('予定').fill('リファクタリング');
+    await page.getByLabel('目標').fill('リファクタリング');
     await page.getByLabel('サマリー').fill('リファクタリングを完了した');
     await page.getByRole('button', { name: '作成' }).click();
 
