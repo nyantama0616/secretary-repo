@@ -9,6 +9,7 @@ import { AlreadyExistsError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
 
 export const CreateDailyReportInputSchema = v.object({
+  monthlyReportId: v.string(),
   date: v.date(),
   plan: v.optional(v.pipe(v.string(), v.minLength(1))),
   summary: v.optional(v.pipe(v.string(), v.minLength(1))),
@@ -43,7 +44,7 @@ export class CreateDailyReportUseCase {
     const dailyReport = createDailyReport({
       id: generateId(),
       date: input.date,
-      monthlyReportId: null,
+      monthlyReportId: input.monthlyReportId,
       plan: input.plan ?? null,
       summary: input.summary ?? null,
       wakeUpTime: input.wakeUpTime ?? null,
