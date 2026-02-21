@@ -1,5 +1,6 @@
 import { DrizzleDailyReportRepository } from '@/server/infrastructure/db/drizzle-daily-report-repository';
 import { DrizzleMonthlyReportRepository } from '@/server/infrastructure/db/drizzle-monthly-report-repository';
+import { DrizzleProjectRepository } from '@/server/infrastructure/db/drizzle-project-repository';
 import { DrizzleTaskRepository } from '@/server/infrastructure/db/drizzle-task-repository';
 import { CreateDailyReportUseCase } from '@/server/usecase/daily-report/create-daily-report';
 import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-report';
@@ -9,6 +10,11 @@ import { CreateMonthlyReportUseCase } from '@/server/usecase/monthly-report/crea
 import { GetMonthlyReportUseCase } from '@/server/usecase/monthly-report/get-monthly-report';
 import { GetMonthlyReportsUseCase } from '@/server/usecase/monthly-report/get-monthly-reports';
 import { ReviewMonthlyReportUseCase } from '@/server/usecase/monthly-report/review-monthly-report';
+import { CreateProjectUseCase } from '@/server/usecase/project/create-project';
+import { GetProjectUseCase } from '@/server/usecase/project/get-project';
+import { GetProjectsUseCase } from '@/server/usecase/project/get-projects';
+import { UpdateProjectUseCase } from '@/server/usecase/project/update-project';
+import { UpdateProjectStatusUseCase } from '@/server/usecase/project/update-project-status';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
 import { DeleteTaskUseCase } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
@@ -46,6 +52,16 @@ export const reviewMonthlyReportUseCase = new ReviewMonthlyReportUseCase(
   monthlyReportRepository,
 );
 
+const projectRepository = new DrizzleProjectRepository();
+
+export const getProjectsUseCase = new GetProjectsUseCase(projectRepository);
+export const getProjectUseCase = new GetProjectUseCase(projectRepository);
+export const createProjectUseCase = new CreateProjectUseCase(projectRepository);
+export const updateProjectUseCase = new UpdateProjectUseCase(projectRepository);
+export const updateProjectStatusUseCase = new UpdateProjectStatusUseCase(
+  projectRepository,
+);
+
 const taskRepository = new DrizzleTaskRepository();
 
 export const getTasksUseCase = new GetTasksUseCase(
@@ -55,8 +71,12 @@ export const getTasksUseCase = new GetTasksUseCase(
 export const getTaskDetailUseCase = new GetTaskDetailUseCase(
   taskRepository,
   dailyReportRepository,
+  projectRepository,
 );
-export const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
+export const updateTaskUseCase = new UpdateTaskUseCase(
+  taskRepository,
+  projectRepository,
+);
 export const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
   taskRepository,
 );

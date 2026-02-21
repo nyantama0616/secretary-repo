@@ -33,6 +33,7 @@ const toTask = (row: typeof tasks.$inferSelect): Task => {
   return createTask({
     id: row.id,
     dailyReportId: row.dailyReportId,
+    projectId: row.projectId,
     title: row.title,
     description: row.description,
     status: row.status,

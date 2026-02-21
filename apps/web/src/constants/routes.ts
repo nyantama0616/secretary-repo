@@ -10,4 +10,8 @@ export const ROUTES = {
   tasks: '/tasks',
   taskDetail: (id: string) => `/tasks/${id}`,
   taskEdit: (id: string) => `/tasks/${id}/edit`,
+  projects: '/projects',
+  projectCreate: '/projects/new',
+  projectDetail: (id: string) => `/projects/${id}`,
+  projectEdit: (id: string) => `/projects/${id}/edit`,
 } as const;

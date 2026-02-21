@@ -65,6 +65,19 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
         )}
       </div>
       <dl className="grid gap-4">
+        {task.project && (
+          <div>
+            <dt className="text-sm text-muted-foreground">プロジェクト</dt>
+            <dd className="mt-1">
+              <Link
+                href={ROUTES.projectDetail(task.project.id)}
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {task.project.name}
+              </Link>
+            </dd>
+          </div>
+        )}
         <DetailItem label="説明" value={task.description} />
         <DetailItem
           label="期限"

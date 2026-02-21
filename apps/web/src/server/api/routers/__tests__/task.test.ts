@@ -4,6 +4,7 @@ import { createCaller } from '@/server/api';
 import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { projects } from '@/server/infrastructure/db/schema/projects';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const caller = createCaller({ isAuthenticated: true });
@@ -11,6 +12,12 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 
 const TEST_DAILY_REPORT = {
   date: new Date('2026-02-17'),
+};
+
+const TEST_PROJECT = {
+  name: 'secretary-repo 開発',
+  purpose: 'AI を活用した日報・タスク管理アプリを作る',
+  status: 'active' as const,
 };
 
 const TEST_TASKS = [
@@ -105,6 +112,7 @@ describe('task.detail', () => {
       estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
       incompletionReason: null,
       dailyReportDate: null,
+      project: null,
       createdAt: expect.any(Date),
     });
   });
@@ -129,6 +137,25 @@ describe('task.detail', () => {
     expect(result).toEqual(
       expect.objectContaining({
         dailyReportDate: TEST_DAILY_REPORT.date,
+      }),
+    );
+  });
+
+  it('プロジェクトに紐づくタスクはプロジェクト情報を含む', async () => {
+    const [project] = await db
+      .insert(projects)
+      .values(TEST_PROJECT)
+      .returning();
+    const [inserted] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[0], projectId: project.id })
+      .returning();
+
+    const result = await caller.task.detail({ id: inserted.id });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        project: { id: project.id, name: TEST_PROJECT.name },
       }),
     );
   });
@@ -188,6 +215,57 @@ describe('task.update', () => {
         description: TEST_TASKS[0].description,
         deadline: TEST_TASKS[0].deadline,
         estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
+      }),
+    );
+  });
+
+  it('projectId を指定してプロジェクトに紐づける', async () => {
+    const [project] = await db
+      .insert(projects)
+      .values(TEST_PROJECT)
+      .returning();
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.update({ id: inserted.id, projectId: project.id });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.project).toStrictEqual({
+      id: project.id,
+      name: TEST_PROJECT.name,
+    });
+  });
+
+  it('projectId に null を渡すと紐づけを解除する', async () => {
+    const [project] = await db
+      .insert(projects)
+      .values(TEST_PROJECT)
+      .returning();
+    const [inserted] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[0], projectId: project.id })
+      .returning();
+
+    await caller.task.update({ id: inserted.id, projectId: null });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.project).toBeNull();
+  });
+
+  it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.update({ id: inserted.id, projectId: nonExistentId }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
       }),
     );
   });

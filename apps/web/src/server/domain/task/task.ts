@@ -11,6 +11,7 @@ const TaskSchema = v.pipe(
   v.object({
     id: v.string(),
     dailyReportId: v.nullable(v.string()),
+    projectId: v.nullable(v.string()),
     title: v.string(),
     description: v.nullable(v.string()),
     status: TaskStatusSchema,

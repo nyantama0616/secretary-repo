@@ -76,13 +76,13 @@ export const MonthlyReportCreateForm = () => {
       <h1 className="text-2xl font-bold">月報作成</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid max-w-lg gap-4">
         <div className="grid gap-2">
-          <Label>月</Label>
+          <Label htmlFor="month">月</Label>
           <Controller
             name="month"
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger aria-label="月">
+                <SelectTrigger id="month">
                   <SelectValue placeholder="月を選択" />
                 </SelectTrigger>
                 <SelectContent>
