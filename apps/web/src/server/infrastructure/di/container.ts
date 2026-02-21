@@ -16,6 +16,7 @@ import { GetProjectsUseCase } from '@/server/usecase/project/get-projects';
 import { UpdateProjectUseCase } from '@/server/usecase/project/update-project';
 import { UpdateProjectStatusUseCase } from '@/server/usecase/project/update-project-status';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
+import { CreateTaskUseCase } from '@/server/usecase/task/create-task';
 import { DeleteTaskUseCase } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
 import { GetTasksUseCase } from '@/server/usecase/task/get-tasks';
@@ -64,6 +65,10 @@ export const updateProjectStatusUseCase = new UpdateProjectStatusUseCase(
 
 const taskRepository = new DrizzleTaskRepository();
 
+export const createTaskUseCase = new CreateTaskUseCase(
+  taskRepository,
+  projectRepository,
+);
 export const getTasksUseCase = new GetTasksUseCase(
   taskRepository,
   dailyReportRepository,

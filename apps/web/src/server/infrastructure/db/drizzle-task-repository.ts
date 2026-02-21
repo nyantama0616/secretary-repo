@@ -20,6 +20,21 @@ export class DrizzleTaskRepository implements TaskRepository {
     return row ? toTask(row) : null;
   }
 
+  async save(task: Task): Promise<void> {
+    await db.insert(tasks).values({
+      id: task.id,
+      dailyReportId: task.dailyReportId,
+      projectId: task.projectId,
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      sortOrder: task.sortOrder,
+      deadline: task.deadline,
+      estimatedMinutes: task.estimatedMinutes,
+      incompletionReason: task.incompletionReason,
+    });
+  }
+
   async update(id: string, fields: TaskUpdatableFields): Promise<void> {
     await db.update(tasks).set(fields).where(eq(tasks.id, id));
   }

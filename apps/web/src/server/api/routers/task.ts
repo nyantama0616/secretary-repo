@@ -3,6 +3,7 @@ import * as v from 'valibot';
 import { protectedProcedure, router } from '@/server/api/trpc';
 import {
   assignDailyReportUseCase,
+  createTaskUseCase,
   deleteTaskUseCase,
   getTaskDetailUseCase,
   getTasksUseCase,
@@ -10,6 +11,7 @@ import {
   updateTaskUseCase,
 } from '@/server/infrastructure/di/container';
 import { AssignDailyReportInputSchema } from '@/server/usecase/task/assign-daily-report';
+import { CreateTaskInputSchema } from '@/server/usecase/task/create-task';
 import { DeleteTaskInputSchema } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailInputSchema } from '@/server/usecase/task/get-task-detail';
 import { UpdateTaskInputSchema } from '@/server/usecase/task/update-task';
@@ -17,6 +19,9 @@ import { UpdateTaskStatusInputSchema } from '@/server/usecase/task/update-task-s
 
 export const taskRouter = router({
   list: protectedProcedure.query(() => getTasksUseCase.execute()),
+  create: protectedProcedure
+    .input(v.parser(CreateTaskInputSchema))
+    .mutation(({ input }) => createTaskUseCase.execute(input)),
   detail: protectedProcedure
     .input(v.parser(GetTaskDetailInputSchema))
     .query(({ input }) => getTaskDetailUseCase.execute(input)),
