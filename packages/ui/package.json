@@ -15,6 +15,7 @@
     "./label": "./src/components/label.tsx",
     "./select": "./src/components/select.tsx",
     "./spinner": "./src/components/spinner.tsx",
+    "./tabs": "./src/components/tabs.tsx",
     "./textarea": "./src/components/textarea.tsx",
     "./lib/utils": "./src/lib/utils.ts"
   },

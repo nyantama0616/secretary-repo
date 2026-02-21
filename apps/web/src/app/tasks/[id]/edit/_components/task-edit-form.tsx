@@ -15,11 +15,11 @@ import {
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
-import { Textarea } from '@repo/ui/textarea';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import * as v from 'valibot';
 
+import { MarkdownEditor } from '@/components/editor/markdown-editor';
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { ROUTES } from '@/constants/routes';
@@ -78,7 +78,7 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState } = useForm<FormValues>({
+  const { register, handleSubmit, formState, control } = useForm<FormValues>({
     resolver: valibotResolver(TaskEditFormSchema),
     defaultValues: {
       title: task.title,
@@ -144,8 +144,17 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="description">説明</Label>
-          <Textarea id="description" rows={3} {...register('description')} />
+          <Label>説明</Label>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <MarkdownEditor
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
