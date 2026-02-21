@@ -13,6 +13,12 @@ export const formatTime = (date: Date): string => {
   return `${h}:${min}`;
 };
 
+export const formatMonth = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  return `${y}年${m}月`;
+};
+
 export const toDateStr = (date: Date): string => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
