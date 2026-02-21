@@ -12,6 +12,7 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 const TEST_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
+    monthlyReportId: null,
     plan: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
@@ -24,6 +25,7 @@ const TEST_DAILY_REPORTS = [
   },
   {
     date: new Date('2026-02-18'),
+    monthlyReportId: null,
     plan: 'テストを書く',
     summary: null,
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
@@ -58,6 +60,7 @@ describe('dailyReport.list', () => {
         TEST_DAILY_REPORTS.map((r) => ({
           id: expect.any(String),
           date: r.date,
+          monthlyReportId: r.monthlyReportId,
           plan: r.plan,
           summary: r.summary,
           wakeUpTime: r.wakeUpTime,
@@ -94,6 +97,7 @@ describe('dailyReport.detail', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: testDailyReport.date,
+      monthlyReportId: testDailyReport.monthlyReportId,
       plan: testDailyReport.plan,
       summary: testDailyReport.summary,
       wakeUpTime: testDailyReport.wakeUpTime,
@@ -147,6 +151,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
+      monthlyReportId: TEST_DAILY_REPORTS[0].monthlyReportId,
       plan: updateInput.plan,
       summary: updateInput.summary,
       wakeUpTime: updateInput.wakeUpTime,
@@ -174,6 +179,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
+      monthlyReportId: TEST_DAILY_REPORTS[0].monthlyReportId,
       plan: TEST_DAILY_REPORTS[0].plan,
       summary: '更新後のまとめ',
       wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
@@ -264,6 +270,7 @@ describe('dailyReport.create', () => {
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: newDailyReport.date,
+      monthlyReportId: null, // NOTE: 日報作成時は月報に紐づかない
       plan: newDailyReport.plan,
       summary: newDailyReport.summary,
       wakeUpTime: newDailyReport.wakeUpTime,
@@ -285,6 +292,7 @@ describe('dailyReport.create', () => {
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: new Date('2026-02-20'),
+      monthlyReportId: null, // NOTE: 日報作成時は月報に紐づかない
       plan: null,
       summary: null,
       wakeUpTime: null,

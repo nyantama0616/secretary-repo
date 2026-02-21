@@ -29,6 +29,17 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     return rows.map(toDailyReport);
   }
 
+  async findByMonthlyReportIds(
+    monthlyReportIds: string[],
+  ): Promise<DailyReport[]> {
+    if (monthlyReportIds.length === 0) return [];
+    const rows = await db
+      .select()
+      .from(dailyReports)
+      .where(inArray(dailyReports.monthlyReportId, monthlyReportIds));
+    return rows.map(toDailyReport);
+  }
+
   async findByDate(date: Date): Promise<DailyReport | null> {
     const rows = await db
       .select()
@@ -41,6 +52,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     await db.insert(dailyReports).values({
       id: dailyReport.id,
       date: dailyReport.date,
+      monthlyReportId: dailyReport.monthlyReportId,
       plan: dailyReport.plan,
       summary: dailyReport.summary,
       wakeUpTime: dailyReport.wakeUpTime,
@@ -58,6 +70,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .update(dailyReports)
       .set({
         date: dailyReport.date,
+        monthlyReportId: dailyReport.monthlyReportId,
         plan: dailyReport.plan,
         summary: dailyReport.summary,
         wakeUpTime: dailyReport.wakeUpTime,
@@ -82,6 +95,7 @@ const toDailyReport = (
   return createDailyReport({
     id: row.id,
     date: row.date,
+    monthlyReportId: row.monthlyReportId,
     plan: row.plan,
     summary: row.summary,
     wakeUpTime: row.wakeUpTime,

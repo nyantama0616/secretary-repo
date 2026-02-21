@@ -4,6 +4,7 @@ const DailyReportSchema = v.pipe(
   v.object({
     id: v.string(),
     date: v.date(),
+    monthlyReportId: v.nullable(v.string()),
     plan: v.nullable(v.string()),
     summary: v.nullable(v.string()),
     wakeUpTime: v.nullable(v.date()),

@@ -43,6 +43,7 @@ export class CreateDailyReportUseCase {
     const dailyReport = createDailyReport({
       id: generateId(),
       date: input.date,
+      monthlyReportId: null,
       plan: input.plan ?? null,
       summary: input.summary ?? null,
       wakeUpTime: input.wakeUpTime ?? null,

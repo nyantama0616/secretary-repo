@@ -40,6 +40,7 @@ export class UpdateDailyReportUseCase {
     const updated = createDailyReport({
       id: existing.id,
       date: existing.date,
+      monthlyReportId: existing.monthlyReportId,
       plan: input.plan ?? existing.plan,
       summary: input.summary ?? existing.summary,
       wakeUpTime: input.wakeUpTime ?? existing.wakeUpTime,
