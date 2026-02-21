@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@repo/ui/badge';
+import { Button } from '@repo/ui/button';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
 
@@ -40,7 +41,12 @@ export const ProjectList = () => {
 
   return (
     <div className="grid gap-4 p-8">
-      <h1 className="text-2xl font-bold">プロジェクト一覧</h1>
+      <div className="flex items-center gap-4">
+        <h1 className="text-2xl font-bold">プロジェクト一覧</h1>
+        <Button asChild>
+          <Link href={ROUTES.projectCreate}>新規作成</Link>
+        </Button>
+      </div>
       {projects.length === 0 ? (
         <p className="text-muted-foreground">プロジェクトがまだありません</p>
       ) : (
