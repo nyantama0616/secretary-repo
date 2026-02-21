@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
+import { projects } from '@/server/infrastructure/db/schema/projects';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const SEED_DAILY_REPORTS = [
@@ -35,6 +36,20 @@ const SEED_DAILY_REPORTS = [
     badPoints: '修正に時間がかかりすぎた',
     learnings: '早めにレビューを出すべきだと分かった',
     nextActions: '明日は新機能に着手する',
+  },
+];
+
+const SEED_PROJECTS = [
+  {
+    name: 'secretary-repo',
+    purpose: 'AI を活用した日報・タスク管理アプリを開発する',
+    status: 'active' as const,
+    deadline: new Date('2026-06-30T00:00:00+09:00'),
+  },
+  {
+    name: '読書記録アプリ',
+    purpose: '読んだ本の感想を記録して振り返る',
+    status: 'done' as const,
   },
 ];
 
@@ -71,7 +86,7 @@ const main = async () => {
   console.log('Seeding...');
   await db.transaction(async (tx) => {
     await tx.execute(
-      sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
+      sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}, ${projects}`,
     );
     await tx.insert(monthlyReports).values([
       {
@@ -92,6 +107,7 @@ const main = async () => {
       .insert(dailyReports)
       .values(SEED_DAILY_REPORTS)
       .returning();
+    await tx.insert(projects).values(SEED_PROJECTS);
     await tx.insert(tasks).values(
       SEED_TASKS.map((task, i) => ({
         ...task,
