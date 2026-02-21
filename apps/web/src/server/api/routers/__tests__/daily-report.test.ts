@@ -4,6 +4,7 @@ import { createCaller } from '@/server/api';
 import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const caller = createCaller({ isAuthenticated: true });
@@ -12,7 +13,6 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 const TEST_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
-    monthlyReportId: null,
     plan: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
@@ -25,7 +25,6 @@ const TEST_DAILY_REPORTS = [
   },
   {
     date: new Date('2026-02-18'),
-    monthlyReportId: null,
     plan: 'テストを書く',
     summary: null,
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
@@ -37,6 +36,11 @@ const TEST_DAILY_REPORTS = [
     notes: '体調不良のため早退',
   },
 ];
+
+const createTestMonthlyReport = async () => {
+  const [mr] = await db.insert(monthlyReports).values({}).returning();
+  return mr;
+};
 
 describe('認証', () => {
   it('未認証の場合、UNAUTHORIZED エラーを返す', async () => {
@@ -50,7 +54,12 @@ describe('認証', () => {
 
 describe('dailyReport.list', () => {
   it('日報一覧を返す', async () => {
-    await db.insert(dailyReports).values(TEST_DAILY_REPORTS);
+    const mr = await createTestMonthlyReport();
+    await db
+      .insert(dailyReports)
+      .values(
+        TEST_DAILY_REPORTS.map((r) => ({ ...r, monthlyReportId: mr.id })),
+      );
 
     const result = await caller.dailyReport.list();
 
@@ -60,7 +69,7 @@ describe('dailyReport.list', () => {
         TEST_DAILY_REPORTS.map((r) => ({
           id: expect.any(String),
           date: r.date,
-          monthlyReportId: r.monthlyReportId,
+          monthlyReportId: mr.id,
           plan: r.plan,
           summary: r.summary,
           wakeUpTime: r.wakeUpTime,
@@ -87,9 +96,10 @@ describe('dailyReport.detail', () => {
   const testDailyReport = TEST_DAILY_REPORTS[0];
 
   it('指定したIDの日報を返す', async () => {
+    const mr = await createTestMonthlyReport();
     const [inserted] = await db
       .insert(dailyReports)
-      .values(testDailyReport)
+      .values({ ...testDailyReport, monthlyReportId: mr.id })
       .returning();
 
     const result = await caller.dailyReport.detail({ id: inserted.id });
@@ -97,7 +107,7 @@ describe('dailyReport.detail', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: testDailyReport.date,
-      monthlyReportId: testDailyReport.monthlyReportId,
+      monthlyReportId: mr.id,
       plan: testDailyReport.plan,
       summary: testDailyReport.summary,
       wakeUpTime: testDailyReport.wakeUpTime,
@@ -138,9 +148,10 @@ describe('dailyReport.update', () => {
   };
 
   it('日報を更新する', async () => {
+    const mr = await createTestMonthlyReport();
     const [inserted] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORTS[0])
+      .values({ ...TEST_DAILY_REPORTS[0], monthlyReportId: mr.id })
       .returning();
 
     const result = await caller.dailyReport.update({
@@ -151,7 +162,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
-      monthlyReportId: TEST_DAILY_REPORTS[0].monthlyReportId,
+      monthlyReportId: mr.id,
       plan: updateInput.plan,
       summary: updateInput.summary,
       wakeUpTime: updateInput.wakeUpTime,
@@ -166,9 +177,10 @@ describe('dailyReport.update', () => {
   });
 
   it('一部のフィールドのみ更新できる', async () => {
+    const mr = await createTestMonthlyReport();
     const [inserted] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORTS[0])
+      .values({ ...TEST_DAILY_REPORTS[0], monthlyReportId: mr.id })
       .returning();
 
     const result = await caller.dailyReport.update({
@@ -179,7 +191,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
-      monthlyReportId: TEST_DAILY_REPORTS[0].monthlyReportId,
+      monthlyReportId: mr.id,
       plan: TEST_DAILY_REPORTS[0].plan,
       summary: '更新後のまとめ',
       wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
@@ -208,9 +220,10 @@ describe('dailyReport.update', () => {
 
 describe('dailyReport.delete', () => {
   it('日報を削除する', async () => {
+    const mr = await createTestMonthlyReport();
     const [inserted] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORTS[0])
+      .values({ ...TEST_DAILY_REPORTS[0], monthlyReportId: mr.id })
       .returning();
 
     await caller.dailyReport.delete({ id: inserted.id });
@@ -220,9 +233,10 @@ describe('dailyReport.delete', () => {
   });
 
   it('紐づくタスクの dailyReportId が null になる', async () => {
+    const mr = await createTestMonthlyReport();
     const [inserted] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORTS[0])
+      .values({ ...TEST_DAILY_REPORTS[0], monthlyReportId: mr.id })
       .returning();
     await db.insert(tasks).values({
       title: 'テストタスク',
@@ -265,12 +279,17 @@ describe('dailyReport.create', () => {
   };
 
   it('日報を作成する', async () => {
-    const result = await caller.dailyReport.create(newDailyReport);
+    const mr = await createTestMonthlyReport();
+
+    const result = await caller.dailyReport.create({
+      ...newDailyReport,
+      monthlyReportId: mr.id,
+    });
 
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: newDailyReport.date,
-      monthlyReportId: null, // NOTE: 日報作成時は月報に紐づかない
+      monthlyReportId: mr.id,
       plan: newDailyReport.plan,
       summary: newDailyReport.summary,
       wakeUpTime: newDailyReport.wakeUpTime,
@@ -284,15 +303,18 @@ describe('dailyReport.create', () => {
     });
   });
 
-  it('日付のみで日報を作成できる', async () => {
+  it('日付と月報IDのみで日報を作成できる', async () => {
+    const mr = await createTestMonthlyReport();
+
     const result = await caller.dailyReport.create({
       date: new Date('2026-02-20'),
+      monthlyReportId: mr.id,
     });
 
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: new Date('2026-02-20'),
-      monthlyReportId: null, // NOTE: 日報作成時は月報に紐づかない
+      monthlyReportId: mr.id,
       plan: null,
       summary: null,
       wakeUpTime: null,
@@ -307,11 +329,15 @@ describe('dailyReport.create', () => {
   });
 
   it('同じ日付の日報が存在する場合、CONFLICT エラーを返す', async () => {
+    const mr = await createTestMonthlyReport();
     await db.insert(dailyReports).values({
       date: newDailyReport.date,
+      monthlyReportId: mr.id,
     });
 
-    await expect(caller.dailyReport.create(newDailyReport)).rejects.toThrow(
+    await expect(
+      caller.dailyReport.create({ ...newDailyReport, monthlyReportId: mr.id }),
+    ).rejects.toThrow(
       expect.objectContaining({
         code: 'CONFLICT',
       }),

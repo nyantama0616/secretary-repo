@@ -4,6 +4,7 @@ import { createCaller } from '@/server/api';
 import { generateId } from '@/server/domain/id';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const caller = createCaller({ isAuthenticated: true });
@@ -11,6 +12,11 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 
 const TEST_DAILY_REPORT = {
   date: new Date('2026-02-17'),
+};
+
+const createTestMonthlyReport = async () => {
+  const [mr] = await db.insert(monthlyReports).values({}).returning();
+  return mr;
 };
 
 const TEST_TASKS = [
@@ -59,9 +65,10 @@ describe('task.list', () => {
   });
 
   it('日報に紐づくタスクは日報の日付を含む', async () => {
+    const mr = await createTestMonthlyReport();
     const [report] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORT)
+      .values({ ...TEST_DAILY_REPORT, monthlyReportId: mr.id })
       .returning();
     await db.insert(tasks).values({
       title: '日報に紐づくタスク',
@@ -110,9 +117,10 @@ describe('task.detail', () => {
   });
 
   it('日報に紐づくタスクは日報の日付を含む', async () => {
+    const mr = await createTestMonthlyReport();
     const [report] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORT)
+      .values({ ...TEST_DAILY_REPORT, monthlyReportId: mr.id })
       .returning();
     const [inserted] = await db
       .insert(tasks)
@@ -236,9 +244,10 @@ describe('task.updateStatus', () => {
 
 describe('task.assignDailyReport', () => {
   it('タスクを日報に紐づける', async () => {
+    const mr = await createTestMonthlyReport();
     const [report] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORT)
+      .values({ ...TEST_DAILY_REPORT, monthlyReportId: mr.id })
       .returning();
     const [inserted] = await db
       .insert(tasks)
@@ -255,9 +264,10 @@ describe('task.assignDailyReport', () => {
   });
 
   it('dailyReportId に null を渡すと紐づけを解除する', async () => {
+    const mr = await createTestMonthlyReport();
     const [report] = await db
       .insert(dailyReports)
-      .values(TEST_DAILY_REPORT)
+      .values({ ...TEST_DAILY_REPORT, monthlyReportId: mr.id })
       .returning();
     const [inserted] = await db
       .insert(tasks)
