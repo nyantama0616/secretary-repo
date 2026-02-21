@@ -51,7 +51,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     await db.insert(dailyReports).values({
       id: dailyReport.id,
       date: dailyReport.date,
-      plan: dailyReport.plan,
+      goal: dailyReport.goal,
       summary: dailyReport.summary,
       wakeUpTime: dailyReport.wakeUpTime,
       bedTime: dailyReport.bedTime,
@@ -68,7 +68,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .update(dailyReports)
       .set({
         date: dailyReport.date,
-        plan: dailyReport.plan,
+        goal: dailyReport.goal,
         summary: dailyReport.summary,
         wakeUpTime: dailyReport.wakeUpTime,
         bedTime: dailyReport.bedTime,
@@ -89,7 +89,7 @@ const toDailyReport = (
   return createDailyReport({
     id: row.id,
     date: row.date,
-    plan: row.plan,
+    goal: row.goal,
     summary: row.summary,
     wakeUpTime: row.wakeUpTime,
     bedTime: row.bedTime,

@@ -10,7 +10,7 @@ import { NotFoundError } from '@/server/domain/error/domain-errors';
 // NOTE: 日付は日報のアイデンティティであるため、変更を許可しない
 export const UpdateDailyReportInputSchema = v.object({
   id: v.string(),
-  plan: v.optional(v.pipe(v.string(), v.minLength(1))),
+  goal: v.optional(v.pipe(v.string(), v.minLength(1))),
   summary: v.optional(v.pipe(v.string(), v.minLength(1))),
   wakeUpTime: v.optional(v.date()),
   bedTime: v.optional(v.date()),
@@ -40,7 +40,7 @@ export class UpdateDailyReportUseCase {
     const updated = createDailyReport({
       id: existing.id,
       date: existing.date,
-      plan: input.plan ?? existing.plan,
+      goal: input.goal ?? existing.goal,
       summary: input.summary ?? existing.summary,
       wakeUpTime: input.wakeUpTime ?? existing.wakeUpTime,
       bedTime: input.bedTime ?? existing.bedTime,

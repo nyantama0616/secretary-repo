@@ -1,0 +1,1 @@
+ALTER TABLE "daily_reports" RENAME COLUMN "plan" TO "goal";

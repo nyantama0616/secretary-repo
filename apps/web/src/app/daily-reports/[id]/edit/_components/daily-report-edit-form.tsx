@@ -21,7 +21,7 @@ import {
 } from '@/trpc/client';
 
 const DailyReportEditFormSchema = v.object({
-  plan: v.optional(v.string()),
+  goal: v.optional(v.string()),
   summary: v.optional(v.string()),
   wakeUpTime: v.optional(v.string()),
   bedTime: v.optional(v.string()),
@@ -62,7 +62,7 @@ export const DailyReportEditForm = ({ id }: DailyReportEditFormProps) => {
 
 type Report = {
   date: Date;
-  plan: string | null;
+  goal: string | null;
   summary: string | null;
   wakeUpTime: Date | null;
   bedTime: Date | null;
@@ -83,7 +83,7 @@ const EditForm = ({ id, report }: { id: string; report: Report }) => {
   const { register, handleSubmit } = useForm<FormValues>({
     resolver: valibotResolver(DailyReportEditFormSchema),
     defaultValues: {
-      plan: report.plan ?? '',
+      goal: report.goal ?? '',
       summary: report.summary ?? '',
       wakeUpTime: report.wakeUpTime ? formatTime(report.wakeUpTime) : '',
       bedTime: report.bedTime ? formatTime(report.bedTime) : '',
@@ -112,7 +112,7 @@ const EditForm = ({ id, report }: { id: string; report: Report }) => {
   const onSubmit = (data: FormValues) => {
     mutate({
       id,
-      plan: emptyToUndefined(data.plan),
+      goal: emptyToUndefined(data.goal),
       summary: emptyToUndefined(data.summary),
       wakeUpTime: timeToDate(dateStr, data.wakeUpTime),
       bedTime: timeToDate(dateStr, data.bedTime),
@@ -130,8 +130,8 @@ const EditForm = ({ id, report }: { id: string; report: Report }) => {
       <p className="text-muted-foreground">{formatDate(report.date)}</p>
       <form onSubmit={handleSubmit(onSubmit)} className="grid max-w-lg gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="plan">予定</Label>
-          <Textarea id="plan" rows={2} {...register('plan')} />
+          <Label htmlFor="goal">目標</Label>
+          <Textarea id="goal" rows={2} {...register('goal')} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="summary">サマリー</Label>

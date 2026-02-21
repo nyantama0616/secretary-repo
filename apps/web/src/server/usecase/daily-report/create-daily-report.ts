@@ -10,7 +10,7 @@ import { generateId } from '@/server/domain/id';
 
 export const CreateDailyReportInputSchema = v.object({
   date: v.date(),
-  plan: v.optional(v.pipe(v.string(), v.minLength(1))),
+  goal: v.optional(v.pipe(v.string(), v.minLength(1))),
   wakeUpTime: v.optional(v.date()),
   notes: v.optional(v.pipe(v.string(), v.minLength(1))),
 });
@@ -37,7 +37,7 @@ export class CreateDailyReportUseCase {
     const dailyReport = createDailyReport({
       id: generateId(),
       date: input.date,
-      plan: input.plan ?? null,
+      goal: input.goal ?? null,
       summary: null,
       wakeUpTime: input.wakeUpTime ?? null,
       bedTime: null,

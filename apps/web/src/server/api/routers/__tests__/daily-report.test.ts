@@ -11,7 +11,7 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 const TEST_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
-    plan: '機能Aの実装を進める',
+    goal: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
@@ -23,7 +23,7 @@ const TEST_DAILY_REPORTS = [
   },
   {
     date: new Date('2026-02-18'),
-    plan: 'テストを書く',
+    goal: 'テストを書く',
     summary: null,
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     bedTime: null,
@@ -57,7 +57,7 @@ describe('dailyReport.list', () => {
         TEST_DAILY_REPORTS.map((r) => ({
           id: expect.any(String),
           date: r.date,
-          plan: r.plan,
+          goal: r.goal,
           summary: r.summary,
           wakeUpTime: r.wakeUpTime,
           bedTime: r.bedTime,
@@ -93,7 +93,7 @@ describe('dailyReport.detail', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: testDailyReport.date,
-      plan: testDailyReport.plan,
+      goal: testDailyReport.goal,
       summary: testDailyReport.summary,
       wakeUpTime: testDailyReport.wakeUpTime,
       bedTime: testDailyReport.bedTime,
@@ -121,7 +121,7 @@ describe('dailyReport.detail', () => {
 
 describe('dailyReport.update', () => {
   const updateInput = {
-    plan: '更新後の計画',
+    goal: '更新後の計画',
     summary: '更新後のまとめ',
     wakeUpTime: new Date('2026-02-19T08:00:00+09:00'),
     bedTime: new Date('2026-02-19T00:00:00+09:00'),
@@ -146,7 +146,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
-      plan: updateInput.plan,
+      goal: updateInput.goal,
       summary: updateInput.summary,
       wakeUpTime: updateInput.wakeUpTime,
       bedTime: updateInput.bedTime,
@@ -173,7 +173,7 @@ describe('dailyReport.update', () => {
     expect(result).toStrictEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
-      plan: TEST_DAILY_REPORTS[0].plan,
+      goal: TEST_DAILY_REPORTS[0].goal,
       summary: '更新後のまとめ',
       wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
       bedTime: TEST_DAILY_REPORTS[0].bedTime,
@@ -202,7 +202,7 @@ describe('dailyReport.update', () => {
 describe('dailyReport.create', () => {
   const createInput = {
     date: new Date('2026-02-19'),
-    plan: '日報作成機能の実装',
+    goal: '日報作成機能の実装',
     wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
     notes: '特になし',
   };
@@ -213,7 +213,7 @@ describe('dailyReport.create', () => {
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: createInput.date,
-      plan: createInput.plan,
+      goal: createInput.goal,
       summary: null,
       wakeUpTime: createInput.wakeUpTime,
       bedTime: null,
@@ -234,7 +234,7 @@ describe('dailyReport.create', () => {
     expect(result).toStrictEqual({
       id: expect.any(String),
       date: new Date('2026-02-20'),
-      plan: null,
+      goal: null,
       summary: null,
       wakeUpTime: null,
       bedTime: null,

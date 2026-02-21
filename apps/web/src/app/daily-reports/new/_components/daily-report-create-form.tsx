@@ -15,7 +15,7 @@ import { useMutation, useQueryClient, useTRPC } from '@/trpc/client';
 
 const DailyReportCreateFormSchema = v.object({
   date: v.pipe(v.string(), v.minLength(1)),
-  plan: v.optional(v.string()),
+  goal: v.optional(v.string()),
   wakeUpTime: v.optional(v.string()),
   notes: v.optional(v.string()),
 });
@@ -50,7 +50,7 @@ export const DailyReportCreateForm = () => {
   const onSubmit = (data: FormValues) => {
     mutate({
       date: new Date(data.date),
-      plan: emptyToUndefined(data.plan),
+      goal: emptyToUndefined(data.goal),
       wakeUpTime: timeToDate(data.date, data.wakeUpTime),
       notes: emptyToUndefined(data.notes),
     });
@@ -68,8 +68,8 @@ export const DailyReportCreateForm = () => {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="plan">予定</Label>
-          <Textarea id="plan" rows={2} {...register('plan')} />
+          <Label htmlFor="goal">目標</Label>
+          <Textarea id="goal" rows={2} {...register('goal')} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="wakeUpTime">起床時刻</Label>

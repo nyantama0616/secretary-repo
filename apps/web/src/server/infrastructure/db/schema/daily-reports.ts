@@ -5,7 +5,7 @@ import { generateId } from '@/server/domain/id';
 export const dailyReports = pgTable('daily_reports', {
   id: text('id').primaryKey().$defaultFn(generateId),
   date: date('date', { mode: 'date' }).notNull().unique(),
-  plan: text('plan'),
+  goal: text('goal'),
   summary: text('summary'),
   wakeUpTime: timestamp('wake_up_time', { withTimezone: true }),
   bedTime: timestamp('bed_time', { withTimezone: true }),

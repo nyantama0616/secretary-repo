@@ -61,10 +61,10 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
         </section>
       )}
 
-      {report.plan && (
+      {report.goal && (
         <section className="grid gap-2">
-          <h2 className="border-b pb-2 text-lg font-semibold">予定</h2>
-          <p className="whitespace-pre-wrap">{report.plan}</p>
+          <h2 className="border-b pb-2 text-lg font-semibold">目標</h2>
+          <p className="whitespace-pre-wrap">{report.goal}</p>
         </section>
       )}
 

@@ -51,7 +51,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
       description: "新しい日報を作成する",
       inputSchema: {
         date: z.iso.date().describe("日報の日付（例: 2026-02-20）"),
-        plan: optionalString,
+        goal: optionalString,
         wakeUpTime: optionalDatetime,
         notes: optionalString,
       },
@@ -60,7 +60,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
       try {
         const report = await createDailyReportUseCase.execute({
           date: new Date(args.date),
-          plan: args.plan,
+          goal: args.goal,
           wakeUpTime: args.wakeUpTime ? new Date(args.wakeUpTime) : undefined,
           notes: args.notes,
         });
@@ -77,7 +77,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
       description: "既存の日報を更新する",
       inputSchema: {
         id: z.string().describe("日報の ID"),
-        plan: optionalString,
+        goal: optionalString,
         summary: optionalString,
         wakeUpTime: optionalDatetime,
         bedTime: optionalDatetime,
@@ -92,7 +92,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
       try {
         const report = await updateDailyReportUseCase.execute({
           id: args.id,
-          plan: args.plan,
+          goal: args.goal,
           summary: args.summary,
           wakeUpTime: args.wakeUpTime ? new Date(args.wakeUpTime) : undefined,
           bedTime: args.bedTime ? new Date(args.bedTime) : undefined,
