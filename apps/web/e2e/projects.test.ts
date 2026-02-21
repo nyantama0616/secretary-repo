@@ -77,3 +77,32 @@ test.describe('プロジェクト詳細', () => {
     expect(response?.status()).toBe(404);
   });
 });
+
+test.describe('プロジェクト作成', () => {
+  test('フォームに入力して作成すると、一覧に反映される', async ({ page }) => {
+    await page.goto('/projects');
+    await page.getByRole('link', { name: '新規作成' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'プロジェクト作成' }),
+    ).toBeVisible();
+
+    await page.getByLabel('プロジェクト名').fill('新しいプロジェクト');
+    await page.getByLabel('目的').fill('テスト用のプロジェクトである');
+    await page.getByLabel('期限').fill('2026-12-31');
+    await page.getByRole('button', { name: '作成' }).click();
+
+    await expect(page).toHaveURL('/projects');
+    await expect(page.getByText('新しいプロジェクト')).toBeVisible();
+  });
+
+  test('必須項目が未入力で作成すると、バリデーションエラーが表示される', async ({
+    page,
+  }) => {
+    await page.goto('/projects/new');
+    await page.getByRole('button', { name: '作成' }).click();
+
+    await expect(page.getByText('プロジェクト名は必須です')).toBeVisible();
+    await expect(page.getByText('目的は必須です')).toBeVisible();
+  });
+});
