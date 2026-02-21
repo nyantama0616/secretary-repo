@@ -6,10 +6,9 @@ import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-report
 export const dailyReports = pgTable('daily_reports', {
   id: text('id').primaryKey().$defaultFn(generateId),
   date: date('date', { mode: 'date' }).notNull().unique(),
-  monthlyReportId: text('monthly_report_id').references(
-    () => monthlyReports.id,
-    { onDelete: 'set null' },
-  ),
+  monthlyReportId: text('monthly_report_id')
+    .notNull()
+    .references(() => monthlyReports.id, { onDelete: 'cascade' }),
   plan: text('plan'),
   summary: text('summary'),
   wakeUpTime: timestamp('wake_up_time', { withTimezone: true }),
