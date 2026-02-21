@@ -13,20 +13,14 @@ const TEST_MONTHLY_REPORTS = [
     startDate: new Date('2026-01-01'),
     goal: 'プロジェクトAの基盤を構築する',
     summary: '開発基盤の整備と主要機能の実装に注力した月',
-    projectProgress: 'プロジェクトAの主要機能を実装した',
-    growthChanges: 'TDDの習慣が身についてきた',
-    purposeActionGap: '技術調査に時間を使いすぎた',
-    improvements: 'タイムボックスを設定する',
+    review: 'プロジェクトAの主要機能を実装した。TDDの習慣が身についてきた。',
     notes: null,
   },
   {
     startDate: new Date('2026-02-01'),
     goal: 'テストカバレッジを80%にする',
     summary: null,
-    projectProgress: null,
-    growthChanges: null,
-    purposeActionGap: null,
-    improvements: null,
+    review: null,
     notes: '体調不良で活動量が少なかった',
   },
 ];
@@ -63,10 +57,7 @@ describe('monthlyReport.list', () => {
           startDate: TEST_MONTHLY_REPORTS[0].startDate,
           goal: TEST_MONTHLY_REPORTS[0].goal,
           summary: TEST_MONTHLY_REPORTS[0].summary,
-          projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
-          growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
-          purposeActionGap: TEST_MONTHLY_REPORTS[0].purposeActionGap,
-          improvements: TEST_MONTHLY_REPORTS[0].improvements,
+          review: TEST_MONTHLY_REPORTS[0].review,
           notes: TEST_MONTHLY_REPORTS[0].notes,
           createdAt: expect.any(Date),
         },
@@ -75,10 +66,7 @@ describe('monthlyReport.list', () => {
           startDate: TEST_MONTHLY_REPORTS[1].startDate,
           goal: TEST_MONTHLY_REPORTS[1].goal,
           summary: TEST_MONTHLY_REPORTS[1].summary,
-          projectProgress: TEST_MONTHLY_REPORTS[1].projectProgress,
-          growthChanges: TEST_MONTHLY_REPORTS[1].growthChanges,
-          purposeActionGap: TEST_MONTHLY_REPORTS[1].purposeActionGap,
-          improvements: TEST_MONTHLY_REPORTS[1].improvements,
+          review: TEST_MONTHLY_REPORTS[1].review,
           notes: TEST_MONTHLY_REPORTS[1].notes,
           createdAt: expect.any(Date),
         },
@@ -112,10 +100,7 @@ describe('monthlyReport.detail', () => {
       startDate: TEST_MONTHLY_REPORTS[0].startDate,
       goal: TEST_MONTHLY_REPORTS[0].goal,
       summary: TEST_MONTHLY_REPORTS[0].summary,
-      projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
-      growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
-      purposeActionGap: TEST_MONTHLY_REPORTS[0].purposeActionGap,
-      improvements: TEST_MONTHLY_REPORTS[0].improvements,
+      review: TEST_MONTHLY_REPORTS[0].review,
       notes: TEST_MONTHLY_REPORTS[0].notes,
       createdAt: expect.any(Date),
       dailyReports: expect.arrayContaining([
@@ -161,10 +146,7 @@ describe('monthlyReport.create', () => {
       startDate,
       goal: '新機能をリリースする',
       summary: null,
-      projectProgress: null,
-      growthChanges: null,
-      purposeActionGap: null,
-      improvements: null,
+      review: null,
       notes: null,
       createdAt: expect.any(Date),
     });
@@ -207,10 +189,7 @@ describe('monthlyReport.review', () => {
     const result = await caller.monthlyReport.review({
       id: created.id,
       summary: '開発基盤の整備に注力した月',
-      projectProgress: 'プロジェクトAの主要機能を実装した',
-      growthChanges: 'TDDの習慣が身についてきた',
-      purposeActionGap: '技術調査に時間を使いすぎた',
-      improvements: 'タイムボックスを設定する',
+      review: 'プロジェクトAの主要機能を実装した。TDDの習慣が身についてきた。',
       notes: '特になし',
     });
 
@@ -219,16 +198,13 @@ describe('monthlyReport.review', () => {
       startDate: new Date('2026-01-01'),
       goal: null,
       summary: '開発基盤の整備に注力した月',
-      projectProgress: 'プロジェクトAの主要機能を実装した',
-      growthChanges: 'TDDの習慣が身についてきた',
-      purposeActionGap: '技術調査に時間を使いすぎた',
-      improvements: 'タイムボックスを設定する',
+      review: 'プロジェクトAの主要機能を実装した。TDDの習慣が身についてきた。',
       notes: '特になし',
       createdAt: expect.any(Date),
     });
 
     const detail = await caller.monthlyReport.detail({ id: created.id });
-    expect(detail.projectProgress).toBe('プロジェクトAの主要機能を実装した');
+    expect(detail.review).toBe('プロジェクトAの主要機能を実装した。TDDの習慣が身についてきた。');
   });
 
   it('一部のフィールドだけ更新できる', async () => {
@@ -238,12 +214,12 @@ describe('monthlyReport.review', () => {
 
     await caller.monthlyReport.review({
       id: created.id,
-      projectProgress: '進捗あり',
+      review: '進捗あり',
     });
 
     const detail = await caller.monthlyReport.detail({ id: created.id });
-    expect(detail.projectProgress).toBe('進捗あり');
-    expect(detail.growthChanges).toBeNull();
+    expect(detail.review).toBe('進捗あり');
+    expect(detail.summary).toBeNull();
   });
 
   it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {

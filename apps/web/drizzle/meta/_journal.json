@@ -120,6 +120,13 @@
       "when": 1771718400000,
       "tag": "0016_merge_review_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1771804800000,
+      "tag": "0017_merge_monthly_review_fields",
+      "breakpoints": true
     }
   ]
 }

@@ -9,10 +9,7 @@ export const monthlyReports = pgTable(
     startDate: date('start_date', { mode: 'date' }).notNull(),
     goal: text('goal'),
     summary: text('summary'),
-    projectProgress: text('project_progress'),
-    growthChanges: text('growth_changes'),
-    purposeActionGap: text('purpose_action_gap'),
-    improvements: text('improvements'),
+    review: text('review'),
     notes: text('notes'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()

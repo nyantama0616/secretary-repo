@@ -5,10 +5,7 @@ type MonthlyReportListItem = {
   startDate: Date;
   goal: string | null;
   summary: string | null;
-  projectProgress: string | null;
-  growthChanges: string | null;
-  purposeActionGap: string | null;
-  improvements: string | null;
+  review: string | null;
   notes: string | null;
   createdAt: Date;
 };
@@ -26,10 +23,7 @@ export class GetMonthlyReportsUseCase {
       startDate: r.startDate,
       goal: r.goal,
       summary: r.summary,
-      projectProgress: r.projectProgress,
-      growthChanges: r.growthChanges,
-      purposeActionGap: r.purposeActionGap,
-      improvements: r.improvements,
+      review: r.review,
       notes: r.notes,
       createdAt: r.createdAt,
     }));

@@ -11,10 +11,7 @@ export const ReviewMonthlyReportInputSchema = v.object({
   id: v.string(),
   goal: v.optional(v.pipe(v.string(), v.minLength(1))),
   summary: v.optional(v.pipe(v.string(), v.minLength(1))),
-  projectProgress: v.optional(v.pipe(v.string(), v.minLength(1))),
-  growthChanges: v.optional(v.pipe(v.string(), v.minLength(1))),
-  purposeActionGap: v.optional(v.pipe(v.string(), v.minLength(1))),
-  improvements: v.optional(v.pipe(v.string(), v.minLength(1))),
+  review: v.optional(v.pipe(v.string(), v.minLength(1))),
   notes: v.optional(v.pipe(v.string(), v.minLength(1))),
 });
 
@@ -38,10 +35,7 @@ export class ReviewMonthlyReportUseCase {
       ...existing,
       goal: input.goal ?? existing.goal,
       summary: input.summary ?? existing.summary,
-      projectProgress: input.projectProgress ?? existing.projectProgress,
-      growthChanges: input.growthChanges ?? existing.growthChanges,
-      purposeActionGap: input.purposeActionGap ?? existing.purposeActionGap,
-      improvements: input.improvements ?? existing.improvements,
+      review: input.review ?? existing.review,
       notes: input.notes ?? existing.notes,
     });
 
