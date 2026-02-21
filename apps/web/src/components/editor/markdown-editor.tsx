@@ -8,11 +8,13 @@ import { MarkdownViewer } from '@/components/viewer/markdown-viewer';
 import { ViewerFrame } from '@/components/viewer/viewer-frame';
 
 type MarkdownEditorProps = {
+  id: string;
   value: string;
   onChange: (value: string) => void;
 };
 
 export const MarkdownEditor = ({
+  id,
   value,
   onChange,
 }: MarkdownEditorProps) => {
@@ -26,6 +28,7 @@ export const MarkdownEditor = ({
       </TabsList>
       <TabsContent value="edit">
         <Textarea
+          id={id}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={8}

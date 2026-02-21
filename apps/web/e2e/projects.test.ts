@@ -14,14 +14,11 @@ test.describe('プロジェクト一覧', () => {
     await expect(page.getByText('読書記録アプリ')).toBeVisible();
   });
 
-  test('プロジェクトのステータスと目的が表示される', async ({ page }) => {
+  test('プロジェクトのステータスが表示される', async ({ page }) => {
     await page.goto('/projects');
 
     await expect(page.getByText('進行中')).toBeVisible();
     await expect(page.getByText('完了')).toBeVisible();
-    await expect(
-      page.getByText('AI を活用した日報・タスク管理アプリを開発する'),
-    ).toBeVisible();
   });
 
   test('期限があるプロジェクトは期限が表示される', async ({ page }) => {

@@ -32,6 +32,10 @@ export const ProjectCreateForm = () => {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: valibotResolver(ProjectCreateFormSchema),
+    defaultValues: {
+      name: '',
+      purpose: '',
+    },
   });
 
   const { mutate, isPending, error } = useMutation(
@@ -65,12 +69,13 @@ export const ProjectCreateForm = () => {
           )}
         </div>
         <div className="grid gap-2">
-          <Label>目的</Label>
+          <Label htmlFor="purpose">目的</Label>
           <Controller
             name="purpose"
             control={control}
             render={({ field }) => (
               <MarkdownEditor
+                id="purpose"
                 value={field.value ?? ''}
                 onChange={field.onChange}
               />

@@ -144,12 +144,13 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
           )}
         </div>
         <div className="grid gap-2">
-          <Label>説明</Label>
+          <Label htmlFor="description">説明</Label>
           <Controller
             name="description"
             control={control}
             render={({ field }) => (
               <MarkdownEditor
+                id="description"
                 value={field.value ?? ''}
                 onChange={field.onChange}
               />
