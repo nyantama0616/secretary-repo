@@ -106,3 +106,51 @@ test.describe('プロジェクト作成', () => {
     await expect(page.getByText('目的は必須です')).toBeVisible();
   });
 });
+
+test.describe('プロジェクト編集', () => {
+  test('編集ボタンをクリックすると、編集ページに遷移する', async ({
+    page,
+  }) => {
+    await page.goto('/projects');
+    await page.getByText('secretary-repo').click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'プロジェクトを編集' }),
+    ).toBeVisible();
+  });
+
+  test('基本情報を編集して保存すると、詳細ページに反映される', async ({
+    page,
+  }) => {
+    await page.goto('/projects');
+    await page.getByText('secretary-repo').click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await page.getByLabel('プロジェクト名').fill('更新後のプロジェクト');
+    await page.getByLabel('目的').fill('更新後の目的');
+    await page.getByRole('button', { name: '保存する' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: '更新後のプロジェクト' }),
+    ).toBeVisible();
+    await expect(page.getByText('更新後の目的')).toBeVisible();
+  });
+
+  test('ステータスを変更して保存すると、詳細ページに反映される', async ({
+    page,
+  }) => {
+    await page.goto('/projects');
+    await page.getByText('更新後のプロジェクト').click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await page.getByLabel('ステータス').click();
+    await page.getByRole('option', { name: '完了' }).click();
+    await page.getByRole('button', { name: '保存する' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: '更新後のプロジェクト' }),
+    ).toBeVisible();
+    await expect(page.getByText('完了', { exact: true })).toBeVisible();
+  });
+});
