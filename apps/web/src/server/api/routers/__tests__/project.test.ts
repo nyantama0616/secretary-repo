@@ -67,3 +67,33 @@ describe('project.list', () => {
     expect(result).toStrictEqual([]);
   });
 });
+
+describe('project.detail', () => {
+  it('プロジェクトの詳細を返す', async () => {
+    const [inserted] = await db
+      .insert(projects)
+      .values(TEST_PROJECTS[0])
+      .returning();
+
+    const result = await caller.project.detail({ id: inserted.id });
+
+    expect(result).toEqual({
+      id: inserted.id,
+      name: TEST_PROJECTS[0].name,
+      purpose: TEST_PROJECTS[0].purpose,
+      status: TEST_PROJECTS[0].status,
+      deadline: TEST_PROJECTS[0].deadline,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.project.detail({ id: 'non-existent-id' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

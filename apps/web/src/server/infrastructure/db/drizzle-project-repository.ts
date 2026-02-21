@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm';
+
 import type { Project } from '@/server/domain/project/project';
 import { createProject } from '@/server/domain/project/project';
 import type { ProjectRepository } from '@/server/domain/project/project-repository';
@@ -8,6 +10,14 @@ export class DrizzleProjectRepository implements ProjectRepository {
   async findAll(): Promise<Project[]> {
     const rows = await db.select().from(projects);
     return rows.map(toProject);
+  }
+
+  async findById(id: string): Promise<Project | null> {
+    const [row] = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.id, id));
+    return row ? toProject(row) : null;
   }
 }
 
