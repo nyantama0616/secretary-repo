@@ -47,16 +47,7 @@ describe('認証', () => {
 
 describe('monthlyReport.list', () => {
   it('月報一覧を返す', async () => {
-    const [inserted1, inserted2] = await db
-      .insert(monthlyReports)
-      .values(TEST_MONTHLY_REPORTS)
-      .returning();
-
-    await db.insert(dailyReports).values([
-      { ...TEST_DAILY_REPORTS[0], monthlyReportId: inserted1.id },
-      { ...TEST_DAILY_REPORTS[1], monthlyReportId: inserted1.id },
-      { ...TEST_DAILY_REPORTS[2], monthlyReportId: inserted2.id },
-    ]);
+    await db.insert(monthlyReports).values(TEST_MONTHLY_REPORTS);
 
     const result = await caller.monthlyReport.list();
 
@@ -64,9 +55,8 @@ describe('monthlyReport.list', () => {
     expect(result).toEqual(
       expect.arrayContaining([
         {
-          id: inserted1.id,
+          id: expect.any(String),
           startDate: TEST_MONTHLY_REPORTS[0].startDate,
-          date: TEST_DAILY_REPORTS[0].date,
           projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
           growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
           purposeActionGap: TEST_MONTHLY_REPORTS[0].purposeActionGap,
@@ -75,9 +65,8 @@ describe('monthlyReport.list', () => {
           createdAt: expect.any(Date),
         },
         {
-          id: inserted2.id,
+          id: expect.any(String),
           startDate: TEST_MONTHLY_REPORTS[1].startDate,
-          date: TEST_DAILY_REPORTS[2].date,
           projectProgress: TEST_MONTHLY_REPORTS[1].projectProgress,
           growthChanges: TEST_MONTHLY_REPORTS[1].growthChanges,
           purposeActionGap: TEST_MONTHLY_REPORTS[1].purposeActionGap,
@@ -87,15 +76,6 @@ describe('monthlyReport.list', () => {
         },
       ]),
     );
-  });
-
-  it('日報が紐づかない月報の date は null を返す', async () => {
-    await db.insert(monthlyReports).values(TEST_MONTHLY_REPORTS[0]);
-
-    const result = await caller.monthlyReport.list();
-
-    expect(result).toHaveLength(1);
-    expect(result[0].date).toBeNull();
   });
 
   it('月報が存在しない場合、空配列を返す', async () => {
@@ -114,10 +94,7 @@ describe('monthlyReport.detail', () => {
 
     const [dr1, dr2] = await db
       .insert(dailyReports)
-      .values([
-        { ...TEST_DAILY_REPORTS[0], monthlyReportId: inserted.id },
-        { ...TEST_DAILY_REPORTS[1], monthlyReportId: inserted.id },
-      ])
+      .values([TEST_DAILY_REPORTS[0], TEST_DAILY_REPORTS[1]])
       .returning();
 
     const result = await caller.monthlyReport.detail({ id: inserted.id });
@@ -254,57 +231,6 @@ describe('monthlyReport.review', () => {
   it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {
     await expect(
       caller.monthlyReport.review({ id: 'non-existent-id' }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'NOT_FOUND',
-      }),
-    );
-  });
-});
-
-describe('monthlyReport.delete', () => {
-  it('月報を削除する', async () => {
-    const created = await caller.monthlyReport.create({
-      startDate: new Date('2026-01-01'),
-    });
-
-    await caller.monthlyReport.delete({ id: created.id });
-
-    await expect(
-      caller.monthlyReport.detail({ id: created.id }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'NOT_FOUND',
-      }),
-    );
-  });
-
-  // NOTE: カスケード動作は本来 Infrastructure 層の責務だが、
-  // 紐づく日報が意図通り削除されることはデータ整合性上重要なため例外的に検証する
-  it('月報を削除すると、紐づいていた日報も削除される', async () => {
-    const created = await caller.monthlyReport.create({
-      startDate: new Date('2026-01-01'),
-    });
-
-    const [dr] = await db
-      .insert(dailyReports)
-      .values({ date: TEST_DAILY_REPORTS[0].date, monthlyReportId: created.id })
-      .returning();
-
-    await caller.monthlyReport.delete({ id: created.id });
-
-    await expect(
-      caller.dailyReport.detail({ id: dr.id }),
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'NOT_FOUND',
-      }),
-    );
-  });
-
-  it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {
-    await expect(
-      caller.monthlyReport.delete({ id: 'non-existent-id' }),
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'NOT_FOUND',

@@ -6,5 +6,4 @@ export interface MonthlyReportRepository {
   findByStartDate(startDate: Date): Promise<MonthlyReport | null>;
   save(monthlyReport: MonthlyReport): Promise<void>;
   update(monthlyReport: MonthlyReport): Promise<void>;
-  delete(id: string): Promise<void>;
 }

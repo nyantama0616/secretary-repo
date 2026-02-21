@@ -1,4 +1,4 @@
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, gte, inArray, lt } from 'drizzle-orm';
 
 import type { DailyReport } from '@/server/domain/daily-report/daily-report';
 import { createDailyReport } from '@/server/domain/daily-report/daily-report';
@@ -29,14 +29,13 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     return rows.map(toDailyReport);
   }
 
-  async findByMonthlyReportIds(
-    monthlyReportIds: string[],
-  ): Promise<DailyReport[]> {
-    if (monthlyReportIds.length === 0) return [];
+  async findByDateRange(start: Date, end: Date): Promise<DailyReport[]> {
     const rows = await db
       .select()
       .from(dailyReports)
-      .where(inArray(dailyReports.monthlyReportId, monthlyReportIds));
+      .where(
+        and(gte(dailyReports.date, start), lt(dailyReports.date, end)),
+      );
     return rows.map(toDailyReport);
   }
 
@@ -52,7 +51,6 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
     await db.insert(dailyReports).values({
       id: dailyReport.id,
       date: dailyReport.date,
-      monthlyReportId: dailyReport.monthlyReportId,
       plan: dailyReport.plan,
       summary: dailyReport.summary,
       wakeUpTime: dailyReport.wakeUpTime,
@@ -70,7 +68,6 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .update(dailyReports)
       .set({
         date: dailyReport.date,
-        monthlyReportId: dailyReport.monthlyReportId,
         plan: dailyReport.plan,
         summary: dailyReport.summary,
         wakeUpTime: dailyReport.wakeUpTime,
@@ -84,9 +81,6 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .where(eq(dailyReports.id, dailyReport.id));
   }
 
-  async delete(id: string): Promise<void> {
-    await db.delete(dailyReports).where(eq(dailyReports.id, id));
-  }
 }
 
 const toDailyReport = (
@@ -95,7 +89,6 @@ const toDailyReport = (
   return createDailyReport({
     id: row.id,
     date: row.date,
-    monthlyReportId: row.monthlyReportId,
     plan: row.plan,
     summary: row.summary,
     wakeUpTime: row.wakeUpTime,

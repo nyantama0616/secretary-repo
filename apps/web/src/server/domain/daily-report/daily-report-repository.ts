@@ -5,8 +5,7 @@ export interface DailyReportRepository {
   findById(id: string): Promise<DailyReport | null>;
   findByIds(ids: string[]): Promise<DailyReport[]>;
   findByDate(date: Date): Promise<DailyReport | null>;
-  findByMonthlyReportIds(monthlyReportIds: string[]): Promise<DailyReport[]>;
+  findByDateRange(start: Date, end: Date): Promise<DailyReport[]>;
   save(dailyReport: DailyReport): Promise<void>;
   update(dailyReport: DailyReport): Promise<void>;
-  delete(id: string): Promise<void>;
 }

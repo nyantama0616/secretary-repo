@@ -2,12 +2,10 @@ import { DrizzleDailyReportRepository } from '@/server/infrastructure/db/drizzle
 import { DrizzleMonthlyReportRepository } from '@/server/infrastructure/db/drizzle-monthly-report-repository';
 import { DrizzleTaskRepository } from '@/server/infrastructure/db/drizzle-task-repository';
 import { CreateDailyReportUseCase } from '@/server/usecase/daily-report/create-daily-report';
-import { DeleteDailyReportUseCase } from '@/server/usecase/daily-report/delete-daily-report';
 import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-report';
 import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-reports';
 import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
 import { CreateMonthlyReportUseCase } from '@/server/usecase/monthly-report/create-monthly-report';
-import { DeleteMonthlyReportUseCase } from '@/server/usecase/monthly-report/delete-monthly-report';
 import { GetMonthlyReportUseCase } from '@/server/usecase/monthly-report/get-monthly-report';
 import { GetMonthlyReportsUseCase } from '@/server/usecase/monthly-report/get-monthly-reports';
 import { ReviewMonthlyReportUseCase } from '@/server/usecase/monthly-report/review-monthly-report';
@@ -29,18 +27,13 @@ export const getDailyReportUseCase = new GetDailyReportUseCase(
 );
 export const createDailyReportUseCase = new CreateDailyReportUseCase(
   dailyReportRepository,
-  monthlyReportRepository,
 );
 export const updateDailyReportUseCase = new UpdateDailyReportUseCase(
-  dailyReportRepository,
-);
-export const deleteDailyReportUseCase = new DeleteDailyReportUseCase(
   dailyReportRepository,
 );
 
 export const getMonthlyReportsUseCase = new GetMonthlyReportsUseCase(
   monthlyReportRepository,
-  dailyReportRepository,
 );
 export const getMonthlyReportUseCase = new GetMonthlyReportUseCase(
   monthlyReportRepository,
@@ -50,9 +43,6 @@ export const createMonthlyReportUseCase = new CreateMonthlyReportUseCase(
   monthlyReportRepository,
 );
 export const reviewMonthlyReportUseCase = new ReviewMonthlyReportUseCase(
-  monthlyReportRepository,
-);
-export const deleteMonthlyReportUseCase = new DeleteMonthlyReportUseCase(
   monthlyReportRepository,
 );
 
