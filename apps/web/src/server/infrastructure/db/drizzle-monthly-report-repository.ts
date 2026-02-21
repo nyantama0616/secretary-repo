@@ -32,6 +32,19 @@ export class DrizzleMonthlyReportRepository
       notes: monthlyReport.notes,
     });
   }
+
+  async update(monthlyReport: MonthlyReport): Promise<void> {
+    await db
+      .update(monthlyReports)
+      .set({
+        projectProgress: monthlyReport.projectProgress,
+        growthChanges: monthlyReport.growthChanges,
+        purposeActionGap: monthlyReport.purposeActionGap,
+        improvements: monthlyReport.improvements,
+        notes: monthlyReport.notes,
+      })
+      .where(eq(monthlyReports.id, monthlyReport.id));
+  }
 }
 
 const toMonthlyReport = (

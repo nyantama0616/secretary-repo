@@ -174,3 +174,54 @@ describe('monthlyReport.create', () => {
     expect(detail.id).toBe(result.id);
   });
 });
+
+describe('monthlyReport.review', () => {
+  it('月報の振り返りを更新する', async () => {
+    const created = await caller.monthlyReport.create();
+
+    const result = await caller.monthlyReport.review({
+      id: created.id,
+      projectProgress: 'プロジェクトAの主要機能を実装した',
+      growthChanges: 'TDDの習慣が身についてきた',
+      purposeActionGap: '技術調査に時間を使いすぎた',
+      improvements: 'タイムボックスを設定する',
+      notes: '特になし',
+    });
+
+    expect(result).toEqual({
+      id: created.id,
+      projectProgress: 'プロジェクトAの主要機能を実装した',
+      growthChanges: 'TDDの習慣が身についてきた',
+      purposeActionGap: '技術調査に時間を使いすぎた',
+      improvements: 'タイムボックスを設定する',
+      notes: '特になし',
+      createdAt: expect.any(Date),
+    });
+
+    const detail = await caller.monthlyReport.detail({ id: created.id });
+    expect(detail.projectProgress).toBe('プロジェクトAの主要機能を実装した');
+  });
+
+  it('一部のフィールドだけ更新できる', async () => {
+    const created = await caller.monthlyReport.create();
+
+    await caller.monthlyReport.review({
+      id: created.id,
+      projectProgress: '進捗あり',
+    });
+
+    const detail = await caller.monthlyReport.detail({ id: created.id });
+    expect(detail.projectProgress).toBe('進捗あり');
+    expect(detail.growthChanges).toBeNull();
+  });
+
+  it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.monthlyReport.review({ id: 'non-existent-id' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

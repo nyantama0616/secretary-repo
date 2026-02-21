@@ -5,8 +5,10 @@ import {
   createMonthlyReportUseCase,
   getMonthlyReportUseCase,
   getMonthlyReportsUseCase,
+  reviewMonthlyReportUseCase,
 } from '@/server/infrastructure/di/container';
 import { GetMonthlyReportInputSchema } from '@/server/usecase/monthly-report/get-monthly-report';
+import { ReviewMonthlyReportInputSchema } from '@/server/usecase/monthly-report/review-monthly-report';
 
 export const monthlyReportRouter = router({
   list: protectedProcedure.query(() => getMonthlyReportsUseCase.execute()),
@@ -16,4 +18,7 @@ export const monthlyReportRouter = router({
   create: protectedProcedure.mutation(() =>
     createMonthlyReportUseCase.execute(),
   ),
+  review: protectedProcedure
+    .input(v.parser(ReviewMonthlyReportInputSchema))
+    .mutation(({ input }) => reviewMonthlyReportUseCase.execute(input)),
 });

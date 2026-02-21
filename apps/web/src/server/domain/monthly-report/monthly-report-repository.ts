@@ -4,4 +4,5 @@ export interface MonthlyReportRepository {
   findAll(): Promise<MonthlyReport[]>;
   findById(id: string): Promise<MonthlyReport | null>;
   save(monthlyReport: MonthlyReport): Promise<void>;
+  update(monthlyReport: MonthlyReport): Promise<void>;
 }
