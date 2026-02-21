@@ -265,16 +265,10 @@ describe('dailyReport.delete', () => {
 });
 
 describe('dailyReport.create', () => {
-  const newDailyReport = {
+  const createInput = {
     date: new Date('2026-02-19'),
     plan: '日報作成機能の実装',
-    summary: '日報作成機能を実装した',
     wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
-    bedTime: new Date('2026-02-19T23:30:00+09:00'),
-    goodPoints: 'TDDで進められた',
-    badPoints: '設計に時間がかかった',
-    learnings: 'Valibotのoptionalの使い方',
-    nextActions: 'E2Eテストを書く',
     notes: '特になし',
   };
 
@@ -282,23 +276,23 @@ describe('dailyReport.create', () => {
     const mr = await createTestMonthlyReport();
 
     const result = await caller.dailyReport.create({
-      ...newDailyReport,
+      ...createInput,
       monthlyReportId: mr.id,
     });
 
     expect(result).toStrictEqual({
       id: expect.any(String),
-      date: newDailyReport.date,
+      date: createInput.date,
       monthlyReportId: mr.id,
-      plan: newDailyReport.plan,
-      summary: newDailyReport.summary,
-      wakeUpTime: newDailyReport.wakeUpTime,
-      bedTime: newDailyReport.bedTime,
-      goodPoints: newDailyReport.goodPoints,
-      badPoints: newDailyReport.badPoints,
-      learnings: newDailyReport.learnings,
-      nextActions: newDailyReport.nextActions,
-      notes: newDailyReport.notes,
+      plan: createInput.plan,
+      summary: null,
+      wakeUpTime: createInput.wakeUpTime,
+      bedTime: null,
+      goodPoints: null,
+      badPoints: null,
+      learnings: null,
+      nextActions: null,
+      notes: createInput.notes,
       createdAt: expect.any(Date),
     });
   });
@@ -331,15 +325,33 @@ describe('dailyReport.create', () => {
   it('同じ日付の日報が存在する場合、CONFLICT エラーを返す', async () => {
     const mr = await createTestMonthlyReport();
     await db.insert(dailyReports).values({
-      date: newDailyReport.date,
+      date: createInput.date,
       monthlyReportId: mr.id,
     });
 
     await expect(
-      caller.dailyReport.create({ ...newDailyReport, monthlyReportId: mr.id }),
+      caller.dailyReport.create({
+        ...createInput,
+        monthlyReportId: mr.id,
+      }),
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'CONFLICT',
+      }),
+    );
+  });
+
+  it('月報が存在しない場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.dailyReport.create({
+        ...createInput,
+        monthlyReportId: nonExistentId,
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
       }),
     );
   });

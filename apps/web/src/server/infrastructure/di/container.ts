@@ -19,6 +19,7 @@ import { UpdateTaskUseCase } from '@/server/usecase/task/update-task';
 import { UpdateTaskStatusUseCase } from '@/server/usecase/task/update-task-status';
 
 const dailyReportRepository = new DrizzleDailyReportRepository();
+const monthlyReportRepository = new DrizzleMonthlyReportRepository();
 
 export const getDailyReportsUseCase = new GetDailyReportsUseCase(
   dailyReportRepository,
@@ -28,6 +29,7 @@ export const getDailyReportUseCase = new GetDailyReportUseCase(
 );
 export const createDailyReportUseCase = new CreateDailyReportUseCase(
   dailyReportRepository,
+  monthlyReportRepository,
 );
 export const updateDailyReportUseCase = new UpdateDailyReportUseCase(
   dailyReportRepository,
@@ -35,8 +37,6 @@ export const updateDailyReportUseCase = new UpdateDailyReportUseCase(
 export const deleteDailyReportUseCase = new DeleteDailyReportUseCase(
   dailyReportRepository,
 );
-
-const monthlyReportRepository = new DrizzleMonthlyReportRepository();
 
 export const getMonthlyReportsUseCase = new GetMonthlyReportsUseCase(
   monthlyReportRepository,

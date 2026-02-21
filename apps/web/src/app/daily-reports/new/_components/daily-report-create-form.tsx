@@ -54,16 +54,12 @@ export const DailyReportCreateForm = () => {
   );
 
   const onSubmit = (data: FormValues) => {
+    // TODO: monthlyReportId を親から受け取るようにリファクタする
     mutate({
+      monthlyReportId: '',
       date: new Date(data.date),
       plan: emptyToUndefined(data.plan),
-      summary: emptyToUndefined(data.summary),
       wakeUpTime: timeToDate(data.date, data.wakeUpTime),
-      bedTime: timeToDate(data.date, data.bedTime),
-      goodPoints: emptyToUndefined(data.goodPoints),
-      badPoints: emptyToUndefined(data.badPoints),
-      learnings: emptyToUndefined(data.learnings),
-      nextActions: emptyToUndefined(data.nextActions),
       notes: emptyToUndefined(data.notes),
     });
   };
