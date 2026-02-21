@@ -1,6 +1,6 @@
 {
-  "id": "631adebc-942b-4ffa-bb6f-8f0f6285c4b1",
-  "prevId": "90846612-a535-4116-b852-78da0c4fd639",
+  "id": "34f8efbe-af85-4aaf-9dec-38cc3d3b264d",
+  "prevId": "631adebc-942b-4ffa-bb6f-8f0f6285c4b1",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -88,10 +88,10 @@
       "uniqueConstraints": {
         "daily_reports_date_unique": {
           "name": "daily_reports_date_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "date"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -170,12 +170,63 @@
       "uniqueConstraints": {
         "monthly_reports_start_date_unique": {
           "name": "monthly_reports_start_date_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "start_date"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.projects": {
+      "name": "projects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "purpose": {
+          "name": "purpose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "deadline": {
+          "name": "deadline",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -252,15 +303,15 @@
         "tasks_daily_report_id_daily_reports_id_fk": {
           "name": "tasks_daily_report_id_daily_reports_id_fk",
           "tableFrom": "tasks",
+          "tableTo": "daily_reports",
           "columnsFrom": [
             "daily_report_id"
           ],
-          "tableTo": "daily_reports",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -272,10 +323,10 @@
   },
   "enums": {},
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

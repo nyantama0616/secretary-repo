@@ -5,12 +5,14 @@ import { cookies } from 'next/headers';
 import { AUTH_COOKIE_NAME, verifyApiKey } from '@/server/api/auth';
 import { dailyReportRouter } from '@/server/api/routers/daily-report';
 import { monthlyReportRouter } from '@/server/api/routers/monthly-report';
+import { projectRouter } from '@/server/api/routers/project';
 import { taskRouter } from '@/server/api/routers/task';
 import { createCallerFactory, router } from '@/server/api/trpc';
 
 export const appRouter = router({
   dailyReport: dailyReportRouter,
   monthlyReport: monthlyReportRouter,
+  project: projectRouter,
   task: taskRouter,
 });
 
