@@ -129,3 +129,51 @@ describe('project.create', () => {
     expect(result.deadline).toBeNull();
   });
 });
+
+describe('project.update', () => {
+  it('プロジェクトを更新する', async () => {
+    const created = await caller.project.create({
+      name: '元の名前',
+      purpose: '元の目的',
+      deadline: new Date('2026-06-30'),
+    });
+
+    await caller.project.update({
+      id: created.id,
+      name: '変更後の名前',
+      purpose: '変更後の目的',
+      deadline: new Date('2026-12-31'),
+    });
+
+    const detail = await caller.project.detail({ id: created.id });
+    expect(detail.name).toBe('変更後の名前');
+    expect(detail.purpose).toBe('変更後の目的');
+    expect(detail.deadline).toEqual(new Date('2026-12-31'));
+  });
+
+  it('一部のフィールドだけ更新できる', async () => {
+    const created = await caller.project.create({
+      name: '元の名前',
+      purpose: '元の目的',
+    });
+
+    await caller.project.update({
+      id: created.id,
+      name: '変更後の名前',
+    });
+
+    const detail = await caller.project.detail({ id: created.id });
+    expect(detail.name).toBe('変更後の名前');
+    expect(detail.purpose).toBe('元の目的');
+  });
+
+  it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.project.update({ id: 'non-existent-id', name: 'test' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

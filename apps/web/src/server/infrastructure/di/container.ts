@@ -13,6 +13,7 @@ import { ReviewMonthlyReportUseCase } from '@/server/usecase/monthly-report/revi
 import { CreateProjectUseCase } from '@/server/usecase/project/create-project';
 import { GetProjectUseCase } from '@/server/usecase/project/get-project';
 import { GetProjectsUseCase } from '@/server/usecase/project/get-projects';
+import { UpdateProjectUseCase } from '@/server/usecase/project/update-project';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
 import { DeleteTaskUseCase } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
@@ -55,6 +56,7 @@ const projectRepository = new DrizzleProjectRepository();
 export const getProjectsUseCase = new GetProjectsUseCase(projectRepository);
 export const getProjectUseCase = new GetProjectUseCase(projectRepository);
 export const createProjectUseCase = new CreateProjectUseCase(projectRepository);
+export const updateProjectUseCase = new UpdateProjectUseCase(projectRepository);
 
 const taskRepository = new DrizzleTaskRepository();
 

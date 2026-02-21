@@ -2,7 +2,10 @@ import { eq } from 'drizzle-orm';
 
 import type { Project } from '@/server/domain/project/project';
 import { createProject } from '@/server/domain/project/project';
-import type { ProjectRepository } from '@/server/domain/project/project-repository';
+import type {
+  ProjectRepository,
+  ProjectUpdatableFields,
+} from '@/server/domain/project/project-repository';
 import { db } from '@/server/infrastructure/db/client';
 import { projects } from '@/server/infrastructure/db/schema/projects';
 
@@ -28,6 +31,10 @@ export class DrizzleProjectRepository implements ProjectRepository {
       status: project.status,
       deadline: project.deadline,
     });
+  }
+
+  async update(id: string, fields: ProjectUpdatableFields): Promise<void> {
+    await db.update(projects).set(fields).where(eq(projects.id, id));
   }
 }
 
