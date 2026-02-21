@@ -10,7 +10,8 @@ const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
     goal: '機能Aの実装を進める',
-    summary: '機能Aの主要部分を実装し、集中して作業できた',
+    summary:
+      '機能Aの主要部分を実装し、集中して作業できた。\n予定していたAPI設計も完了した。\n明日はテストを書く予定。',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
     goodPoints: '集中して作業できた',
