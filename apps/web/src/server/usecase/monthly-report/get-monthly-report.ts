@@ -12,6 +12,7 @@ type GetMonthlyReportInput = v.InferOutput<typeof GetMonthlyReportInputSchema>;
 
 type MonthlyReportDetail = {
   id: string;
+  startDate: Date;
   projectProgress: string | null;
   growthChanges: string | null;
   purposeActionGap: string | null;
@@ -45,6 +46,7 @@ export class GetMonthlyReportUseCase {
 
     return {
       id: monthlyReport.id,
+      startDate: monthlyReport.startDate,
       projectProgress: monthlyReport.projectProgress,
       growthChanges: monthlyReport.growthChanges,
       purposeActionGap: monthlyReport.purposeActionGap,

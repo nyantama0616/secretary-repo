@@ -10,6 +10,7 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 
 const TEST_MONTHLY_REPORTS = [
   {
+    startDate: new Date('2026-01-01'),
     projectProgress: 'プロジェクトAの主要機能を実装した',
     growthChanges: 'TDDの習慣が身についてきた',
     purposeActionGap: '技術調査に時間を使いすぎた',
@@ -17,6 +18,7 @@ const TEST_MONTHLY_REPORTS = [
     notes: null,
   },
   {
+    startDate: new Date('2026-02-01'),
     projectProgress: null,
     growthChanges: null,
     purposeActionGap: null,
@@ -63,6 +65,7 @@ describe('monthlyReport.list', () => {
       expect.arrayContaining([
         {
           id: inserted1.id,
+          startDate: TEST_MONTHLY_REPORTS[0].startDate,
           date: TEST_DAILY_REPORTS[0].date,
           projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
           growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
@@ -73,6 +76,7 @@ describe('monthlyReport.list', () => {
         },
         {
           id: inserted2.id,
+          startDate: TEST_MONTHLY_REPORTS[1].startDate,
           date: TEST_DAILY_REPORTS[2].date,
           projectProgress: TEST_MONTHLY_REPORTS[1].projectProgress,
           growthChanges: TEST_MONTHLY_REPORTS[1].growthChanges,
@@ -120,6 +124,7 @@ describe('monthlyReport.detail', () => {
 
     expect(result).toEqual({
       id: inserted.id,
+      startDate: TEST_MONTHLY_REPORTS[0].startDate,
       projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
       growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
       purposeActionGap: TEST_MONTHLY_REPORTS[0].purposeActionGap,
@@ -158,10 +163,12 @@ describe('monthlyReport.detail', () => {
 
 describe('monthlyReport.create', () => {
   it('空の月報を作成する', async () => {
-    const result = await caller.monthlyReport.create();
+    const startDate = new Date('2026-03-01');
+    const result = await caller.monthlyReport.create({ startDate });
 
     expect(result).toEqual({
       id: expect.any(String),
+      startDate,
       projectProgress: null,
       growthChanges: null,
       purposeActionGap: null,
@@ -172,12 +179,38 @@ describe('monthlyReport.create', () => {
 
     const detail = await caller.monthlyReport.detail({ id: result.id });
     expect(detail.id).toBe(result.id);
+    expect(detail.startDate).toEqual(startDate);
+  });
+
+  it('1日以外の日付の場合、BAD_REQUEST エラーを返す', async () => {
+    await expect(
+      caller.monthlyReport.create({ startDate: new Date('2026-03-15') }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+      }),
+    );
+  });
+
+  it('同じ startDate の月報が既に存在する場合、CONFLICT エラーを返す', async () => {
+    const startDate = new Date('2026-03-01');
+    await caller.monthlyReport.create({ startDate });
+
+    await expect(
+      caller.monthlyReport.create({ startDate }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'CONFLICT',
+      }),
+    );
   });
 });
 
 describe('monthlyReport.review', () => {
   it('月報の振り返りを更新する', async () => {
-    const created = await caller.monthlyReport.create();
+    const created = await caller.monthlyReport.create({
+      startDate: new Date('2026-01-01'),
+    });
 
     const result = await caller.monthlyReport.review({
       id: created.id,
@@ -190,6 +223,7 @@ describe('monthlyReport.review', () => {
 
     expect(result).toEqual({
       id: created.id,
+      startDate: new Date('2026-01-01'),
       projectProgress: 'プロジェクトAの主要機能を実装した',
       growthChanges: 'TDDの習慣が身についてきた',
       purposeActionGap: '技術調査に時間を使いすぎた',
@@ -203,7 +237,9 @@ describe('monthlyReport.review', () => {
   });
 
   it('一部のフィールドだけ更新できる', async () => {
-    const created = await caller.monthlyReport.create();
+    const created = await caller.monthlyReport.create({
+      startDate: new Date('2026-01-01'),
+    });
 
     await caller.monthlyReport.review({
       id: created.id,
@@ -228,7 +264,9 @@ describe('monthlyReport.review', () => {
 
 describe('monthlyReport.delete', () => {
   it('月報を削除する', async () => {
-    const created = await caller.monthlyReport.create();
+    const created = await caller.monthlyReport.create({
+      startDate: new Date('2026-01-01'),
+    });
 
     await caller.monthlyReport.delete({ id: created.id });
 
@@ -244,7 +282,9 @@ describe('monthlyReport.delete', () => {
   // NOTE: カスケード動作は本来 Infrastructure 層の責務だが、
   // 紐づく日報が意図通り削除されることはデータ整合性上重要なため例外的に検証する
   it('月報を削除すると、紐づいていた日報も削除される', async () => {
-    const created = await caller.monthlyReport.create();
+    const created = await caller.monthlyReport.create({
+      startDate: new Date('2026-01-01'),
+    });
 
     const [dr] = await db
       .insert(dailyReports)

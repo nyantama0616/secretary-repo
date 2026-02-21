@@ -3,6 +3,7 @@ import * as v from 'valibot';
 const MonthlyReportSchema = v.pipe(
   v.object({
     id: v.string(),
+    startDate: v.date(),
     projectProgress: v.nullable(v.string()),
     growthChanges: v.nullable(v.string()),
     purposeActionGap: v.nullable(v.string()),

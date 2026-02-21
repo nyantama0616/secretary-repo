@@ -38,7 +38,10 @@ const TEST_DAILY_REPORTS = [
 ];
 
 const createTestMonthlyReport = async () => {
-  const [mr] = await db.insert(monthlyReports).values({}).returning();
+  const [mr] = await db
+    .insert(monthlyReports)
+    .values({ startDate: new Date('2026-01-01') })
+    .returning();
   return mr;
 };
 

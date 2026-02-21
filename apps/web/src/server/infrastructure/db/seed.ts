@@ -73,7 +73,10 @@ const main = async () => {
     await tx.execute(
       sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
     );
-    const [mr] = await tx.insert(monthlyReports).values({}).returning();
+    const [mr] = await tx
+      .insert(monthlyReports)
+      .values({ startDate: new Date('2026-02-01') })
+      .returning();
     const insertedReports = await tx
       .insert(dailyReports)
       .values(

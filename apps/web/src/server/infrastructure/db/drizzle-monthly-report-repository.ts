@@ -22,9 +22,18 @@ export class DrizzleMonthlyReportRepository
     return rows[0] ? toMonthlyReport(rows[0]) : null;
   }
 
+  async findByStartDate(startDate: Date): Promise<MonthlyReport | null> {
+    const rows = await db
+      .select()
+      .from(monthlyReports)
+      .where(eq(monthlyReports.startDate, startDate));
+    return rows[0] ? toMonthlyReport(rows[0]) : null;
+  }
+
   async save(monthlyReport: MonthlyReport): Promise<void> {
     await db.insert(monthlyReports).values({
       id: monthlyReport.id,
+      startDate: monthlyReport.startDate,
       projectProgress: monthlyReport.projectProgress,
       growthChanges: monthlyReport.growthChanges,
       purposeActionGap: monthlyReport.purposeActionGap,
@@ -56,6 +65,7 @@ const toMonthlyReport = (
 ): MonthlyReport => {
   return createMonthlyReport({
     id: row.id,
+    startDate: row.startDate,
     projectProgress: row.projectProgress,
     growthChanges: row.growthChanges,
     purposeActionGap: row.purposeActionGap,

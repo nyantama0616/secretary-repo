@@ -3,6 +3,7 @@ import type { MonthlyReportRepository } from '@/server/domain/monthly-report/mon
 
 type MonthlyReportListItem = {
   id: string;
+  startDate: Date;
   date: Date | null;
   projectProgress: string | null;
   growthChanges: string | null;
@@ -38,6 +39,7 @@ export class GetMonthlyReportsUseCase {
 
     return monthlyReports.map((r) => ({
       id: r.id,
+      startDate: r.startDate,
       date: earliestDateByMonthlyReportId.get(r.id) ?? null,
       projectProgress: r.projectProgress,
       growthChanges: r.growthChanges,
