@@ -13,11 +13,8 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
   }
 
   async findById(id: string): Promise<DailyReport | null> {
-    const rows = await db
-      .select()
-      .from(dailyReports)
-      .where(eq(dailyReports.id, id));
-    return rows[0] ? toDailyReport(rows[0]) : null;
+    const results = await this.findByIds([id]);
+    return results[0] ?? null;
   }
 
   async findByIds(ids: string[]): Promise<DailyReport[]> {
