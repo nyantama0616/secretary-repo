@@ -1,4 +1,7 @@
 import { expect, test } from './fixtures';
+import { seed } from './seed';
+
+test.beforeAll(seed);
 
 test.describe('タスク一覧', () => {
   test('一覧ページを開くと、タスクが表示される', async ({ page }) => {

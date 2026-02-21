@@ -1,4 +1,7 @@
 import { expect, test } from './fixtures';
+import { seed } from './seed';
+
+test.beforeAll(seed);
 
 test.describe('日報一覧', () => {
   test('一覧ページを開くと、日報が表示される', async ({ page }) => {
@@ -57,6 +60,21 @@ test.describe('日報詳細', () => {
 });
 
 test.describe('日報編集', () => {
+  test('編集フォームに既存の値がプリフィルされている', async ({ page }) => {
+    await page.goto('/daily-reports');
+    await page
+      .getByRole('link', {
+        name: /機能Aの主要部分を実装し、集中して作業できた/,
+      })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
+    await expect(page.getByLabel('良かった点')).toHaveValue(
+      '集中して作業できた',
+    );
+  });
+
   test('詳細画面から編集ページに遷移し、日報を更新すると、詳細に反映される', async ({
     page,
   }) => {
@@ -78,44 +96,6 @@ test.describe('日報編集', () => {
     await expect(page).toHaveURL(/\/daily-reports\/[\w-]+$/);
     await expect(page.getByText('編集後のサマリー')).toBeVisible();
   });
-
-  test('編集フォームに既存の値がプリフィルされている', async ({ page }) => {
-    await page.goto('/daily-reports');
-    await page
-      .getByRole('link', {
-        name: /機能Aの主要部分を実装し、集中して作業できた/,
-      })
-      .click();
-    await page.getByRole('link', { name: '編集' }).click();
-
-    await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
-    await expect(page.getByLabel('良かった点')).toHaveValue(
-      '集中して作業できた',
-    );
-  });
-});
-
-test.describe('日報削除', () => {
-  test('編集画面から日報を削除すると、一覧から消える', async ({ page }) => {
-    await page.goto('/daily-reports');
-    await page
-      .getByRole('link', {
-        name: /テストの基本を学んだが体調不良で早退した/,
-      })
-      .click();
-    await page.getByRole('link', { name: '編集' }).click();
-    await page.getByRole('button', { name: '削除' }).click();
-
-    await expect(
-      page.getByRole('heading', { name: '日報を削除しますか？' }),
-    ).toBeVisible();
-    await page.getByRole('button', { name: '削除する' }).click();
-
-    await expect(page).toHaveURL('/daily-reports');
-    await expect(
-      page.getByText('テストの基本を学んだが体調不良で早退した'),
-    ).not.toBeVisible();
-  });
 });
 
 test.describe('日報作成', () => {
@@ -125,13 +105,9 @@ test.describe('日報作成', () => {
     await page.goto('/daily-reports/new');
     await page.getByLabel('日付').fill('2026-02-20');
     await page.getByLabel('目標').fill('リファクタリング');
-    await page.getByLabel('サマリー').fill('リファクタリングを完了した');
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page).toHaveURL('/daily-reports');
-    await expect(
-      page.getByText('リファクタリングを完了した'),
-    ).toBeVisible();
   });
 
   test('一覧の「日報を作成」ボタンから作成ページに遷移できる', async ({

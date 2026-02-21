@@ -1,4 +1,7 @@
 import { expect, test } from './fixtures';
+import { seed } from './seed';
+
+test.beforeAll(seed);
 
 test.describe('月報一覧', () => {
   test('一覧ページを開くと、月報が表示される', async ({ page }) => {
