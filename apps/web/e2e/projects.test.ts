@@ -41,4 +41,39 @@ test.describe('プロジェクト一覧', () => {
       page.getByRole('heading', { name: 'プロジェクト一覧' }),
     ).toBeVisible();
   });
+
+  test('プロジェクトをクリックすると、詳細ページに遷移する', async ({
+    page,
+  }) => {
+    await page.goto('/projects');
+    await page.getByText('secretary-repo').click();
+
+    await expect(
+      page.getByRole('heading', { name: 'secretary-repo' }),
+    ).toBeVisible();
+  });
+});
+
+test.describe('プロジェクト詳細', () => {
+  test('プロジェクトの詳細情報が表示される', async ({ page }) => {
+    await page.goto('/projects');
+    await page.getByText('secretary-repo').click();
+
+    await expect(
+      page.getByRole('heading', { name: 'secretary-repo' }),
+    ).toBeVisible();
+    await expect(page.getByText('進行中')).toBeVisible();
+    await expect(
+      page.getByText('AI を活用した日報・タスク管理アプリを開発する'),
+    ).toBeVisible();
+    await expect(page.getByText('2026/06/30（火）')).toBeVisible();
+  });
+
+  test('存在しないプロジェクトにアクセスすると、404ページが表示される', async ({
+    page,
+  }) => {
+    const response = await page.goto('/projects/nonexistent-id');
+
+    expect(response?.status()).toBe(404);
+  });
 });
