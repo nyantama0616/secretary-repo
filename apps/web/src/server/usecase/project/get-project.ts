@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 
 import { NotFoundError } from '@/server/domain/error/domain-errors';
+import type { ProjectStatus } from '@/server/domain/project/project';
 import type { ProjectRepository } from '@/server/domain/project/project-repository';
 
 export const GetProjectInputSchema = v.object({
@@ -13,7 +14,7 @@ type ProjectDetail = {
   id: string;
   name: string;
   purpose: string;
-  status: string;
+  status: ProjectStatus;
   deadline: Date | null;
   createdAt: Date;
 };

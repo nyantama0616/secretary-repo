@@ -12,4 +12,5 @@ export const ROUTES = {
   taskEdit: (id: string) => `/tasks/${id}/edit`,
   projects: '/projects',
   projectDetail: (id: string) => `/projects/${id}`,
+  projectEdit: (id: string) => `/projects/${id}/edit`,
 } as const;
