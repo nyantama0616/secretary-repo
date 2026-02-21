@@ -2,16 +2,34 @@
 
 import { valibotResolver } from '@hookform/resolvers/valibot';
 import { Button } from '@repo/ui/button';
-import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/select';
 import { Textarea } from '@repo/ui/textarea';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import * as v from 'valibot';
 
 import { ROUTES } from '@/constants/routes';
 import { formatMonth } from '@/lib/format';
 import { useMutation, useQueryClient, useTRPC } from '@/trpc/client';
+
+const generateMonthOptions = (): { value: string; label: string }[] => {
+  const now = new Date();
+  return Array.from({ length: 12 }, (_, i) => {
+    const date = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    return { value: `${y}-${m}`, label: formatMonth(date) };
+  });
+};
+
+const MONTH_OPTIONS = generateMonthOptions();
 
 const MonthlyReportCreateFormSchema = v.object({
   month: v.pipe(v.string(), v.minLength(1)),
@@ -28,6 +46,7 @@ export const MonthlyReportCreateForm = () => {
   const {
     register,
     handleSubmit,
+    control,
     getValues,
     formState: { errors },
   } = useForm<FormValues>({
@@ -57,8 +76,25 @@ export const MonthlyReportCreateForm = () => {
       <h1 className="text-2xl font-bold">月報作成</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid max-w-lg gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="month">月</Label>
-          <Input id="month" type="month" {...register('month')} />
+          <Label>月</Label>
+          <Controller
+            name="month"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger aria-label="月">
+                  <SelectValue placeholder="月を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MONTH_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.month && (
             <p className="text-sm text-destructive">{errors.month.message}</p>
           )}

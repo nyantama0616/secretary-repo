@@ -125,7 +125,8 @@ test.describe('月報詳細', () => {
 test.describe('月報作成', () => {
   test('フォームから月報を作成すると、一覧に反映される', async ({ page }) => {
     await page.goto('/monthly-reports/new');
-    await page.getByLabel('月').fill('2026-04');
+    await page.getByLabel('月').click();
+    await page.getByRole('option', { name: '2026年04月' }).click();
     await page.getByLabel('目標').fill('リファクタリングを完了する');
     await page.getByRole('button', { name: '作成' }).click();
 
@@ -147,7 +148,8 @@ test.describe('月報作成', () => {
 
   test('同じ月の月報が存在する場合、エラーが表示される', async ({ page }) => {
     await page.goto('/monthly-reports/new');
-    await page.getByLabel('月').fill('2026-02');
+    await page.getByLabel('月').click();
+    await page.getByRole('option', { name: '2026年02月' }).click();
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page.getByText(/の月報はすでに存在します/)).toBeVisible();
