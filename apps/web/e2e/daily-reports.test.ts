@@ -1,4 +1,7 @@
 import { expect, test } from './fixtures';
+import { seed } from './seed';
+
+test.beforeAll(seed);
 
 test.describe('日報一覧', () => {
   test('一覧ページを開くと、日報が表示される', async ({ page }) => {
@@ -57,6 +60,21 @@ test.describe('日報詳細', () => {
 });
 
 test.describe('日報編集', () => {
+  test('編集フォームに既存の値がプリフィルされている', async ({ page }) => {
+    await page.goto('/daily-reports');
+    await page
+      .getByRole('link', {
+        name: /機能Aの主要部分を実装し、集中して作業できた/,
+      })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
+    await expect(page.getByLabel('良かった点')).toHaveValue(
+      '集中して作業できた',
+    );
+  });
+
   test('詳細画面から編集ページに遷移し、日報を更新すると、詳細に反映される', async ({
     page,
   }) => {
@@ -77,21 +95,6 @@ test.describe('日報編集', () => {
 
     await expect(page).toHaveURL(/\/daily-reports\/[\w-]+$/);
     await expect(page.getByText('編集後のサマリー')).toBeVisible();
-  });
-
-  test('編集フォームに既存の値がプリフィルされている', async ({ page }) => {
-    await page.goto('/daily-reports');
-    await page
-      .getByRole('link', {
-        name: /機能Aの主要部分を実装し、集中して作業できた/,
-      })
-      .click();
-    await page.getByRole('link', { name: '編集' }).click();
-
-    await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
-    await expect(page.getByLabel('良かった点')).toHaveValue(
-      '集中して作業できた',
-    );
   });
 });
 

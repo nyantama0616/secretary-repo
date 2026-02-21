@@ -7,10 +7,10 @@ const e2ePort = 3100;
 
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: IS_CI,
   retries: IS_CI ? 2 : 0,
-  workers: IS_CI ? 1 : undefined,
+  workers: 1,
   reporter: 'html',
   globalSetup: './e2e/setup.ts',
   use: {

@@ -1,9 +1,11 @@
 import { sql } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
-import { db } from '@/server/infrastructure/db/client';
-import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
-import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
-import { tasks } from '@/server/infrastructure/db/schema/tasks';
+import { DATABASE_URL_TEST } from '../src/config';
+import { dailyReports } from '../src/server/infrastructure/db/schema/daily-reports';
+import { monthlyReports } from '../src/server/infrastructure/db/schema/monthly-reports';
+import { tasks } from '../src/server/infrastructure/db/schema/tasks';
 
 const SEED_DAILY_REPORTS = [
   {
@@ -42,43 +44,55 @@ const SEED_TASKS = [
   },
 ];
 
-const main = async () => {
-  console.log('Seeding for E2E...');
-  await db.transaction(async (tx) => {
-    await tx.execute(
-      sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
-    );
-    await tx.insert(monthlyReports).values([
-      {
-        startDate: new Date('2026-02-01'),
-        goal: '機能Aをリリースする',
-        summary: '新機能の開発を進めた月だった',
-        projectProgress: '機能Aの実装とテストが完了した',
-        growthChanges: 'テストの書き方に慣れてきた',
-        purposeActionGap: '休憩を忘れて集中しすぎる傾向がある',
-        improvements: 'レビューを早めに出すことで手戻りを減らせる',
-      },
-      {
-        startDate: new Date('2026-03-01'),
-        goal: 'テストカバレッジを80%にする',
-      },
-    ]);
-    const insertedReports = await tx
-      .insert(dailyReports)
-      .values(SEED_DAILY_REPORTS)
-      .returning();
-    await tx.insert(tasks).values(
-      SEED_TASKS.map((task, i) => ({
-        ...task,
-        dailyReportId: insertedReports[i % insertedReports.length].id,
-      })),
-    );
-  });
-  console.log('Seeding for E2E completed.');
-  process.exit(0);
+export const seed = async () => {
+  const client = postgres(DATABASE_URL_TEST!);
+  const db = drizzle(client);
+
+  try {
+    console.log('Seeding for E2E...');
+    await db.transaction(async (tx) => {
+      await tx.execute(
+        sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
+      );
+      await tx.insert(monthlyReports).values([
+        {
+          startDate: new Date('2026-02-01'),
+          goal: '機能Aをリリースする',
+          summary: '新機能の開発を進めた月だった',
+          projectProgress: '機能Aの実装とテストが完了した',
+          growthChanges: 'テストの書き方に慣れてきた',
+          purposeActionGap: '休憩を忘れて集中しすぎる傾向がある',
+          improvements: 'レビューを早めに出すことで手戻りを減らせる',
+        },
+        {
+          startDate: new Date('2026-03-01'),
+          goal: 'テストカバレッジを80%にする',
+        },
+      ]);
+      const insertedReports = await tx
+        .insert(dailyReports)
+        .values(SEED_DAILY_REPORTS)
+        .returning();
+      await tx.insert(tasks).values(
+        SEED_TASKS.map((task, i) => ({
+          ...task,
+          dailyReportId: insertedReports[i % insertedReports.length].id,
+        })),
+      );
+    });
+    console.log('Seeding for E2E completed.');
+  } finally {
+    await client.end();
+  }
 };
 
-main().catch((e) => {
-  console.error('Seeding for E2E failed:', e);
-  process.exit(1);
-});
+// NOTE: CLI から直接実行された場合のみ process.exit() する
+const isDirectExecution = require.main === module;
+if (isDirectExecution) {
+  seed()
+    .then(() => process.exit(0))
+    .catch((e) => {
+      console.error('Seeding for E2E failed:', e);
+      process.exit(1);
+    });
+}

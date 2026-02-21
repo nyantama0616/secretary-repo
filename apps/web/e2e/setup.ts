@@ -6,7 +6,6 @@ const setup = () => {
   const env = { ...process.env, DATABASE_URL: DATABASE_URL_TEST! };
 
   execSync('pnpm db:migrate', { stdio: 'inherit', env });
-  execSync('pnpm db:seed:e2e', { stdio: 'inherit', env });
 };
 
 export default setup;
