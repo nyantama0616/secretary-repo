@@ -74,7 +74,14 @@ const main = async () => {
       sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
     );
     await tx.insert(monthlyReports).values([
-      { startDate: new Date('2026-02-01'), summary: '新機能の開発を進めた月だった' },
+      {
+        startDate: new Date('2026-02-01'),
+        summary: '新機能の開発を進めた月だった',
+        projectProgress: '機能Aの実装とテストが完了し、コードレビューも通った',
+        growthChanges: 'テストの書き方に慣れてきた。レビューの指摘から設計の考え方を学べた',
+        purposeActionGap: '休憩を忘れて集中しすぎる傾向がある。ポモドーロテクニックの導入を検討したい',
+        improvements: 'レビューを早めに出すことで手戻りを減らせる。作業の見積もり精度も改善したい',
+      },
       { startDate: new Date('2026-01-01') },
     ]);
     const insertedReports = await tx
