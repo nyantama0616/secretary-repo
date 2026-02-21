@@ -41,7 +41,19 @@ const SEED_DAILY_REPORTS = [
 const SEED_TASKS = [
   {
     title: 'tRPC ルーターを実装する',
-    description: 'タスク一覧APIを実装する',
+    description: [
+      '## 概要',
+      'タスク一覧APIを実装する。',
+      '',
+      '## やること',
+      '- [ ] `task.list` プロシージャを追加する',
+      '- [ ] `task.detail` プロシージャを追加する',
+      '- [ ] 統合テストを書く',
+      '',
+      '## 備考',
+      '既存の `dailyReport` ルーターの実装を参考にする。',
+      '`sortOrder` でのソートを忘れないこと。',
+    ].join('\n'),
     status: 'not_started' as const,
     sortOrder: 1,
     deadline: new Date('2026-02-20T18:00:00+09:00'),
@@ -54,7 +66,13 @@ const SEED_TASKS = [
   },
   {
     title: 'コードレビューの修正',
-    description: 'レビュー指摘の対応',
+    description: [
+      'レビューで以下の指摘を受けた。',
+      '',
+      '1. **命名の改善**: `getData` → `fetchTaskList` に変更する',
+      '2. **エラーハンドリング**: `NotFoundError` を追加する',
+      '3. **型定義**: `as const` を使って型を厳密にする',
+    ].join('\n'),
     status: 'in_progress' as const,
     sortOrder: 3,
     estimatedMinutes: 60,
