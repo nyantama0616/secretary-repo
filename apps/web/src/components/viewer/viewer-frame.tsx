@@ -6,7 +6,7 @@ type ViewerFrameProps = {
 
 export const ViewerFrame = ({ children }: ViewerFrameProps) => {
   return (
-    <div className="rounded-lg border bg-muted/50 px-4 py-3">
+    <div className="rounded-lg border bg-muted/50 p-8">
       {children}
     </div>
   );
