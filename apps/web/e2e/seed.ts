@@ -48,7 +48,10 @@ const main = async () => {
     await tx.execute(
       sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
     );
-    await tx.insert(monthlyReports).values({ startDate: new Date('2026-02-01') });
+    await tx.insert(monthlyReports).values([
+      { startDate: new Date('2026-02-01'), notes: '新機能の開発を進めた月だった' },
+      { startDate: new Date('2026-01-01') },
+    ]);
     const insertedReports = await tx
       .insert(dailyReports)
       .values(SEED_DAILY_REPORTS)
