@@ -34,6 +34,7 @@ export class DrizzleMonthlyReportRepository
     await db.insert(monthlyReports).values({
       id: monthlyReport.id,
       startDate: monthlyReport.startDate,
+      goal: monthlyReport.goal,
       summary: monthlyReport.summary,
       projectProgress: monthlyReport.projectProgress,
       growthChanges: monthlyReport.growthChanges,
@@ -47,6 +48,7 @@ export class DrizzleMonthlyReportRepository
     await db
       .update(monthlyReports)
       .set({
+        goal: monthlyReport.goal,
         summary: monthlyReport.summary,
         projectProgress: monthlyReport.projectProgress,
         growthChanges: monthlyReport.growthChanges,
@@ -65,6 +67,7 @@ const toMonthlyReport = (
   return createMonthlyReport({
     id: row.id,
     startDate: row.startDate,
+    goal: row.goal,
     summary: row.summary,
     projectProgress: row.projectProgress,
     growthChanges: row.growthChanges,

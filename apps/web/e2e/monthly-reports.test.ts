@@ -8,7 +8,7 @@ test.describe('月報一覧', () => {
       page.getByRole('heading', { name: '月報一覧' }),
     ).toBeVisible();
     await expect(page.getByText('2026年02月')).toBeVisible();
-    await expect(page.getByText('2026年01月')).toBeVisible();
+    await expect(page.getByText('2026年03月')).toBeVisible();
     await expect(
       page.getByText('新機能の開発を進めた月だった'),
     ).toBeVisible();
@@ -68,14 +68,17 @@ test.describe('月報詳細', () => {
     ).toBeVisible();
   });
 
-  test('振り返りがない月報では、振り返りセクションが表示されない', async ({
+  test('目標のみの月報では、振り返りセクションが表示されない', async ({
     page,
   }) => {
     await page.goto('/monthly-reports');
-    await page.getByRole('link', { name: /2026年01月/ }).click();
+    await page.getByRole('link', { name: /2026年03月/ }).click();
 
     await expect(
-      page.getByRole('heading', { name: '2026年01月' }),
+      page.getByRole('heading', { name: '2026年03月' }),
+    ).toBeVisible();
+    await expect(
+      page.getByText('テストカバレッジを80%にする'),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: '振り返り' }),

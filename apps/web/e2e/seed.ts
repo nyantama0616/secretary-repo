@@ -51,13 +51,17 @@ const main = async () => {
     await tx.insert(monthlyReports).values([
       {
         startDate: new Date('2026-02-01'),
+        goal: '機能Aをリリースする',
         summary: '新機能の開発を進めた月だった',
         projectProgress: '機能Aの実装とテストが完了した',
         growthChanges: 'テストの書き方に慣れてきた',
         purposeActionGap: '休憩を忘れて集中しすぎる傾向がある',
         improvements: 'レビューを早めに出すことで手戻りを減らせる',
       },
-      { startDate: new Date('2026-01-01') },
+      {
+        startDate: new Date('2026-03-01'),
+        goal: 'テストカバレッジを80%にする',
+      },
     ]);
     const insertedReports = await tx
       .insert(dailyReports)

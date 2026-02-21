@@ -16,6 +16,7 @@ export const CreateMonthlyReportInputSchema = v.object({
       'startDate は月の1日である必要があります',
     ),
   ),
+  goal: v.optional(v.pipe(v.string(), v.minLength(1))),
 });
 
 type CreateMonthlyReportInput = v.InferOutput<
@@ -38,6 +39,7 @@ export class CreateMonthlyReportUseCase {
     const monthlyReport = createMonthlyReport({
       id: generateId(),
       startDate: input.startDate,
+      goal: input.goal ?? null,
       summary: null,
       projectProgress: null,
       growthChanges: null,

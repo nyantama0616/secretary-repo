@@ -47,6 +47,7 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
       </div>
 
       <dl className="grid gap-4">
+        <DetailItem label="目標" value={report.goal} />
         <DetailItem label="サマリー" value={report.summary} />
       </dl>
 

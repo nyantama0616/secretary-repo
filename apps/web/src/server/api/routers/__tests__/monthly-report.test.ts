@@ -11,6 +11,7 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 const TEST_MONTHLY_REPORTS = [
   {
     startDate: new Date('2026-01-01'),
+    goal: 'プロジェクトAの基盤を構築する',
     summary: '開発基盤の整備と主要機能の実装に注力した月',
     projectProgress: 'プロジェクトAの主要機能を実装した',
     growthChanges: 'TDDの習慣が身についてきた',
@@ -20,6 +21,7 @@ const TEST_MONTHLY_REPORTS = [
   },
   {
     startDate: new Date('2026-02-01'),
+    goal: 'テストカバレッジを80%にする',
     summary: null,
     projectProgress: null,
     growthChanges: null,
@@ -59,6 +61,7 @@ describe('monthlyReport.list', () => {
         {
           id: expect.any(String),
           startDate: TEST_MONTHLY_REPORTS[0].startDate,
+          goal: TEST_MONTHLY_REPORTS[0].goal,
           summary: TEST_MONTHLY_REPORTS[0].summary,
           projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
           growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
@@ -70,6 +73,7 @@ describe('monthlyReport.list', () => {
         {
           id: expect.any(String),
           startDate: TEST_MONTHLY_REPORTS[1].startDate,
+          goal: TEST_MONTHLY_REPORTS[1].goal,
           summary: TEST_MONTHLY_REPORTS[1].summary,
           projectProgress: TEST_MONTHLY_REPORTS[1].projectProgress,
           growthChanges: TEST_MONTHLY_REPORTS[1].growthChanges,
@@ -106,6 +110,7 @@ describe('monthlyReport.detail', () => {
     expect(result).toEqual({
       id: inserted.id,
       startDate: TEST_MONTHLY_REPORTS[0].startDate,
+      goal: TEST_MONTHLY_REPORTS[0].goal,
       summary: TEST_MONTHLY_REPORTS[0].summary,
       projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
       growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
@@ -144,13 +149,17 @@ describe('monthlyReport.detail', () => {
 });
 
 describe('monthlyReport.create', () => {
-  it('空の月報を作成する', async () => {
+  it('目標付きの月報を作成する', async () => {
     const startDate = new Date('2026-03-01');
-    const result = await caller.monthlyReport.create({ startDate });
+    const result = await caller.monthlyReport.create({
+      startDate,
+      goal: '新機能をリリースする',
+    });
 
     expect(result).toEqual({
       id: expect.any(String),
       startDate,
+      goal: '新機能をリリースする',
       summary: null,
       projectProgress: null,
       growthChanges: null,
@@ -208,6 +217,7 @@ describe('monthlyReport.review', () => {
     expect(result).toEqual({
       id: created.id,
       startDate: new Date('2026-01-01'),
+      goal: null,
       summary: '開発基盤の整備に注力した月',
       projectProgress: 'プロジェクトAの主要機能を実装した',
       growthChanges: 'TDDの習慣が身についてきた',
