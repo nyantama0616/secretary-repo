@@ -3,10 +3,12 @@
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import Link from 'next/link';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
+import { MarkdownViewer } from '@/components/viewer/markdown-viewer';
+import { ViewerFrame } from '@/components/viewer/viewer-frame';
 import { ROUTES } from '@/constants/routes';
 import { formatDate } from '@/lib/format';
 import type { ProjectStatus } from '@/server/domain/project/project';
@@ -58,7 +60,11 @@ export const ProjectDetail = ({ id }: ProjectDetailProps) => {
         {STATUS_CONFIG[project.status].label}
       </Badge>
       <dl className="grid gap-4">
-        <DetailItem label="目的" value={project.purpose} />
+        <DetailItem label="目的">
+          <ViewerFrame>
+            <MarkdownViewer content={project.purpose} />
+          </ViewerFrame>
+        </DetailItem>
         <DetailItem
           label="期限"
           value={project.deadline ? formatDate(project.deadline) : null}
@@ -71,16 +77,20 @@ export const ProjectDetail = ({ id }: ProjectDetailProps) => {
 const DetailItem = ({
   label,
   value,
+  children,
 }: {
   label: string;
-  value: string | null;
+  value?: string | null;
+  children?: ReactNode;
 }) => {
-  if (!value) return null;
+  if (!value && !children) return null;
 
   return (
     <div>
       <dt className="text-sm text-muted-foreground">{label}</dt>
-      <dd className="mt-1 whitespace-pre-wrap">{value}</dd>
+      <dd className="mt-1">
+        {children ?? <span className="whitespace-pre-wrap">{value}</span>}
+      </dd>
     </div>
   );
 };

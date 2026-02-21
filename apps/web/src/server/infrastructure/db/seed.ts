@@ -42,7 +42,20 @@ const SEED_DAILY_REPORTS = [
 const SEED_PROJECTS = [
   {
     name: 'secretary-repo',
-    purpose: 'AI を活用した日報・タスク管理アプリを開発する',
+    purpose: [
+      '## ゴール',
+      'AI を活用した**日報・タスク管理アプリ**を開発する。',
+      '',
+      '## 解決したい課題',
+      '- 先延ばしの解消',
+      '- モチベーションの維持',
+      '- 日々の振り返りの習慣化',
+      '',
+      '## 技術スタック',
+      '- Next.js (App Router)',
+      '- tRPC + TanStack Query',
+      '- Drizzle ORM + PostgreSQL',
+    ].join('\n'),
     status: 'active' as const,
     deadline: new Date('2026-06-30T00:00:00+09:00'),
   },
