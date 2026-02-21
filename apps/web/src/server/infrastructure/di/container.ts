@@ -71,8 +71,12 @@ export const getTasksUseCase = new GetTasksUseCase(
 export const getTaskDetailUseCase = new GetTaskDetailUseCase(
   taskRepository,
   dailyReportRepository,
+  projectRepository,
 );
-export const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
+export const updateTaskUseCase = new UpdateTaskUseCase(
+  taskRepository,
+  projectRepository,
+);
 export const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
   taskRepository,
 );
