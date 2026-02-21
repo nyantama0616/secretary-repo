@@ -57,7 +57,6 @@ export const ProjectList = () => {
               href={ROUTES.projectDetail(project.id)}
               name={project.name}
               status={project.status}
-              purpose={project.purpose}
               deadline={project.deadline}
             />
           ))}
@@ -71,13 +70,11 @@ const ProjectCard = ({
   href,
   name,
   status,
-  purpose,
   deadline,
 }: {
   href: string;
   name: string;
   status: ProjectStatus;
-  purpose: string;
   deadline: Date | null;
 }) => {
   return (
@@ -91,7 +88,6 @@ const ProjectCard = ({
           <span>期限: {formatDate(deadline)}</span>
         )}
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">{purpose}</p>
     </Link>
   );
 };
