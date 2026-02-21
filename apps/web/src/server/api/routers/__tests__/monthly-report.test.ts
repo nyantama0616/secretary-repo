@@ -100,3 +100,58 @@ describe('monthlyReport.list', () => {
     expect(result).toStrictEqual([]);
   });
 });
+
+describe('monthlyReport.detail', () => {
+  it('月報の詳細と紐づく日報一覧を返す', async () => {
+    const [inserted] = await db
+      .insert(monthlyReports)
+      .values(TEST_MONTHLY_REPORTS[0])
+      .returning();
+
+    const [dr1, dr2] = await db
+      .insert(dailyReports)
+      .values([
+        { ...TEST_DAILY_REPORTS[0], monthlyReportId: inserted.id },
+        { ...TEST_DAILY_REPORTS[1], monthlyReportId: inserted.id },
+      ])
+      .returning();
+
+    const result = await caller.monthlyReport.detail({ id: inserted.id });
+
+    expect(result).toEqual({
+      id: inserted.id,
+      projectProgress: TEST_MONTHLY_REPORTS[0].projectProgress,
+      growthChanges: TEST_MONTHLY_REPORTS[0].growthChanges,
+      purposeActionGap: TEST_MONTHLY_REPORTS[0].purposeActionGap,
+      improvements: TEST_MONTHLY_REPORTS[0].improvements,
+      notes: TEST_MONTHLY_REPORTS[0].notes,
+      createdAt: expect.any(Date),
+      dailyReports: expect.arrayContaining([
+        { id: dr1.id, date: TEST_DAILY_REPORTS[0].date, summary: null },
+        { id: dr2.id, date: TEST_DAILY_REPORTS[1].date, summary: null },
+      ]),
+    });
+    expect(result.dailyReports).toHaveLength(2);
+  });
+
+  it('日報が紐づかない場合、dailyReports は空配列を返す', async () => {
+    const [inserted] = await db
+      .insert(monthlyReports)
+      .values(TEST_MONTHLY_REPORTS[0])
+      .returning();
+
+    const result = await caller.monthlyReport.detail({ id: inserted.id });
+
+    expect(result.dailyReports).toStrictEqual([]);
+  });
+
+  it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.monthlyReport.detail({ id: 'non-existent-id' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

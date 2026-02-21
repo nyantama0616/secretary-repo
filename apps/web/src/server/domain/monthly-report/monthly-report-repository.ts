@@ -2,4 +2,5 @@ import type { MonthlyReport } from '@/server/domain/monthly-report/monthly-repor
 
 export interface MonthlyReportRepository {
   findAll(): Promise<MonthlyReport[]>;
+  findById(id: string): Promise<MonthlyReport | null>;
 }
