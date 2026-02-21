@@ -15,10 +15,7 @@ const SEED_DAILY_REPORTS = [
     summary: '機能Aの主要部分を実装し、集中して作業できた',
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
-    goodPoints: '集中して作業できた',
-    badPoints: '休憩を取り忘れた',
-    learnings: 'ポモドーロテクニックを試してみたい',
-    nextActions: '明日はテストを書く',
+    review: '集中して作業できた。休憩を取り忘れたので改善したい。',
   },
   {
     date: new Date('2026-02-18'),

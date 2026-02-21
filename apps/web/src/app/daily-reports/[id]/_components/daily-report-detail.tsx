@@ -38,13 +38,6 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
   }
 
   const timeLabel = buildTimeLabel(report.wakeUpTime, report.bedTime);
-  const reviewMarkdown = buildReviewMarkdown({
-    goodPoints: report.goodPoints,
-    badPoints: report.badPoints,
-    learnings: report.learnings,
-    nextActions: report.nextActions,
-  });
-
   return (
     <div className="grid gap-6 p-8">
       <div className="flex items-center gap-4">
@@ -75,11 +68,11 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
         </section>
       )}
 
-      {reviewMarkdown && (
+      {report.review && (
         <section className="grid gap-2">
           <h2 className="border-b pb-2 text-lg font-semibold">振り返り</h2>
           <ViewerFrame>
-            <MarkdownViewer content={reviewMarkdown} />
+            <MarkdownViewer content={report.review} />
           </ViewerFrame>
         </section>
       )}
@@ -105,25 +98,4 @@ const buildTimeLabel = (
   if (wakeUpTime) parts.push(`起床 ${formatTime(wakeUpTime)}`);
   if (bedTime) parts.push(`就寝 ${formatTime(bedTime)}`);
   return parts.join(' / ');
-};
-
-// NOTE: バックエンドが振り返りフィールドを統合するまでの暫定処理である
-const buildReviewMarkdown = ({
-  goodPoints,
-  badPoints,
-  learnings,
-  nextActions,
-}: {
-  goodPoints: string | null;
-  badPoints: string | null;
-  learnings: string | null;
-  nextActions: string | null;
-}): string | null => {
-  const sections: string[] = [];
-  if (goodPoints) sections.push(`## 良かった点\n${goodPoints}`);
-  if (badPoints) sections.push(`## 改善点\n${badPoints}`);
-  if (learnings) sections.push(`## 学び\n${learnings}`);
-  if (nextActions) sections.push(`## ネクストアクション\n${nextActions}`);
-  if (sections.length === 0) return null;
-  return sections.join('\n\n');
 };

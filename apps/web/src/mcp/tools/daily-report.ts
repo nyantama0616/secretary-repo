@@ -81,10 +81,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
         summary: optionalString,
         wakeUpTime: optionalDatetime,
         bedTime: optionalDatetime,
-        goodPoints: optionalString,
-        badPoints: optionalString,
-        learnings: optionalString,
-        nextActions: optionalString,
+        review: optionalString,
         notes: optionalString,
       },
     },
@@ -96,10 +93,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
           summary: args.summary,
           wakeUpTime: args.wakeUpTime ? new Date(args.wakeUpTime) : undefined,
           bedTime: args.bedTime ? new Date(args.bedTime) : undefined,
-          goodPoints: args.goodPoints,
-          badPoints: args.badPoints,
-          learnings: args.learnings,
-          nextActions: args.nextActions,
+          review: args.review,
           notes: args.notes,
         });
         return toSuccess(JSON.stringify(report, null, 2));

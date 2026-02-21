@@ -9,10 +9,7 @@ export const dailyReports = pgTable('daily_reports', {
   summary: text('summary'),
   wakeUpTime: timestamp('wake_up_time', { withTimezone: true }),
   bedTime: timestamp('bed_time', { withTimezone: true }),
-  goodPoints: text('good_points'),
-  badPoints: text('bad_points'),
-  learnings: text('learnings'),
-  nextActions: text('next_actions'),
+  review: text('review'),
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
