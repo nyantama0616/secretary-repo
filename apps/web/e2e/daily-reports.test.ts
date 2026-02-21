@@ -41,13 +41,8 @@ test.describe('日報詳細', () => {
     await expect(page).toHaveURL(/\/daily-reports\/[\w-]+/);
     await expect(page.getByText('機能Aの実装を進める')).toBeVisible();
     await expect(
-      page.getByText('集中して作業できた', { exact: true }),
+      page.getByText('集中して作業できた。休憩を取り忘れたので改善したい。'),
     ).toBeVisible();
-    await expect(page.getByText('休憩を取り忘れた')).toBeVisible();
-    await expect(
-      page.getByText('ポモドーロテクニックを試してみたい'),
-    ).toBeVisible();
-    await expect(page.getByText('明日はテストを書く')).toBeVisible();
   });
 
   test('存在しないIDにアクセスすると、404ページが表示される', async ({
@@ -70,8 +65,8 @@ test.describe('日報編集', () => {
     await page.getByRole('link', { name: '編集' }).click();
 
     await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
-    await expect(page.getByLabel('良かった点')).toHaveValue(
-      '集中して作業できた',
+    await expect(page.getByLabel('振り返り')).toHaveValue(
+      '集中して作業できた。休憩を取り忘れたので改善したい。',
     );
   });
 

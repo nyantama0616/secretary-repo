@@ -64,9 +64,6 @@ test.describe('月報詳細', () => {
       page.getByText('テストの書き方に慣れてきた'),
     ).toBeVisible();
     await expect(
-      page.getByText('休憩を忘れて集中しすぎる傾向がある'),
-    ).toBeVisible();
-    await expect(
       page.getByText('レビューを早めに出すことで手戻りを減らせる'),
     ).toBeVisible();
   });
