@@ -106,6 +106,13 @@
       "when": 1771675313112,
       "tag": "0014_slow_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1771678658966,
+      "tag": "0015_silent_lord_hawal",
+      "breakpoints": true
     }
   ]
 }

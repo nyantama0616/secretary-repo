@@ -2,10 +2,14 @@ import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 import { generateId } from '@/server/domain/id';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { projects } from '@/server/infrastructure/db/schema/projects';
 
 export const tasks = pgTable('tasks', {
   id: text('id').primaryKey().$defaultFn(generateId),
   dailyReportId: text('daily_report_id').references(() => dailyReports.id, {
+    onDelete: 'set null',
+  }),
+  projectId: text('project_id').references(() => projects.id, {
     onDelete: 'set null',
   }),
   title: text('title').notNull(),
