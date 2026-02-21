@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 
-import type { Project } from '@/server/domain/project/project';
+import type { Project, ProjectStatus } from '@/server/domain/project/project';
 import { createProject } from '@/server/domain/project/project';
 import type {
   ProjectRepository,
@@ -35,6 +35,13 @@ export class DrizzleProjectRepository implements ProjectRepository {
 
   async update(id: string, fields: ProjectUpdatableFields): Promise<void> {
     await db.update(projects).set(fields).where(eq(projects.id, id));
+  }
+
+  async updateStatus(id: string, status: ProjectStatus): Promise<void> {
+    await db
+      .update(projects)
+      .set({ status })
+      .where(eq(projects.id, id));
   }
 }
 

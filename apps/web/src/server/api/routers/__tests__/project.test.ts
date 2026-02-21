@@ -177,3 +177,35 @@ describe('project.update', () => {
     );
   });
 });
+
+describe('project.updateStatus', () => {
+  it('プロジェクトのステータスを変更する', async () => {
+    const created = await caller.project.create({
+      name: 'テストプロジェクト',
+      purpose: 'ステータス変更テスト',
+    });
+
+    expect(created.status).toBe('active');
+
+    await caller.project.updateStatus({
+      id: created.id,
+      status: 'done',
+    });
+
+    const detail = await caller.project.detail({ id: created.id });
+    expect(detail.status).toBe('done');
+  });
+
+  it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.project.updateStatus({
+        id: 'non-existent-id',
+        status: 'done',
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
