@@ -16,13 +16,7 @@ import { useMutation, useQueryClient, useTRPC } from '@/trpc/client';
 const DailyReportCreateFormSchema = v.object({
   date: v.pipe(v.string(), v.minLength(1)),
   plan: v.optional(v.string()),
-  summary: v.optional(v.string()),
   wakeUpTime: v.optional(v.string()),
-  bedTime: v.optional(v.string()),
-  goodPoints: v.optional(v.string()),
-  badPoints: v.optional(v.string()),
-  learnings: v.optional(v.string()),
-  nextActions: v.optional(v.string()),
   notes: v.optional(v.string()),
 });
 
@@ -80,34 +74,8 @@ export const DailyReportCreateForm = () => {
           <Textarea id="plan" rows={2} {...register('plan')} />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="summary">サマリー</Label>
-          <Textarea id="summary" rows={2} {...register('summary')} />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="wakeUpTime">起床時刻</Label>
-            <Input id="wakeUpTime" type="time" {...register('wakeUpTime')} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="bedTime">就寝時刻</Label>
-            <Input id="bedTime" type="time" {...register('bedTime')} />
-          </div>
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="goodPoints">良かった点</Label>
-          <Textarea id="goodPoints" rows={2} {...register('goodPoints')} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="badPoints">改善点</Label>
-          <Textarea id="badPoints" rows={2} {...register('badPoints')} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="learnings">学び</Label>
-          <Textarea id="learnings" rows={2} {...register('learnings')} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="nextActions">ネクストアクション</Label>
-          <Textarea id="nextActions" rows={2} {...register('nextActions')} />
+          <Label htmlFor="wakeUpTime">起床時刻</Label>
+          <Input id="wakeUpTime" type="time" {...register('wakeUpTime')} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="notes">メモ</Label>
