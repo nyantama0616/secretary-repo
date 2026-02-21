@@ -9,6 +9,7 @@ import type { MonthlyReportRepository } from '@/server/domain/monthly-report/mon
 
 export const ReviewMonthlyReportInputSchema = v.object({
   id: v.string(),
+  summary: v.optional(v.pipe(v.string(), v.minLength(1))),
   projectProgress: v.optional(v.pipe(v.string(), v.minLength(1))),
   growthChanges: v.optional(v.pipe(v.string(), v.minLength(1))),
   purposeActionGap: v.optional(v.pipe(v.string(), v.minLength(1))),
@@ -34,6 +35,7 @@ export class ReviewMonthlyReportUseCase {
 
     const updated = createMonthlyReport({
       ...existing,
+      summary: input.summary ?? existing.summary,
       projectProgress: input.projectProgress ?? existing.projectProgress,
       growthChanges: input.growthChanges ?? existing.growthChanges,
       purposeActionGap: input.purposeActionGap ?? existing.purposeActionGap,

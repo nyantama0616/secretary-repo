@@ -50,7 +50,7 @@ export const MonthlyReportList = () => {
             >
               <MonthlyReportCard
                 startDate={report.startDate}
-                summary={report.notes}
+                summary={report.summary}
               />
             </Link>
           ))}
@@ -65,7 +65,6 @@ const MonthlyReportCard = ({
   summary,
 }: {
   startDate: Date;
-  // TODO: バックエンドに summary フィールドを追加後、notes からの仮表示を置き換える
   summary: string | null;
 }) => {
   return (

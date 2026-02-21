@@ -7,6 +7,7 @@ export const monthlyReports = pgTable(
   {
     id: text('id').primaryKey().$defaultFn(generateId),
     startDate: date('start_date', { mode: 'date' }).notNull(),
+    summary: text('summary'),
     projectProgress: text('project_progress'),
     growthChanges: text('growth_changes'),
     purposeActionGap: text('purpose_action_gap'),

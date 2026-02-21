@@ -38,6 +38,7 @@ export class CreateMonthlyReportUseCase {
     const monthlyReport = createMonthlyReport({
       id: generateId(),
       startDate: input.startDate,
+      summary: null,
       projectProgress: null,
       growthChanges: null,
       purposeActionGap: null,

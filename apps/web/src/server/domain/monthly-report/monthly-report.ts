@@ -4,6 +4,7 @@ const MonthlyReportSchema = v.pipe(
   v.object({
     id: v.string(),
     startDate: v.date(),
+    summary: v.nullable(v.string()),
     projectProgress: v.nullable(v.string()),
     growthChanges: v.nullable(v.string()),
     purposeActionGap: v.nullable(v.string()),
