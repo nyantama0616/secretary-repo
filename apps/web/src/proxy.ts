@@ -5,7 +5,7 @@ import { AUTH_COOKIE_NAME } from '@/server/api/auth-constants';
 
 const PUBLIC_PATHS = ['/login', '/api/auth/'];
 
-export const middleware = (request: NextRequest) => {
+export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl;
   if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
