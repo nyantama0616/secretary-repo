@@ -242,8 +242,8 @@ describe('monthlyReport.delete', () => {
   });
 
   // NOTE: カスケード動作は本来 Infrastructure 層の責務だが、
-  // 紐づく日報が消失しないことはデータ保全上重要なため例外的に検証する
-  it('月報を削除しても、紐づいていた日報は残る', async () => {
+  // 紐づく日報が意図通り削除されることはデータ整合性上重要なため例外的に検証する
+  it('月報を削除すると、紐づいていた日報も削除される', async () => {
     const created = await caller.monthlyReport.create();
 
     const [dr] = await db
@@ -253,8 +253,13 @@ describe('monthlyReport.delete', () => {
 
     await caller.monthlyReport.delete({ id: created.id });
 
-    const detail = await caller.dailyReport.detail({ id: dr.id });
-    expect(detail.monthlyReportId).toBeNull();
+    await expect(
+      caller.dailyReport.detail({ id: dr.id }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
   });
 
   it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {

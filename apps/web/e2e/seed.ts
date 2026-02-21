@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
+import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 const SEED_DAILY_REPORTS = [
@@ -44,10 +45,15 @@ const SEED_TASKS = [
 const main = async () => {
   console.log('Seeding for E2E...');
   await db.transaction(async (tx) => {
-    await tx.execute(sql`TRUNCATE ${tasks}, ${dailyReports}`);
+    await tx.execute(
+      sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}`,
+    );
+    const [mr] = await tx.insert(monthlyReports).values({}).returning();
     const insertedReports = await tx
       .insert(dailyReports)
-      .values(SEED_DAILY_REPORTS)
+      .values(
+        SEED_DAILY_REPORTS.map((r) => ({ ...r, monthlyReportId: mr.id })),
+      )
       .returning();
     await tx.insert(tasks).values(
       SEED_TASKS.map((task, i) => ({
