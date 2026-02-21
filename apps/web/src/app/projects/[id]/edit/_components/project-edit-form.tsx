@@ -11,11 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/select';
-import { Textarea } from '@repo/ui/textarea';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import * as v from 'valibot';
 
+import { MarkdownEditor } from '@/components/editor/markdown-editor';
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { ROUTES } from '@/constants/routes';
@@ -160,7 +160,17 @@ const EditForm = ({ id, project }: { id: string; project: Project }) => {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="purpose">目的</Label>
-          <Textarea id="purpose" rows={3} {...register('purpose')} />
+          <Controller
+            name="purpose"
+            control={control}
+            render={({ field }) => (
+              <MarkdownEditor
+                id="purpose"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
           {formState.errors.purpose && (
             <p className="text-sm text-destructive">
               {formState.errors.purpose.message}

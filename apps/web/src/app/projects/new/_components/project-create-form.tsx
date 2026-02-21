@@ -4,11 +4,11 @@ import { valibotResolver } from '@hookform/resolvers/valibot';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
-import { Textarea } from '@repo/ui/textarea';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import * as v from 'valibot';
 
+import { MarkdownEditor } from '@/components/editor/markdown-editor';
 import { ROUTES } from '@/constants/routes';
 import { useMutation, useQueryClient, useTRPC } from '@/trpc/client';
 
@@ -28,9 +28,14 @@ export const ProjectCreateForm = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: valibotResolver(ProjectCreateFormSchema),
+    defaultValues: {
+      name: '',
+      purpose: '',
+    },
   });
 
   const { mutate, isPending, error } = useMutation(
@@ -65,7 +70,17 @@ export const ProjectCreateForm = () => {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="purpose">目的</Label>
-          <Textarea id="purpose" rows={3} {...register('purpose')} />
+          <Controller
+            name="purpose"
+            control={control}
+            render={({ field }) => (
+              <MarkdownEditor
+                id="purpose"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
+            )}
+          />
           {errors.purpose && (
             <p className="text-sm text-destructive">{errors.purpose.message}</p>
           )}

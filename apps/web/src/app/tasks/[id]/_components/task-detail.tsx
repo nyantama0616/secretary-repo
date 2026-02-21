@@ -3,10 +3,12 @@
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import Link from 'next/link';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
+import { MarkdownViewer } from '@/components/viewer/markdown-viewer';
+import { ViewerFrame } from '@/components/viewer/viewer-frame';
 import { ROUTES } from '@/constants/routes';
 import { formatDate } from '@/lib/format';
 import type { TaskStatus } from '@/server/domain/task/task';
@@ -78,7 +80,13 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
             </dd>
           </div>
         )}
-        <DetailItem label="説明" value={task.description} />
+        {task.description && (
+          <DetailItem label="説明">
+            <ViewerFrame>
+              <MarkdownViewer content={task.description} />
+            </ViewerFrame>
+          </DetailItem>
+        )}
         <DetailItem
           label="期限"
           value={task.deadline ? formatDate(task.deadline) : null}
@@ -102,16 +110,20 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
 const DetailItem = ({
   label,
   value,
+  children,
 }: {
   label: string;
-  value: string | null;
+  value?: string | null;
+  children?: ReactNode;
 }) => {
-  if (!value) return null;
+  if (!value && !children) return null;
 
   return (
     <div>
       <dt className="text-sm text-muted-foreground">{label}</dt>
-      <dd className="mt-1 whitespace-pre-wrap">{value}</dd>
+      <dd className="mt-1">
+        {children ?? <span className="whitespace-pre-wrap">{value}</span>}
+      </dd>
     </div>
   );
 };
