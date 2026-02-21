@@ -121,3 +121,36 @@ test.describe('月報詳細', () => {
     expect(response?.status()).toBe(404);
   });
 });
+
+test.describe('月報作成', () => {
+  test('フォームから月報を作成すると、一覧に反映される', async ({ page }) => {
+    await page.goto('/monthly-reports/new');
+    await page.getByLabel('月').fill('2026-04');
+    await page.getByLabel('目標').fill('リファクタリングを完了する');
+    await page.getByRole('button', { name: '作成' }).click();
+
+    await expect(page).toHaveURL('/monthly-reports');
+    await expect(page.getByText('2026年04月')).toBeVisible();
+  });
+
+  test('一覧の「月報を作成」ボタンから作成ページに遷移できる', async ({
+    page,
+  }) => {
+    await page.goto('/monthly-reports');
+    await page.getByRole('link', { name: '月報を作成' }).click();
+
+    await expect(page).toHaveURL('/monthly-reports/new');
+    await expect(
+      page.getByRole('heading', { name: '月報作成' }),
+    ).toBeVisible();
+  });
+
+  test('同じ月の月報が存在する場合、エラーが表示される', async ({ page }) => {
+    await page.goto('/monthly-reports/new');
+    await page.getByLabel('月').fill('2026-02');
+    await page.getByRole('button', { name: '作成' }).click();
+
+    await expect(page.getByText(/の月報はすでに存在します/)).toBeVisible();
+    await expect(page).toHaveURL('/monthly-reports/new');
+  });
+});
