@@ -225,3 +225,45 @@ describe('monthlyReport.review', () => {
     );
   });
 });
+
+describe('monthlyReport.delete', () => {
+  it('月報を削除する', async () => {
+    const created = await caller.monthlyReport.create();
+
+    await caller.monthlyReport.delete({ id: created.id });
+
+    await expect(
+      caller.monthlyReport.detail({ id: created.id }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+
+  // NOTE: カスケード動作は本来 Infrastructure 層の責務だが、
+  // 紐づく日報が消失しないことはデータ保全上重要なため例外的に検証する
+  it('月報を削除しても、紐づいていた日報は残る', async () => {
+    const created = await caller.monthlyReport.create();
+
+    const [dr] = await db
+      .insert(dailyReports)
+      .values({ date: TEST_DAILY_REPORTS[0].date, monthlyReportId: created.id })
+      .returning();
+
+    await caller.monthlyReport.delete({ id: created.id });
+
+    const detail = await caller.dailyReport.detail({ id: dr.id });
+    expect(detail.monthlyReportId).toBeNull();
+  });
+
+  it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.monthlyReport.delete({ id: 'non-existent-id' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

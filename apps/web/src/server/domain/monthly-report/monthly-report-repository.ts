@@ -5,4 +5,5 @@ export interface MonthlyReportRepository {
   findById(id: string): Promise<MonthlyReport | null>;
   save(monthlyReport: MonthlyReport): Promise<void>;
   update(monthlyReport: MonthlyReport): Promise<void>;
+  delete(id: string): Promise<void>;
 }

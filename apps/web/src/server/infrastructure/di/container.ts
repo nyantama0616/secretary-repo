@@ -7,6 +7,7 @@ import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-r
 import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-reports';
 import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
 import { CreateMonthlyReportUseCase } from '@/server/usecase/monthly-report/create-monthly-report';
+import { DeleteMonthlyReportUseCase } from '@/server/usecase/monthly-report/delete-monthly-report';
 import { GetMonthlyReportUseCase } from '@/server/usecase/monthly-report/get-monthly-report';
 import { GetMonthlyReportsUseCase } from '@/server/usecase/monthly-report/get-monthly-reports';
 import { ReviewMonthlyReportUseCase } from '@/server/usecase/monthly-report/review-monthly-report';
@@ -49,6 +50,9 @@ export const createMonthlyReportUseCase = new CreateMonthlyReportUseCase(
   monthlyReportRepository,
 );
 export const reviewMonthlyReportUseCase = new ReviewMonthlyReportUseCase(
+  monthlyReportRepository,
+);
+export const deleteMonthlyReportUseCase = new DeleteMonthlyReportUseCase(
   monthlyReportRepository,
 );
 

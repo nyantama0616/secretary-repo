@@ -45,6 +45,10 @@ export class DrizzleMonthlyReportRepository
       })
       .where(eq(monthlyReports.id, monthlyReport.id));
   }
+
+  async delete(id: string): Promise<void> {
+    await db.delete(monthlyReports).where(eq(monthlyReports.id, id));
+  }
 }
 
 const toMonthlyReport = (
