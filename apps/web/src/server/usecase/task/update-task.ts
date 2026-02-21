@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 
 import { NotFoundError } from '@/server/domain/error/domain-errors';
+import type { ProjectRepository } from '@/server/domain/project/project-repository';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
 export const UpdateTaskInputSchema = v.object({
@@ -9,12 +10,16 @@ export const UpdateTaskInputSchema = v.object({
   description: v.optional(v.nullable(v.string())),
   deadline: v.optional(v.nullable(v.date())),
   estimatedMinutes: v.optional(v.nullable(v.number())),
+  projectId: v.optional(v.nullable(v.string())),
 });
 
 type UpdateTaskInput = v.InferOutput<typeof UpdateTaskInputSchema>;
 
 export class UpdateTaskUseCase {
-  constructor(private readonly taskRepository: TaskRepository) {}
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly projectRepository: ProjectRepository,
+  ) {}
 
   async execute(input: UpdateTaskInput): Promise<void> {
     const { id, ...fields } = input;
@@ -23,6 +28,14 @@ export class UpdateTaskUseCase {
 
     if (!task) {
       throw new NotFoundError('タスク', id);
+    }
+
+    if (fields.projectId) {
+      const project = await this.projectRepository.findById(fields.projectId);
+
+      if (!project) {
+        throw new NotFoundError('プロジェクト', fields.projectId);
+      }
     }
 
     await this.taskRepository.update(id, fields);

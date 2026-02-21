@@ -2,6 +2,7 @@ import * as v from 'valibot';
 
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { NotFoundError } from '@/server/domain/error/domain-errors';
+import type { ProjectRepository } from '@/server/domain/project/project-repository';
 import type { TaskStatus } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
@@ -10,6 +11,11 @@ export const GetTaskDetailInputSchema = v.object({
 });
 
 type GetTaskDetailInput = v.InferOutput<typeof GetTaskDetailInputSchema>;
+
+type TaskDetailProject = {
+  id: string;
+  name: string;
+};
 
 type TaskDetail = {
   id: string;
@@ -20,6 +26,7 @@ type TaskDetail = {
   estimatedMinutes: number | null;
   incompletionReason: string | null;
   dailyReportDate: Date | null;
+  project: TaskDetailProject | null;
   createdAt: Date;
 };
 
@@ -27,6 +34,7 @@ export class GetTaskDetailUseCase {
   constructor(
     private readonly taskRepository: TaskRepository,
     private readonly dailyReportRepository: DailyReportRepository,
+    private readonly projectRepository: ProjectRepository,
   ) {}
 
   async execute(input: GetTaskDetailInput): Promise<TaskDetail> {
@@ -36,9 +44,10 @@ export class GetTaskDetailUseCase {
       throw new NotFoundError('タスク', input.id);
     }
 
-    const dailyReportDate = await this.resolveDailyReportDate(
-      task.dailyReportId,
-    );
+    const [dailyReportDate, project] = await Promise.all([
+      this.resolveDailyReportDate(task.dailyReportId),
+      this.resolveProject(task.projectId),
+    ]);
 
     return {
       id: task.id,
@@ -49,6 +58,7 @@ export class GetTaskDetailUseCase {
       estimatedMinutes: task.estimatedMinutes,
       incompletionReason: task.incompletionReason,
       dailyReportDate,
+      project,
       createdAt: task.createdAt,
     };
   }
@@ -61,5 +71,16 @@ export class GetTaskDetailUseCase {
     const dailyReport =
       await this.dailyReportRepository.findById(dailyReportId);
     return dailyReport?.date ?? null;
+  }
+
+  private async resolveProject(
+    projectId: string | null,
+  ): Promise<TaskDetailProject | null> {
+    if (!projectId) return null;
+
+    const project = await this.projectRepository.findById(projectId);
+    if (!project) return null;
+
+    return { id: project.id, name: project.name };
   }
 }
