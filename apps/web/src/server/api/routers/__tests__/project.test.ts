@@ -97,3 +97,35 @@ describe('project.detail', () => {
     );
   });
 });
+
+describe('project.create', () => {
+  it('プロジェクトを作成する', async () => {
+    const result = await caller.project.create({
+      name: '新プロジェクト',
+      purpose: 'テスト用のプロジェクトを作成する',
+      deadline: new Date('2026-12-31'),
+    });
+
+    expect(result).toEqual({
+      id: expect.any(String),
+      name: '新プロジェクト',
+      purpose: 'テスト用のプロジェクトを作成する',
+      status: 'active',
+      deadline: new Date('2026-12-31'),
+      createdAt: expect.any(Date),
+    });
+
+    const detail = await caller.project.detail({ id: result.id });
+    expect(detail.id).toBe(result.id);
+    expect(detail.name).toBe('新プロジェクト');
+  });
+
+  it('deadline なしでプロジェクトを作成できる', async () => {
+    const result = await caller.project.create({
+      name: '期限なしプロジェクト',
+      purpose: '期限を設定しないプロジェクト',
+    });
+
+    expect(result.deadline).toBeNull();
+  });
+});

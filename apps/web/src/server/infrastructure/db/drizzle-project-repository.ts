@@ -19,6 +19,16 @@ export class DrizzleProjectRepository implements ProjectRepository {
       .where(eq(projects.id, id));
     return row ? toProject(row) : null;
   }
+
+  async save(project: Project): Promise<void> {
+    await db.insert(projects).values({
+      id: project.id,
+      name: project.name,
+      purpose: project.purpose,
+      status: project.status,
+      deadline: project.deadline,
+    });
+  }
 }
 
 const toProject = (row: typeof projects.$inferSelect): Project => {

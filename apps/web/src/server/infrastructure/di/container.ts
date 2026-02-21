@@ -10,6 +10,7 @@ import { CreateMonthlyReportUseCase } from '@/server/usecase/monthly-report/crea
 import { GetMonthlyReportUseCase } from '@/server/usecase/monthly-report/get-monthly-report';
 import { GetMonthlyReportsUseCase } from '@/server/usecase/monthly-report/get-monthly-reports';
 import { ReviewMonthlyReportUseCase } from '@/server/usecase/monthly-report/review-monthly-report';
+import { CreateProjectUseCase } from '@/server/usecase/project/create-project';
 import { GetProjectUseCase } from '@/server/usecase/project/get-project';
 import { GetProjectsUseCase } from '@/server/usecase/project/get-projects';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
@@ -53,6 +54,7 @@ const projectRepository = new DrizzleProjectRepository();
 
 export const getProjectsUseCase = new GetProjectsUseCase(projectRepository);
 export const getProjectUseCase = new GetProjectUseCase(projectRepository);
+export const createProjectUseCase = new CreateProjectUseCase(projectRepository);
 
 const taskRepository = new DrizzleTaskRepository();
 
