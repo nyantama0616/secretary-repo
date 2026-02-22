@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 import { toSuccess } from "./helpers";
 import { registerDailyReportTools } from "./tools/daily-report";
+import { registerTaskTools } from "./tools/task";
 
 export const createMcpServer = (): McpServer => {
   const server = new McpServer({
@@ -14,6 +15,7 @@ export const createMcpServer = (): McpServer => {
   );
 
   registerDailyReportTools(server);
+  registerTaskTools(server);
 
   return server;
 };
