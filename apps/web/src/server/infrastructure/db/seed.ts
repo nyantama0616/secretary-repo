@@ -13,8 +13,8 @@ const SEED_DAILY_REPORTS = [
     goal: '機能Aの実装を進める',
     summary:
       '機能Aの主要部分を実装し、集中して作業できた。\n予定していたAPI設計も完了した。\n明日はテストを書く予定。',
-    wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
-    bedTime: new Date('2026-02-17T23:00:00+09:00'),
+    wakeUpTime: new Date('2026-02-16T22:00:00Z'),
+    bedTime: new Date('2026-02-17T14:00:00Z'),
     review: [
       '## 良かった点',
       '- 集中して作業できた',
@@ -32,7 +32,7 @@ const SEED_DAILY_REPORTS = [
     date: new Date('2026-02-18'),
     goal: 'テストを書く',
     summary: 'テストの基本を学んだが体調不良で早退した',
-    wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
+    wakeUpTime: new Date('2026-02-17T21:30:00Z'),
     review: [
       '## 良かった点',
       '- テストの書き方が分かってきた',
@@ -47,8 +47,8 @@ const SEED_DAILY_REPORTS = [
     date: new Date('2026-02-19'),
     goal: 'コードレビューと修正',
     summary: 'レビューで良い指摘をもらい修正を完了した',
-    wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
-    bedTime: new Date('2026-02-19T23:30:00+09:00'),
+    wakeUpTime: new Date('2026-02-18T22:30:00Z'),
+    bedTime: new Date('2026-02-19T14:30:00Z'),
     review: [
       '## 良かった点',
       '- レビューで良い指摘をもらえた',
@@ -98,7 +98,7 @@ const SEED_PROJECTS = [
       '- Drizzle ORM + PostgreSQL',
     ].join('\n'),
     status: 'active' as const,
-    deadline: new Date('2026-06-30T00:00:00+09:00'),
+    deadline: new Date('2026-06-30'),
   },
   {
     name: '読書記録アプリ',
@@ -155,7 +155,7 @@ const SEED_TASKS = [
     ].join('\n'),
     status: 'not_started' as const,
     sortOrder: 1,
-    deadline: new Date('2026-02-20T18:00:00+09:00'),
+    deadline: new Date('2026-02-20T09:00:00Z'),
     estimatedMinutes: 120,
   },
   {
