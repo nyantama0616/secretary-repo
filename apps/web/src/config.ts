@@ -1,5 +1,8 @@
 import * as v from 'valibot';
 
+// NOTE: サーバープロセス全体で日付演算を UTC に統一する
+process.env.TZ = 'UTC';
+
 // NOTE: Next.js は .env を自動ロードするが、Vitest や Playwright から直接インポートされる場合は
 // 自動ロードされないため、.env が存在すればロードする。既にロード済みの環境変数は上書きされない
 try {
