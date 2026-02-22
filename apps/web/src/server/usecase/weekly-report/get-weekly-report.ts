@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
+import { addDays } from '@/server/domain/date';
 import { NotFoundError } from '@/server/domain/error/domain-errors';
 import type { WeeklyReportRepository } from '@/server/domain/weekly-report/weekly-report-repository';
 
@@ -38,12 +39,11 @@ export class GetWeeklyReportUseCase {
       throw new NotFoundError('週報', input.id);
     }
 
-    const nextMonday = new Date(weeklyReport.startDate);
-    nextMonday.setDate(nextMonday.getDate() + 7);
+    const weekEnd = addDays(weeklyReport.startDate, 7);
 
     const dailyReports = await this.dailyReportRepository.findByDateRange(
       weeklyReport.startDate,
-      nextMonday,
+      weekEnd,
     );
 
     return {

@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 
+import { isStartOfMonth } from '@/server/domain/date';
 import { AlreadyExistsError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
 import {
@@ -11,10 +12,7 @@ import type { MonthlyReportRepository } from '@/server/domain/monthly-report/mon
 export const CreateMonthlyReportInputSchema = v.object({
   startDate: v.pipe(
     v.date(),
-    v.check(
-      (d) => d.getDate() === 1,
-      'startDate は月の1日である必要があります',
-    ),
+    v.check(isStartOfMonth, 'startDate は月の開始日である必要があります'),
   ),
   goal: v.optional(v.pipe(v.string(), v.minLength(1))),
 });

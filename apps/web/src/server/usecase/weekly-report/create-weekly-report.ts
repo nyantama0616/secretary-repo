@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 
+import { isStartOfWeek } from '@/server/domain/date';
 import { AlreadyExistsError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
 import {
@@ -11,10 +12,7 @@ import type { WeeklyReportRepository } from '@/server/domain/weekly-report/weekl
 export const CreateWeeklyReportInputSchema = v.object({
   startDate: v.pipe(
     v.date(),
-    v.check(
-      (d) => d.getDay() === 1,
-      'startDate は月曜日である必要があります',
-    ),
+    v.check(isStartOfWeek, 'startDate は週の開始日である必要があります'),
   ),
   goal: v.optional(v.pipe(v.string(), v.minLength(1))),
 });

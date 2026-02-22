@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 
+import { nextMonthStart } from '@/server/domain/date';
 import { NotFoundError } from '@/server/domain/error/domain-errors';
 import type { MonthlyReportRepository } from '@/server/domain/monthly-report/monthly-report-repository';
 import type { WeeklyReportRepository } from '@/server/domain/weekly-report/weekly-report-repository';
@@ -40,14 +41,10 @@ export class GetMonthlyReportUseCase {
       throw new NotFoundError('月報', input.id);
     }
 
-    const year = monthlyReport.startDate.getFullYear();
-    const month = monthlyReport.startDate.getMonth();
-    const nextMonthStart = new Date(year, month + 1, 1);
-
     const weeklyReports =
       await this.weeklyReportRepository.findByDateRange(
         monthlyReport.startDate,
-        nextMonthStart,
+        nextMonthStart(monthlyReport.startDate),
       );
 
     return {
