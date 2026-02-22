@@ -1,3 +1,4 @@
+import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 import { generateId } from '@/server/domain/id';
@@ -15,7 +16,7 @@ export const tasks = pgTable('tasks', {
   title: text('title').notNull(),
   description: text('description'),
   status: text('status', {
-    enum: ['not_started', 'in_progress', 'done', 'cancelled'],
+    enum: ['not_started', 'in_progress', 'done', 'cancelled', 'deferred'],
   })
     .notNull()
     .default('not_started'),
@@ -23,6 +24,10 @@ export const tasks = pgTable('tasks', {
   deadline: timestamp('deadline', { withTimezone: true }),
   estimatedMinutes: integer('estimated_minutes'),
   incompletionReason: text('incompletion_reason'),
+  carriedOverFromId: text('carried_over_from_id').references(
+    (): AnyPgColumn => tasks.id,
+    { onDelete: 'set null' },
+  ),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),

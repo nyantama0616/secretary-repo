@@ -68,6 +68,7 @@ describe('task.create', () => {
       deadline: CREATE_TASK_INPUT.deadline,
       estimatedMinutes: CREATE_TASK_INPUT.estimatedMinutes,
       incompletionReason: null,
+      carriedOverFromId: null,
       createdAt: expect.any(Date),
     });
 
@@ -95,6 +96,7 @@ describe('task.create', () => {
       deadline: null,
       estimatedMinutes: null,
       incompletionReason: null,
+      carriedOverFromId: null,
       createdAt: expect.any(Date),
     });
   });

@@ -56,6 +56,7 @@ const toTask = (row: typeof tasks.$inferSelect): Task => {
     deadline: row.deadline,
     estimatedMinutes: row.estimatedMinutes,
     incompletionReason: row.incompletionReason,
+    carriedOverFromId: row.carriedOverFromId,
     createdAt: row.createdAt,
   });
 };

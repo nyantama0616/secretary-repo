@@ -1,0 +1,2 @@
+ALTER TABLE "tasks" ADD COLUMN "carried_over_from_id" text;--> statement-breakpoint
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_carried_over_from_id_tasks_id_fk" FOREIGN KEY ("carried_over_from_id") REFERENCES "public"."tasks"("id") ON DELETE set null ON UPDATE no action;

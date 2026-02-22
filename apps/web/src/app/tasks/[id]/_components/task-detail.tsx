@@ -22,6 +22,7 @@ const STATUS_CONFIG: Record<
   in_progress: { label: '着手中', variant: 'default' },
   done: { label: '完了', variant: 'outline' },
   cancelled: { label: '中止', variant: 'destructive' },
+  deferred: { label: '延期', variant: 'secondary' },
 };
 
 type TaskDetailProps = {

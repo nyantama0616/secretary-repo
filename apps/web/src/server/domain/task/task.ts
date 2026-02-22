@@ -5,6 +5,7 @@ export const TaskStatusSchema = v.picklist([
   'in_progress',
   'done',
   'cancelled',
+  'deferred',
 ]);
 
 const TaskSchema = v.pipe(
@@ -19,6 +20,7 @@ const TaskSchema = v.pipe(
     deadline: v.nullable(v.date()),
     estimatedMinutes: v.nullable(v.number()),
     incompletionReason: v.nullable(v.string()),
+    carriedOverFromId: v.nullable(v.string()),
     createdAt: v.date(),
   }),
   v.brand('Task'),

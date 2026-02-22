@@ -42,6 +42,7 @@ export class CreateTaskUseCase {
       deadline: input.deadline ?? null,
       estimatedMinutes: input.estimatedMinutes ?? null,
       incompletionReason: null,
+      carriedOverFromId: null,
       createdAt: new Date(),
     });
 
