@@ -1,9 +1,11 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from 'next';
 
-import { ROUTES } from "@/constants/routes";
+import { Dashboard } from './_components/dashboard';
 
-const TopPage = () => {
-  redirect(ROUTES.dailyReports);
+export const metadata: Metadata = {
+  title: 'ダッシュボード',
 };
 
-export default TopPage;
+const DashboardPage = () => <Dashboard />;
+
+export default DashboardPage;

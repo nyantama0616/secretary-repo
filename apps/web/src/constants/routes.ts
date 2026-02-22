@@ -1,4 +1,5 @@
 export const ROUTES = {
+  dashboard: '/',
   login: '/login',
   dailyReports: '/daily-reports',
   dailyReportDetail: (id: string) => `/daily-reports/${id}`,
