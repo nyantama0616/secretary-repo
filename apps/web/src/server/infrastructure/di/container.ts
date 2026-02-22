@@ -18,6 +18,7 @@ import { UpdateProjectUseCase } from '@/server/usecase/project/update-project';
 import { UpdateProjectStatusUseCase } from '@/server/usecase/project/update-project-status';
 import { AssignDailyReportUseCase } from '@/server/usecase/task/assign-daily-report';
 import { CreateTaskUseCase } from '@/server/usecase/task/create-task';
+import { DeferTaskUseCase } from '@/server/usecase/task/defer-task';
 import { DeleteTaskUseCase } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
 import { GetTasksUseCase } from '@/server/usecase/task/get-tasks';
@@ -110,6 +111,7 @@ export const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
   taskRepository,
 );
 export const deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
+export const deferTaskUseCase = new DeferTaskUseCase(taskRepository);
 export const assignDailyReportUseCase = new AssignDailyReportUseCase(
   taskRepository,
   dailyReportRepository,

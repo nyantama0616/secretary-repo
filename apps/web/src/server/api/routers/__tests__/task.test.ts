@@ -507,6 +507,86 @@ describe('task.assignDailyReport', () => {
   });
 });
 
+describe('task.defer', () => {
+  it('タスクを延期し、複製先タスクが作成される', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    const deferred = await caller.task.defer({ id: inserted.id });
+
+    expect(deferred).toEqual(
+      expect.objectContaining({
+        title: TEST_TASKS[0].title,
+        description: TEST_TASKS[0].description,
+        status: 'not_started',
+        carriedOverFromId: inserted.id,
+      }),
+    );
+
+    const original = await caller.task.detail({ id: inserted.id });
+    expect(original.status).toBe('deferred');
+  });
+
+  it('延期時に未達成の理由を設定できる', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.defer({
+      id: inserted.id,
+      incompletionReason: '時間が足りなかった',
+    });
+
+    const original = await caller.task.detail({ id: inserted.id });
+    expect(original.incompletionReason).toBe('時間が足りなかった');
+  });
+
+  it('完了済みタスクの場合、BAD_REQUEST エラーを返す', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[0], status: 'done' })
+      .returning();
+
+    await expect(
+      caller.task.defer({ id: inserted.id }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+      }),
+    );
+  });
+
+  it('中止済みタスクの場合、BAD_REQUEST エラーを返す', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[0], status: 'cancelled' })
+      .returning();
+
+    await expect(
+      caller.task.defer({ id: inserted.id }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+      }),
+    );
+  });
+
+  it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+      caller.task.defer({ id: nonExistentId }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
 describe('task.delete', () => {
   it('タスクを削除する', async () => {
     const [inserted] = await db
