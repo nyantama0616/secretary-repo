@@ -54,7 +54,7 @@ export const Dashboard = () => {
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   return (
-    <div className="grid gap-8 p-8">
+    <div className="grid max-w-2xl gap-8 p-8">
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
       <DailyTaskSection
