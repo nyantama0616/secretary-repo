@@ -99,7 +99,7 @@ const WeeklyReportCard = ({
   goal: string | null;
 }) => {
   return (
-    <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
+    <div className="rounded-lg border p-4">
       <p className="font-semibold">{formatDate(startDate)}〜</p>
       {goal && (
         <p className="mt-1 text-sm text-muted-foreground">{goal}</p>
