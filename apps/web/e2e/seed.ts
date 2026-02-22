@@ -93,6 +93,11 @@ const SEED_TODAY_TASKS = [
     status: 'not_started' as const,
     sortOrder: 1,
   },
+  {
+    title: '日報を書く',
+    status: 'done' as const,
+    sortOrder: 2,
+  },
 ];
 
 const SEED_TOMORROW_TASKS = [

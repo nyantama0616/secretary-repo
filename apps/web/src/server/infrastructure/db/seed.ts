@@ -211,6 +211,18 @@ const SEED_TODAY_TASKS = [
     status: 'done' as const,
     sortOrder: 2,
   },
+  {
+    title: '旧APIの削除',
+    status: 'cancelled' as const,
+    sortOrder: 3,
+    incompletionReason: '仕様変更により不要になった',
+  },
+  {
+    title: 'ライブラリのアップデート',
+    status: 'deferred' as const,
+    sortOrder: 4,
+    incompletionReason: '優先度の高いタスクを先に対応する',
+  },
 ];
 
 const SEED_TOMORROW_TASKS = [

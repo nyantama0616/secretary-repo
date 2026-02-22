@@ -25,6 +25,23 @@ test.describe('ダッシュボード', () => {
     await expect(page.getByText('ドキュメント更新')).toBeVisible();
   });
 
+  test('完了済みタスクが未完了タスクより上に表示される', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText('日報を書く')).toBeVisible();
+
+    const todaySection = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { name: '今日のタスク' }) });
+    const taskLinks = todaySection.locator('a');
+    const titles = await taskLinks.allTextContents();
+
+    const doneIndex = titles.findIndex((t) => t.includes('日報を書く'));
+    const activeIndex = titles.findIndex((t) =>
+      t.includes('ダッシュボードUIを実装する'),
+    );
+    expect(doneIndex).toBeLessThan(activeIndex);
+  });
+
   test('タスクをクリックすると、詳細ページに遷移する', async ({ page }) => {
     await page.goto('/');
     await page.getByText('ダッシュボードUIを実装する').click();
