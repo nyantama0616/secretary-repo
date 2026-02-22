@@ -21,6 +21,25 @@ export class DrizzleWeeklyReportRepository
       .where(eq(weeklyReports.id, id));
     return rows[0] ? toWeeklyReport(rows[0]) : null;
   }
+
+  async findByStartDate(startDate: Date): Promise<WeeklyReport | null> {
+    const rows = await db
+      .select()
+      .from(weeklyReports)
+      .where(eq(weeklyReports.startDate, startDate));
+    return rows[0] ? toWeeklyReport(rows[0]) : null;
+  }
+
+  async save(weeklyReport: WeeklyReport): Promise<void> {
+    await db.insert(weeklyReports).values({
+      id: weeklyReport.id,
+      startDate: weeklyReport.startDate,
+      goal: weeklyReport.goal,
+      summary: weeklyReport.summary,
+      review: weeklyReport.review,
+      notes: weeklyReport.notes,
+    });
+  }
 }
 
 const toWeeklyReport = (

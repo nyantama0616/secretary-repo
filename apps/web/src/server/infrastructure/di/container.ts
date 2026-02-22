@@ -23,6 +23,7 @@ import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
 import { GetTasksUseCase } from '@/server/usecase/task/get-tasks';
 import { UpdateTaskUseCase } from '@/server/usecase/task/update-task';
 import { UpdateTaskStatusUseCase } from '@/server/usecase/task/update-task-status';
+import { CreateWeeklyReportUseCase } from '@/server/usecase/weekly-report/create-weekly-report';
 import { GetWeeklyReportUseCase } from '@/server/usecase/weekly-report/get-weekly-report';
 import { GetWeeklyReportsUseCase } from '@/server/usecase/weekly-report/get-weekly-reports';
 
@@ -74,6 +75,9 @@ export const getWeeklyReportsUseCase = new GetWeeklyReportsUseCase(
 export const getWeeklyReportUseCase = new GetWeeklyReportUseCase(
   weeklyReportRepository,
   dailyReportRepository,
+);
+export const createWeeklyReportUseCase = new CreateWeeklyReportUseCase(
+  weeklyReportRepository,
 );
 
 const taskRepository = new DrizzleTaskRepository();

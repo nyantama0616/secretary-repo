@@ -132,3 +132,50 @@ describe('weeklyReport.detail', () => {
     );
   });
 });
+
+describe('weeklyReport.create', () => {
+  it('目標付きの週報を作成する', async () => {
+    const startDate = new Date('2026-02-16');
+    const result = await caller.weeklyReport.create({
+      startDate,
+      goal: '週報機能を完成させる',
+    });
+
+    expect(result).toEqual({
+      id: expect.any(String),
+      startDate,
+      goal: '週報機能を完成させる',
+      summary: null,
+      review: null,
+      notes: null,
+      createdAt: expect.any(Date),
+    });
+
+    const detail = await caller.weeklyReport.detail({ id: result.id });
+    expect(detail.id).toBe(result.id);
+    expect(detail.startDate).toEqual(startDate);
+  });
+
+  it('月曜日以外の日付の場合、BAD_REQUEST エラーを返す', async () => {
+    await expect(
+      caller.weeklyReport.create({ startDate: new Date('2026-02-18') }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+      }),
+    );
+  });
+
+  it('同じ startDate の週報が既に存在する場合、CONFLICT エラーを返す', async () => {
+    const startDate = new Date('2026-02-16');
+    await caller.weeklyReport.create({ startDate });
+
+    await expect(
+      caller.weeklyReport.create({ startDate }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'CONFLICT',
+      }),
+    );
+  });
+});
