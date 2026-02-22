@@ -1,12 +1,9 @@
 'use client';
 
-import Link from 'next/link';
-
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { MarkdownViewer } from '@/components/viewer/markdown-viewer';
 import { ViewerFrame } from '@/components/viewer/viewer-frame';
-import { ROUTES } from '@/constants/routes';
 import { formatDate, formatMonth } from '@/lib/format';
 import { useQuery, useTRPC } from '@/trpc/client';
 
