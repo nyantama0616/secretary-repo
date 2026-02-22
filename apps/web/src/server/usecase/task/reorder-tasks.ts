@@ -21,8 +21,8 @@ export class ReorderTasksUseCase {
       }
     }
 
-    for (let i = 0; i < input.taskIds.length; i++) {
-      await this.taskRepository.update(input.taskIds[i], { sortOrder: i });
-    }
+    await this.taskRepository.updateMany(
+      input.taskIds.map((id, i) => ({ id, fields: { sortOrder: i } })),
+    );
   }
 }

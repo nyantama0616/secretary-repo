@@ -25,5 +25,8 @@ export interface TaskRepository {
   findById(id: string): Promise<Task | null>;
   save(task: Task): Promise<void>;
   update(id: string, fields: TaskUpdatableFields): Promise<void>;
+  updateMany(
+    items: { id: string; fields: TaskUpdatableFields }[],
+  ): Promise<void>;
   delete(id: string): Promise<void>;
 }
