@@ -5,4 +5,5 @@ export interface WeeklyReportRepository {
   findById(id: string): Promise<WeeklyReport | null>;
   findByStartDate(startDate: Date): Promise<WeeklyReport | null>;
   save(weeklyReport: WeeklyReport): Promise<void>;
+  update(weeklyReport: WeeklyReport): Promise<void>;
 }

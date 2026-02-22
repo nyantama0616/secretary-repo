@@ -40,6 +40,17 @@ export class DrizzleWeeklyReportRepository
       notes: weeklyReport.notes,
     });
   }
+
+  async update(weeklyReport: WeeklyReport): Promise<void> {
+    await db
+      .update(weeklyReports)
+      .set({
+        summary: weeklyReport.summary,
+        review: weeklyReport.review,
+        notes: weeklyReport.notes,
+      })
+      .where(eq(weeklyReports.id, weeklyReport.id));
+  }
 }
 
 const toWeeklyReport = (
