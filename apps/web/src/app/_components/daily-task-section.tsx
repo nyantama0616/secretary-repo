@@ -4,6 +4,13 @@ import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { Badge } from '@repo/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@repo/ui/dropdown-menu';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
 import { useState } from 'react';
@@ -69,6 +76,9 @@ export const DailyTaskSection = ({
 
   const reorderMutation = useMutation(trpc.task.reorder.mutationOptions());
   const createMutation = useMutation(trpc.task.create.mutationOptions());
+  const updateStatusMutation = useMutation(
+    trpc.task.updateStatus.mutationOptions(),
+  );
 
   // NOTE: D&D による楽観的な並び順を保持するためにローカル状態を使う
   // サーバーデータが更新（dataUpdatedAt が変化）したらローカル状態をリセットする
@@ -86,6 +96,13 @@ export const DailyTaskSection = ({
 
   const invalidateTasks = () => {
     queryClient.invalidateQueries({ queryKey: taskQueryOptions.queryKey });
+  };
+
+  const handleStatusChange = (taskId: string, status: TaskStatus) => {
+    updateStatusMutation.mutate(
+      { id: taskId, status },
+      { onSuccess: invalidateTasks },
+    );
   };
 
   const handleAddTask = async (title: string) => {
@@ -134,6 +151,7 @@ export const DailyTaskSection = ({
                 task={task}
                 index={index}
                 isNext={task.id === findNextTaskId(displayTasks)}
+                onStatusChange={handleStatusChange}
               />
             ))}
           </div>
@@ -169,17 +187,34 @@ const findNextTaskId = (tasks: TaskItem[]): string | null => {
   return next?.id ?? null;
 };
 
+const ALL_STATUSES: TaskStatus[] = [
+  'not_started',
+  'in_progress',
+  'done',
+  'cancelled',
+  'deferred',
+];
+
 const SortableTaskRow = ({
   task,
   index,
   isNext,
+  onStatusChange,
 }: {
   task: TaskItem;
   index: number;
   isNext: boolean;
+  onStatusChange: (taskId: string, status: TaskStatus) => void;
 }) => {
   const { ref, isDragging } = useSortable({ id: task.id, index });
   const config = STATUS_CONFIG[task.status];
+  const isDone = task.status === 'done';
+
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onStatusChange(task.id, isDone ? 'not_started' : 'done');
+  };
 
   return (
     <div
@@ -189,19 +224,64 @@ const SortableTaskRow = ({
       <div className="flex w-6 shrink-0 cursor-grab items-center justify-center text-sm font-medium text-muted-foreground active:cursor-grabbing">
         {index + 1}
       </div>
-      <Link
-        href={ROUTES.taskDetail(task.id)}
-        className={`flex min-w-0 flex-1 items-center gap-2 rounded-lg border transition-colors hover:bg-muted/50 ${isNext ? 'shadow-md p-4' : 'p-3'}`}
+      <div
+        className={`flex min-w-0 flex-1 items-center gap-2 rounded-lg border transition-colors ${isNext ? 'shadow-md p-4' : 'p-3'}`}
       >
-        <Badge className="shrink-0" variant={config.variant}>
-          {config.label}
-        </Badge>
-        <span
-          className={`truncate font-medium ${isNext ? 'text-base' : 'text-sm'} ${config.muted ? 'text-muted-foreground line-through' : ''}`}
+        <button
+          type="button"
+          aria-label={isDone ? 'タスクを未完了にする' : 'タスクを完了にする'}
+          onClick={handleCheckboxClick}
+          className={`flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 transition-colors ${isDone ? 'border-success bg-success text-white' : 'border-muted-foreground/40 hover:border-success hover:bg-success/10'}`}
         >
-          {task.title}
-        </span>
-      </Link>
+          {isDone && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={3}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-3"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type="button" className="shrink-0 cursor-pointer">
+              <Badge variant={config.variant}>{config.label}</Badge>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuRadioGroup
+              value={task.status}
+              onValueChange={(value) =>
+                onStatusChange(task.id, value as TaskStatus)
+              }
+            >
+              {ALL_STATUSES.map((status) => (
+                <DropdownMenuRadioItem key={status} value={status}>
+                  <Badge variant={STATUS_CONFIG[status].variant}>
+                    {STATUS_CONFIG[status].label}
+                  </Badge>
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Link
+          href={ROUTES.taskDetail(task.id)}
+          className="min-w-0 flex-1 hover:underline"
+        >
+          <span
+            className={`truncate font-medium ${isNext ? 'text-base' : 'text-sm'} ${config.muted ? 'text-muted-foreground line-through' : ''}`}
+          >
+            {task.title}
+          </span>
+        </Link>
+      </div>
     </div>
   );
 };
