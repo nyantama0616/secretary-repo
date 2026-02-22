@@ -1,6 +1,17 @@
+import * as v from 'valibot';
+
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
-import type { TaskStatus } from '@/server/domain/task/task';
+import { TaskStatusSchema, type TaskStatus } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
+
+export const GetTasksInputSchema = v.optional(
+  v.object({
+    dailyReportId: v.optional(v.string()),
+    statuses: v.optional(v.array(TaskStatusSchema)),
+  }),
+);
+
+type GetTasksInput = v.InferOutput<typeof GetTasksInputSchema>;
 
 type TaskListItem = {
   id: string;
@@ -15,8 +26,11 @@ export class GetTasksUseCase {
     private readonly dailyReportRepository: DailyReportRepository,
   ) {}
 
-  async execute(): Promise<TaskListItem[]> {
-    const tasks = await this.taskRepository.findAll();
+  async execute(input?: GetTasksInput): Promise<TaskListItem[]> {
+    const tasks = await this.taskRepository.findAll({
+      dailyReportId: input?.dailyReportId,
+      statuses: input?.statuses,
+    });
 
     const dailyReportIds = [
       ...new Set(

@@ -1,8 +1,9 @@
-import { eq } from 'drizzle-orm';
+import { type SQL, and, asc, eq, inArray } from 'drizzle-orm';
 
 import type { Task } from '@/server/domain/task/task';
 import { createTask } from '@/server/domain/task/task';
 import type {
+  TaskFilters,
   TaskRepository,
   TaskUpdatableFields,
 } from '@/server/domain/task/task-repository';
@@ -10,8 +11,22 @@ import { db } from '@/server/infrastructure/db/client';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 export class DrizzleTaskRepository implements TaskRepository {
-  async findAll(): Promise<Task[]> {
-    const rows = await db.select().from(tasks);
+  async findAll(filters?: TaskFilters): Promise<Task[]> {
+    const conditions: SQL[] = [];
+
+    if (filters?.dailyReportId) {
+      conditions.push(eq(tasks.dailyReportId, filters.dailyReportId));
+    }
+
+    if (filters?.statuses && filters.statuses.length > 0) {
+      conditions.push(inArray(tasks.status, filters.statuses));
+    }
+
+    const rows = await db
+      .select()
+      .from(tasks)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(asc(tasks.sortOrder));
     return rows.map(toTask);
   }
 

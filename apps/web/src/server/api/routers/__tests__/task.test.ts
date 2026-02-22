@@ -119,6 +119,36 @@ describe('task.create', () => {
     });
   });
 
+  it('dailyReportId を指定して日報に紐づける', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+
+const result = await caller.task.create({
+      title: CREATE_TASK_INPUT.title,
+      dailyReportId: report.id,
+    });
+
+    const detail = await caller.task.detail({ id: result.id });
+    expect(detail.dailyReportDate).toStrictEqual(TEST_DAILY_REPORT.date);
+  });
+
+  it('存在しない日報の場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+    caller.task.create({
+        title: CREATE_TASK_INPUT.title,
+        dailyReportId: nonExistentId,
+      }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+
   it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
     const nonExistentId = generateId();
 
@@ -174,6 +204,80 @@ describe('task.list', () => {
         dailyReportDate: TEST_DAILY_REPORT.date,
       }),
     ]);
+  });
+
+  it('dailyReportId でフィルタリングできる', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+    await db.insert(tasks).values([
+      {
+        title: '日報に紐づくタスク',
+        status: 'not_started',
+        sortOrder: 1,
+        dailyReportId: report.id,
+      },
+      {
+        title: '日報に紐づかないタスク',
+        status: 'not_started',
+        sortOrder: 2,
+      },
+    ]);
+
+const result = await caller.task.list({ dailyReportId: report.id });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(
+      expect.objectContaining({ title: '日報に紐づくタスク' }),
+    );
+  });
+
+  it('statuses でフィルタリングできる', async () => {
+    await db.insert(tasks).values(TEST_TASKS);
+
+const result = await caller.task.list({ statuses: ['done'] });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(
+      expect.objectContaining({ title: 'テストを書く', status: 'done' }),
+    );
+  });
+
+  it('dailyReportId と statuses を組み合わせてフィルタリングできる', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
+    await db.insert(tasks).values([
+      {
+        title: '未着手タスク',
+        status: 'not_started',
+        sortOrder: 1,
+        dailyReportId: report.id,
+      },
+      {
+        title: '完了タスク',
+        status: 'done',
+        sortOrder: 2,
+        dailyReportId: report.id,
+      },
+      {
+        title: '別の日報のタスク',
+        status: 'not_started',
+        sortOrder: 3,
+      },
+    ]);
+
+const result = await caller.task.list({
+      dailyReportId: report.id,
+      statuses: ['not_started'],
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(
+      expect.objectContaining({ title: '未着手タスク' }),
+    );
   });
 
   it('タスクが存在しない場合、空配列を返す', async () => {
@@ -499,6 +603,35 @@ describe('task.assignDailyReport', () => {
         id: inserted.id,
         dailyReportId: nonExistentId,
       }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
+describe('task.reorder', () => {
+  it('タスクの並び順を更新する', async () => {
+    const inserted = await db
+      .insert(tasks)
+      .values(TEST_TASKS)
+      .returning();
+    const [first, second] = inserted;
+
+await caller.task.reorder({ taskIds: [second.id, first.id] });
+
+    // NOTE: list は sortOrder 順で返すため、並び順の変更を検証できる
+    const list = await caller.task.list();
+    expect(list[0].id).toBe(second.id);
+    expect(list[1].id).toBe(first.id);
+  });
+
+  it('存在しないタスクIDが含まれる場合、NOT_FOUND エラーを返す', async () => {
+    const nonExistentId = generateId();
+
+    await expect(
+    caller.task.reorder({ taskIds: [nonExistentId] }),
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'NOT_FOUND',

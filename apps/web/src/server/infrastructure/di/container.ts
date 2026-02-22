@@ -22,6 +22,7 @@ import { DeferTaskUseCase } from '@/server/usecase/task/defer-task';
 import { DeleteTaskUseCase } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailUseCase } from '@/server/usecase/task/get-task-detail';
 import { GetTasksUseCase } from '@/server/usecase/task/get-tasks';
+import { ReorderTasksUseCase } from '@/server/usecase/task/reorder-tasks';
 import { UpdateTaskUseCase } from '@/server/usecase/task/update-task';
 import { UpdateTaskStatusUseCase } from '@/server/usecase/task/update-task-status';
 import { CreateWeeklyReportUseCase } from '@/server/usecase/weekly-report/create-weekly-report';
@@ -93,6 +94,7 @@ const taskRepository = new DrizzleTaskRepository();
 export const createTaskUseCase = new CreateTaskUseCase(
   taskRepository,
   projectRepository,
+  dailyReportRepository,
 );
 export const getTasksUseCase = new GetTasksUseCase(
   taskRepository,
@@ -110,6 +112,7 @@ export const updateTaskUseCase = new UpdateTaskUseCase(
 export const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
   taskRepository,
 );
+export const reorderTasksUseCase = new ReorderTasksUseCase(taskRepository);
 export const deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
 export const deferTaskUseCase = new DeferTaskUseCase(taskRepository);
 export const assignDailyReportUseCase = new AssignDailyReportUseCase(
