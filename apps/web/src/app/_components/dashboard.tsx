@@ -13,6 +13,7 @@ import { formatDate, toDateStr } from '@/lib/format';
 import { useQuery, useTRPC } from '@/trpc/client';
 
 import { DailyTaskSection } from './daily-task-section';
+import { ProjectSection } from './project-section';
 
 export const Dashboard = () => {
   const trpc = useTRPC();
@@ -102,6 +103,8 @@ export const Dashboard = () => {
         dateLabel={formatDate(tomorrow)}
         dailyReportId={tomorrowReport?.id ?? null}
       />
+
+      <ProjectSection />
     </div>
   );
 };

@@ -54,6 +54,33 @@ test.describe('ダッシュボード', () => {
     ).toBeVisible();
   });
 
+  test('プロジェクト一覧が表示される', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(
+      page.getByRole('heading', { name: 'プロジェクト' }),
+    ).toBeVisible();
+    await expect(page.getByText('secretary-repo')).toBeVisible();
+    await expect(page.getByText('読書記録アプリ')).toBeVisible();
+    await expect(page.getByText('進行中')).toBeVisible();
+    await expect(page.getByText('期限: 2026/06/30')).toBeVisible();
+  });
+
+  test('プロジェクトをクリックすると、詳細ページに遷移する', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const projectSection = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { name: 'プロジェクト' }) });
+    await projectSection.getByText('secretary-repo').click();
+
+    await expect(
+      page.getByRole('heading', { name: 'secretary-repo' }),
+    ).toBeVisible();
+  });
+
   test('完了済みタスクが未完了タスクより上に表示される', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByText('日報を書く')).toBeVisible();
