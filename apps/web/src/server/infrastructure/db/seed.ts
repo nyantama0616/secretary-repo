@@ -61,6 +61,15 @@ const SEED_DAILY_REPORTS = [
       '- 明日は新機能に着手する',
     ].join('\n'),
   },
+  {
+    date: new Date('2026-02-22'),
+    goal: 'ダッシュボードUIを実装する',
+    wakeUpTime: new Date('2026-02-21T22:00:00Z'),
+  },
+  {
+    date: new Date('2026-02-23'),
+    goal: 'E2Eテストを書く',
+  },
 ];
 
 const SEED_WEEKLY_REPORTS = [
@@ -184,6 +193,41 @@ const SEED_TASKS = [
   },
 ];
 
+const SEED_TODAY_TASKS = [
+  {
+    title: 'ダッシュボードUIを実装する',
+    status: 'in_progress' as const,
+    sortOrder: 0,
+    estimatedMinutes: 180,
+  },
+  {
+    title: 'コンポーネントのテストを書く',
+    status: 'not_started' as const,
+    sortOrder: 1,
+    estimatedMinutes: 60,
+  },
+  {
+    title: '日報を書く',
+    status: 'done' as const,
+    sortOrder: 2,
+  },
+];
+
+const SEED_TOMORROW_TASKS = [
+  {
+    title: 'E2Eテストを追加する',
+    status: 'not_started' as const,
+    sortOrder: 0,
+    estimatedMinutes: 120,
+  },
+  {
+    title: 'コードレビュー対応',
+    status: 'not_started' as const,
+    sortOrder: 1,
+    estimatedMinutes: 90,
+  },
+];
+
 const main = async () => {
   console.log('Seeding...');
   await db.transaction(async (tx) => {
@@ -221,14 +265,30 @@ const main = async () => {
       .insert(projects)
       .values(SEED_PROJECTS)
       .returning();
-    await tx.insert(tasks).values(
-      SEED_TASKS.map((task, i) => ({
+    const todayReport = insertedReports.find(
+      (r) => r.date.toISOString().startsWith('2026-02-22'),
+    )!;
+    const tomorrowReport = insertedReports.find(
+      (r) => r.date.toISOString().startsWith('2026-02-23'),
+    )!;
+    await tx.insert(tasks).values([
+      ...SEED_TASKS.map((task, i) => ({
         ...task,
-        dailyReportId: insertedReports[i % insertedReports.length].id,
+        dailyReportId: insertedReports[i % 3].id,
         // NOTE: 最初の2つのタスクを active なプロジェクトに紐付ける
         projectId: i < 2 ? insertedProjects[0].id : null,
       })),
-    );
+      ...SEED_TODAY_TASKS.map((task) => ({
+        ...task,
+        dailyReportId: todayReport.id,
+        projectId: insertedProjects[0].id,
+      })),
+      ...SEED_TOMORROW_TASKS.map((task) => ({
+        ...task,
+        dailyReportId: tomorrowReport.id,
+        projectId: insertedProjects[0].id,
+      })),
+    ]);
   });
   console.log('Seeding completed.');
   process.exit(0);

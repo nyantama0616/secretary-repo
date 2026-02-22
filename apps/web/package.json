@@ -18,6 +18,8 @@
     "mcp": "tsx --watch src/mcp/index.ts"
   },
   "dependencies": {
+    "@dnd-kit/helpers": "^0.1.18",
+    "@dnd-kit/react": "^0.1.18",
     "@hono/node-server": "^1.19.9",
     "@hookform/resolvers": "^5.2.2",
     "@modelcontextprotocol/sdk": "^1.26.0",
