@@ -85,32 +85,17 @@ test.describe('月報詳細', () => {
     ).not.toBeVisible();
   });
 
-  test('月報に紐づく日報が一覧表示される', async ({ page }) => {
+  test('月報に紐づく週報が一覧表示される', async ({ page }) => {
     await page.goto('/monthly-reports');
     await page
       .getByRole('link', { name: /新機能の開発を進めた月だった/ })
       .click();
 
     await expect(
-      page.getByRole('heading', { name: '日報' }),
+      page.getByRole('heading', { name: '週報' }),
     ).toBeVisible();
-    await expect(
-      page.getByText('機能Aの主要部分を実装し、集中して作業できた'),
-    ).toBeVisible();
-  });
-
-  test('日報カードをクリックすると、日報詳細に遷移する', async ({ page }) => {
-    await page.goto('/monthly-reports');
-    await page
-      .getByRole('link', { name: /新機能の開発を進めた月だった/ })
-      .click();
-    await page
-      .getByRole('link', {
-        name: /機能Aの主要部分を実装し、集中して作業できた/,
-      })
-      .click();
-
-    await expect(page).toHaveURL(/\/daily-reports\/[\w-]+/);
+    await expect(page.getByText('機能Aの設計を固める')).toBeVisible();
+    await expect(page.getByText('テストを充実させる')).toBeVisible();
   });
 
   test('存在しないIDにアクセスすると、404ページが表示される', async ({

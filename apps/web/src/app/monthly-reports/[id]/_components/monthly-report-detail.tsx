@@ -1,12 +1,9 @@
 'use client';
 
-import Link from 'next/link';
-
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { MarkdownViewer } from '@/components/viewer/markdown-viewer';
 import { ViewerFrame } from '@/components/viewer/viewer-frame';
-import { ROUTES } from '@/constants/routes';
 import { formatDate, formatMonth } from '@/lib/format';
 import { useQuery, useTRPC } from '@/trpc/client';
 
@@ -76,20 +73,16 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
         </section>
       )}
 
-      {report.dailyReports.length > 0 && (
+      {report.weeklyReports.length > 0 && (
         <section className="grid gap-3">
-          <h2 className="border-b pb-2 text-lg font-semibold">日報</h2>
+          <h2 className="border-b pb-2 text-lg font-semibold">週報</h2>
           <div className="grid gap-2">
-            {report.dailyReports.map((dailyReport) => (
-              <Link
-                key={dailyReport.id}
-                href={ROUTES.dailyReportDetail(dailyReport.id)}
-              >
-                <DailyReportCard
-                  date={dailyReport.date}
-                  summary={dailyReport.summary}
-                />
-              </Link>
+            {report.weeklyReports.map((weeklyReport) => (
+              <WeeklyReportCard
+                key={weeklyReport.id}
+                startDate={weeklyReport.startDate}
+                goal={weeklyReport.goal}
+              />
             ))}
           </div>
         </section>
@@ -98,18 +91,18 @@ export const MonthlyReportDetail = ({ id }: MonthlyReportDetailProps) => {
   );
 };
 
-const DailyReportCard = ({
-  date,
-  summary,
+const WeeklyReportCard = ({
+  startDate,
+  goal,
 }: {
-  date: Date;
-  summary: string | null;
+  startDate: Date;
+  goal: string | null;
 }) => {
   return (
-    <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
-      <p className="font-semibold">{formatDate(date)}</p>
-      {summary && (
-        <p className="mt-1 text-sm text-muted-foreground">{summary}</p>
+    <div className="rounded-lg border p-4">
+      <p className="font-semibold">{formatDate(startDate)}〜</p>
+      {goal && (
+        <p className="mt-1 text-sm text-muted-foreground">{goal}</p>
       )}
     </div>
   );

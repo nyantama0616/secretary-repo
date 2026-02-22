@@ -1,8 +1,8 @@
 import * as v from 'valibot';
 
-import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { NotFoundError } from '@/server/domain/error/domain-errors';
 import type { MonthlyReportRepository } from '@/server/domain/monthly-report/monthly-report-repository';
+import type { WeeklyReportRepository } from '@/server/domain/weekly-report/weekly-report-repository';
 
 export const GetMonthlyReportInputSchema = v.object({
   id: v.string(),
@@ -18,17 +18,17 @@ type MonthlyReportDetail = {
   review: string | null;
   notes: string | null;
   createdAt: Date;
-  dailyReports: {
+  weeklyReports: {
     id: string;
-    date: Date;
-    summary: string | null;
+    startDate: Date;
+    goal: string | null;
   }[];
 };
 
 export class GetMonthlyReportUseCase {
   constructor(
     private readonly monthlyReportRepository: MonthlyReportRepository,
-    private readonly dailyReportRepository: DailyReportRepository,
+    private readonly weeklyReportRepository: WeeklyReportRepository,
   ) {}
 
   async execute(input: GetMonthlyReportInput): Promise<MonthlyReportDetail> {
@@ -44,8 +44,8 @@ export class GetMonthlyReportUseCase {
     const month = monthlyReport.startDate.getMonth();
     const nextMonthStart = new Date(year, month + 1, 1);
 
-    const dailyReports =
-      await this.dailyReportRepository.findByDateRange(
+    const weeklyReports =
+      await this.weeklyReportRepository.findByDateRange(
         monthlyReport.startDate,
         nextMonthStart,
       );
@@ -58,10 +58,10 @@ export class GetMonthlyReportUseCase {
       review: monthlyReport.review,
       notes: monthlyReport.notes,
       createdAt: monthlyReport.createdAt,
-      dailyReports: dailyReports.map((dr) => ({
-        id: dr.id,
-        date: dr.date,
-        summary: dr.summary,
+      weeklyReports: weeklyReports.map((wr) => ({
+        id: wr.id,
+        startDate: wr.startDate,
+        goal: wr.goal,
       })),
     };
   }
