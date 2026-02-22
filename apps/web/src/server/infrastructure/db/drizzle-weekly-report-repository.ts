@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, gte, lt } from 'drizzle-orm';
 
 import type { WeeklyReport } from '@/server/domain/weekly-report/weekly-report';
 import { createWeeklyReport } from '@/server/domain/weekly-report/weekly-report';
@@ -28,6 +28,19 @@ export class DrizzleWeeklyReportRepository
       .from(weeklyReports)
       .where(eq(weeklyReports.startDate, startDate));
     return rows[0] ? toWeeklyReport(rows[0]) : null;
+  }
+
+  async findByDateRange(start: Date, end: Date): Promise<WeeklyReport[]> {
+    const rows = await db
+      .select()
+      .from(weeklyReports)
+      .where(
+        and(
+          gte(weeklyReports.startDate, start),
+          lt(weeklyReports.startDate, end),
+        ),
+      );
+    return rows.map(toWeeklyReport);
   }
 
   async save(weeklyReport: WeeklyReport): Promise<void> {
