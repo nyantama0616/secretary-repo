@@ -1,4 +1,9 @@
-import type { Task } from '@/server/domain/task/task';
+import type { Task, TaskStatus } from '@/server/domain/task/task';
+
+export type TaskFilters = {
+  dailyReportId?: string;
+  statuses?: TaskStatus[];
+};
 
 export type TaskUpdatableFields = Partial<
   Pick<
@@ -6,6 +11,7 @@ export type TaskUpdatableFields = Partial<
     | 'title'
     | 'description'
     | 'status'
+    | 'sortOrder'
     | 'deadline'
     | 'estimatedMinutes'
     | 'dailyReportId'
@@ -15,7 +21,7 @@ export type TaskUpdatableFields = Partial<
 >;
 
 export interface TaskRepository {
-  findAll(): Promise<Task[]>;
+  findAll(filters?: TaskFilters): Promise<Task[]>;
   findById(id: string): Promise<Task | null>;
   save(task: Task): Promise<void>;
   update(id: string, fields: TaskUpdatableFields): Promise<void>;
