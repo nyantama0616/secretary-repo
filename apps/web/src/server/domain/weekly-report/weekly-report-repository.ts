@@ -1,0 +1,5 @@
+import type { WeeklyReport } from '@/server/domain/weekly-report/weekly-report';
+
+export interface WeeklyReportRepository {
+  findAll(): Promise<WeeklyReport[]>;
+}
