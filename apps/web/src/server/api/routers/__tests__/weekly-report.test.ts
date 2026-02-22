@@ -232,3 +232,59 @@ describe('weeklyReport.review', () => {
     );
   });
 });
+
+describe('weeklyReport.update', () => {
+  it('週報の全フィールドを更新する', async () => {
+    const created = await caller.weeklyReport.create({
+      startDate: new Date('2026-01-05'),
+      goal: '設計を完了する',
+    });
+
+    const result = await caller.weeklyReport.update({
+      id: created.id,
+      goal: '設計と実装を完了する',
+      summary: '設計と実装を進めた',
+      review: '両方完了できた',
+      notes: '順調だった',
+    });
+
+    expect(result).toEqual({
+      id: created.id,
+      startDate: new Date('2026-01-05'),
+      goal: '設計と実装を完了する',
+      summary: '設計と実装を進めた',
+      review: '両方完了できた',
+      notes: '順調だった',
+      createdAt: expect.any(Date),
+    });
+
+    const detail = await caller.weeklyReport.detail({ id: created.id });
+    expect(detail.goal).toBe('設計と実装を完了する');
+  });
+
+  it('一部のフィールドだけ更新できる', async () => {
+    const created = await caller.weeklyReport.create({
+      startDate: new Date('2026-01-05'),
+      goal: '設計を完了する',
+    });
+
+    await caller.weeklyReport.update({
+      id: created.id,
+      goal: '修正後の目標',
+    });
+
+    const detail = await caller.weeklyReport.detail({ id: created.id });
+    expect(detail.goal).toBe('修正後の目標');
+    expect(detail.summary).toBeNull();
+  });
+
+  it('存在しない週報の場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.weeklyReport.update({ id: 'non-existent-id' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});

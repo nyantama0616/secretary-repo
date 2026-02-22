@@ -6,10 +6,12 @@ import {
   getWeeklyReportUseCase,
   getWeeklyReportsUseCase,
   reviewWeeklyReportUseCase,
+  updateWeeklyReportUseCase,
 } from '@/server/infrastructure/di/container';
 import { CreateWeeklyReportInputSchema } from '@/server/usecase/weekly-report/create-weekly-report';
 import { GetWeeklyReportInputSchema } from '@/server/usecase/weekly-report/get-weekly-report';
 import { ReviewWeeklyReportInputSchema } from '@/server/usecase/weekly-report/review-weekly-report';
+import { UpdateWeeklyReportInputSchema } from '@/server/usecase/weekly-report/update-weekly-report';
 
 export const weeklyReportRouter = router({
   list: protectedProcedure.query(() => getWeeklyReportsUseCase.execute()),
@@ -22,4 +24,7 @@ export const weeklyReportRouter = router({
   review: protectedProcedure
     .input(v.parser(ReviewWeeklyReportInputSchema))
     .mutation(({ input }) => reviewWeeklyReportUseCase.execute(input)),
+  update: protectedProcedure
+    .input(v.parser(UpdateWeeklyReportInputSchema))
+    .mutation(({ input }) => updateWeeklyReportUseCase.execute(input)),
 });

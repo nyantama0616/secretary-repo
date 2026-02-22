@@ -45,6 +45,7 @@ export class DrizzleWeeklyReportRepository
     await db
       .update(weeklyReports)
       .set({
+        goal: weeklyReport.goal,
         summary: weeklyReport.summary,
         review: weeklyReport.review,
         notes: weeklyReport.notes,

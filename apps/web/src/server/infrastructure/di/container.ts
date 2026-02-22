@@ -27,6 +27,7 @@ import { CreateWeeklyReportUseCase } from '@/server/usecase/weekly-report/create
 import { GetWeeklyReportUseCase } from '@/server/usecase/weekly-report/get-weekly-report';
 import { GetWeeklyReportsUseCase } from '@/server/usecase/weekly-report/get-weekly-reports';
 import { ReviewWeeklyReportUseCase } from '@/server/usecase/weekly-report/review-weekly-report';
+import { UpdateWeeklyReportUseCase } from '@/server/usecase/weekly-report/update-weekly-report';
 
 const dailyReportRepository = new DrizzleDailyReportRepository();
 const monthlyReportRepository = new DrizzleMonthlyReportRepository();
@@ -81,6 +82,9 @@ export const createWeeklyReportUseCase = new CreateWeeklyReportUseCase(
   weeklyReportRepository,
 );
 export const reviewWeeklyReportUseCase = new ReviewWeeklyReportUseCase(
+  weeklyReportRepository,
+);
+export const updateWeeklyReportUseCase = new UpdateWeeklyReportUseCase(
   weeklyReportRepository,
 );
 
