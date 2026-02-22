@@ -32,7 +32,8 @@ const SEED_DAILY_REPORTS = [
   },
   {
     date: today,
-    goal: '今日の目標',
+    goal: 'ダッシュボードの改善を進める',
+    review: '## 良かった点\n- 集中して作業できた\n\n## 改善点\n- 休憩を取り忘れた',
   },
   {
     date: tomorrow,

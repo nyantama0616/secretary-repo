@@ -25,6 +25,35 @@ test.describe('ダッシュボード', () => {
     await expect(page.getByText('ドキュメント更新')).toBeVisible();
   });
 
+  test('今日の目標と振り返りが表示される', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(
+      page.getByRole('heading', { name: '今日の目標' }),
+    ).toBeVisible();
+    await expect(page.getByText('ダッシュボードの改善を進める')).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', { name: '振り返り' }),
+    ).toBeVisible();
+    await expect(page.getByText('集中して作業できた')).toBeVisible();
+  });
+
+  test('編集ボタンをクリックすると、日報編集ページに遷移する', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    await expect(
+      page.getByRole('heading', { name: '今日の目標' }),
+    ).toBeVisible();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: '日報編集' }),
+    ).toBeVisible();
+  });
+
   test('完了済みタスクが未完了タスクより上に表示される', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByText('日報を書く')).toBeVisible();
