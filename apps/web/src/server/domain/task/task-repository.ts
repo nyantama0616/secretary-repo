@@ -10,6 +10,7 @@ export type TaskUpdatableFields = Partial<
     | 'estimatedMinutes'
     | 'dailyReportId'
     | 'projectId'
+    | 'incompletionReason'
   >
 >;
 

@@ -11,6 +11,7 @@ export const UpdateTaskInputSchema = v.object({
   deadline: v.optional(v.nullable(v.date())),
   estimatedMinutes: v.optional(v.nullable(v.number())),
   projectId: v.optional(v.nullable(v.string())),
+  incompletionReason: v.optional(v.nullable(v.string())),
 });
 
 type UpdateTaskInput = v.InferOutput<typeof UpdateTaskInputSchema>;

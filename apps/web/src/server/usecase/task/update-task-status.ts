@@ -7,6 +7,7 @@ import type { TaskRepository } from '@/server/domain/task/task-repository';
 export const UpdateTaskStatusInputSchema = v.object({
   id: v.string(),
   status: TaskStatusSchema,
+  incompletionReason: v.optional(v.nullable(v.string())),
 });
 
 type UpdateTaskStatusInput = v.InferOutput<typeof UpdateTaskStatusInputSchema>;
@@ -21,6 +22,9 @@ export class UpdateTaskStatusUseCase {
       throw new NotFoundError('タスク', input.id);
     }
 
-    await this.taskRepository.update(input.id, { status: input.status });
+    await this.taskRepository.update(input.id, {
+      status: input.status,
+      incompletionReason: input.incompletionReason,
+    });
   }
 }

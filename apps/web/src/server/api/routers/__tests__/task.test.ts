@@ -341,6 +341,21 @@ describe('task.update', () => {
     expect(updated.project).toBeNull();
   });
 
+  it('未達成の理由を更新する', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.update({
+      id: inserted.id,
+      incompletionReason: '仕様変更により不要になった',
+    });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.incompletionReason).toBe('仕様変更により不要になった');
+  });
+
   it('存在しないプロジェクトの場合、NOT_FOUND エラーを返す', async () => {
     const [inserted] = await db
       .insert(tasks)
@@ -384,6 +399,23 @@ describe('task.updateStatus', () => {
 
     const updated = await caller.task.detail({ id: inserted.id });
     expect(updated.status).toBe('in_progress');
+  });
+
+  it('ステータス更新と同時に未達成の理由を設定する', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await caller.task.updateStatus({
+      id: inserted.id,
+      status: 'cancelled',
+      incompletionReason: '優先度が下がったため',
+    });
+
+    const updated = await caller.task.detail({ id: inserted.id });
+    expect(updated.status).toBe('cancelled');
+    expect(updated.incompletionReason).toBe('優先度が下がったため');
   });
 
   it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
