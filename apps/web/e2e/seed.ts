@@ -7,6 +7,7 @@ import { dailyReports } from '../src/server/infrastructure/db/schema/daily-repor
 import { monthlyReports } from '../src/server/infrastructure/db/schema/monthly-reports';
 import { projects } from '../src/server/infrastructure/db/schema/projects';
 import { tasks } from '../src/server/infrastructure/db/schema/tasks';
+import { weeklyReports } from '../src/server/infrastructure/db/schema/weekly-reports';
 
 const SEED_DAILY_REPORTS = [
   {
@@ -23,6 +24,18 @@ const SEED_DAILY_REPORTS = [
     summary: 'テストの基本を学んだが体調不良で早退した',
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     notes: '体調不良のため早退',
+  },
+];
+
+const SEED_WEEKLY_REPORTS = [
+  {
+    startDate: new Date('2026-02-02'),
+    goal: '機能Aの設計を固める',
+    summary: '設計レビューを実施し、API仕様を確定した',
+  },
+  {
+    startDate: new Date('2026-02-16'),
+    goal: 'テストを充実させる',
   },
 ];
 
@@ -64,7 +77,7 @@ export const seed = async () => {
     console.log('Seeding for E2E...');
     await db.transaction(async (tx) => {
       await tx.execute(
-        sql`TRUNCATE ${tasks}, ${dailyReports}, ${monthlyReports}, ${projects}`,
+        sql`TRUNCATE ${tasks}, ${dailyReports}, ${weeklyReports}, ${monthlyReports}, ${projects}`,
       );
       await tx.insert(monthlyReports).values([
         {
@@ -79,6 +92,7 @@ export const seed = async () => {
           goal: 'テストカバレッジを80%にする',
         },
       ]);
+      await tx.insert(weeklyReports).values(SEED_WEEKLY_REPORTS);
       const insertedReports = await tx
         .insert(dailyReports)
         .values(SEED_DAILY_REPORTS)
