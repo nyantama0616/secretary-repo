@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createCaller } from '@/server/api';
 import { db } from '@/server/infrastructure/db/client';
+import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 import { weeklyReports } from '@/server/infrastructure/db/schema/weekly-reports';
 
 const caller = createCaller({ isAuthenticated: true });
@@ -22,6 +23,12 @@ const TEST_WEEKLY_REPORTS = [
     review: null,
     notes: '体調不良で進捗が少なかった',
   },
+];
+
+const TEST_DAILY_REPORTS = [
+  { date: new Date('2026-01-05') },
+  { date: new Date('2026-01-08') },
+  { date: new Date('2026-01-12') },
 ];
 
 describe('認証', () => {
@@ -71,5 +78,57 @@ describe('weeklyReport.list', () => {
     const result = await caller.weeklyReport.list();
 
     expect(result).toStrictEqual([]);
+  });
+});
+
+describe('weeklyReport.detail', () => {
+  it('週報の詳細と紐づく日報一覧を返す', async () => {
+    const [inserted] = await db
+      .insert(weeklyReports)
+      .values(TEST_WEEKLY_REPORTS[0])
+      .returning();
+
+    const [dr1, dr2] = await db
+      .insert(dailyReports)
+      .values([TEST_DAILY_REPORTS[0], TEST_DAILY_REPORTS[1]])
+      .returning();
+
+    const result = await caller.weeklyReport.detail({ id: inserted.id });
+
+    expect(result).toEqual({
+      id: inserted.id,
+      startDate: TEST_WEEKLY_REPORTS[0].startDate,
+      goal: TEST_WEEKLY_REPORTS[0].goal,
+      summary: TEST_WEEKLY_REPORTS[0].summary,
+      review: TEST_WEEKLY_REPORTS[0].review,
+      notes: TEST_WEEKLY_REPORTS[0].notes,
+      createdAt: expect.any(Date),
+      dailyReports: expect.arrayContaining([
+        { id: dr1.id, date: TEST_DAILY_REPORTS[0].date, summary: null },
+        { id: dr2.id, date: TEST_DAILY_REPORTS[1].date, summary: null },
+      ]),
+    });
+    expect(result.dailyReports).toHaveLength(2);
+  });
+
+  it('日報が紐づかない場合、dailyReports は空配列を返す', async () => {
+    const [inserted] = await db
+      .insert(weeklyReports)
+      .values(TEST_WEEKLY_REPORTS[0])
+      .returning();
+
+    const result = await caller.weeklyReport.detail({ id: inserted.id });
+
+    expect(result.dailyReports).toStrictEqual([]);
+  });
+
+  it('存在しない週報の場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.weeklyReport.detail({ id: 'non-existent-id' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
   });
 });
