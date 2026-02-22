@@ -8,6 +8,7 @@ import {
   deleteTaskUseCase,
   getTaskDetailUseCase,
   getTasksUseCase,
+  reorderTasksUseCase,
   updateTaskStatusUseCase,
   updateTaskUseCase,
 } from '@/server/infrastructure/di/container';
@@ -16,11 +17,15 @@ import { CreateTaskInputSchema } from '@/server/usecase/task/create-task';
 import { DeferTaskInputSchema } from '@/server/usecase/task/defer-task';
 import { DeleteTaskInputSchema } from '@/server/usecase/task/delete-task';
 import { GetTaskDetailInputSchema } from '@/server/usecase/task/get-task-detail';
+import { GetTasksInputSchema } from '@/server/usecase/task/get-tasks';
+import { ReorderTasksInputSchema } from '@/server/usecase/task/reorder-tasks';
 import { UpdateTaskInputSchema } from '@/server/usecase/task/update-task';
 import { UpdateTaskStatusInputSchema } from '@/server/usecase/task/update-task-status';
 
 export const taskRouter = router({
-  list: protectedProcedure.query(() => getTasksUseCase.execute()),
+  list: protectedProcedure
+    .input(v.parser(GetTasksInputSchema))
+    .query(({ input }) => getTasksUseCase.execute(input)),
   create: protectedProcedure
     .input(v.parser(CreateTaskInputSchema))
     .mutation(({ input }) => createTaskUseCase.execute(input)),
@@ -39,6 +44,9 @@ export const taskRouter = router({
   delete: protectedProcedure
     .input(v.parser(DeleteTaskInputSchema))
     .mutation(({ input }) => deleteTaskUseCase.execute(input)),
+  reorder: protectedProcedure
+    .input(v.parser(ReorderTasksInputSchema))
+    .mutation(({ input }) => reorderTasksUseCase.execute(input)),
   assignDailyReport: protectedProcedure
     .input(v.parser(AssignDailyReportInputSchema))
     .mutation(({ input }) => assignDailyReportUseCase.execute(input)),

@@ -1,8 +1,9 @@
-import { eq } from 'drizzle-orm';
+import { type SQL, and, asc, eq, inArray } from 'drizzle-orm';
 
 import type { Task } from '@/server/domain/task/task';
 import { createTask } from '@/server/domain/task/task';
 import type {
+  TaskFilters,
   TaskRepository,
   TaskUpdatableFields,
 } from '@/server/domain/task/task-repository';
@@ -10,8 +11,22 @@ import { db } from '@/server/infrastructure/db/client';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
 
 export class DrizzleTaskRepository implements TaskRepository {
-  async findAll(): Promise<Task[]> {
-    const rows = await db.select().from(tasks);
+  async findAll(filters?: TaskFilters): Promise<Task[]> {
+    const conditions: SQL[] = [];
+
+    if (filters?.dailyReportId) {
+      conditions.push(eq(tasks.dailyReportId, filters.dailyReportId));
+    }
+
+    if (filters?.statuses && filters.statuses.length > 0) {
+      conditions.push(inArray(tasks.status, filters.statuses));
+    }
+
+    const rows = await db
+      .select()
+      .from(tasks)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(asc(tasks.sortOrder));
     return rows.map(toTask);
   }
 
@@ -36,7 +51,17 @@ export class DrizzleTaskRepository implements TaskRepository {
   }
 
   async update(id: string, fields: TaskUpdatableFields): Promise<void> {
-    await db.update(tasks).set(fields).where(eq(tasks.id, id));
+    await this.updateMany([{ id, fields }]);
+  }
+
+  async updateMany(
+    items: { id: string; fields: TaskUpdatableFields }[],
+  ): Promise<void> {
+    await db.transaction(async (tx) => {
+      for (const item of items) {
+        await tx.update(tasks).set(item.fields).where(eq(tasks.id, item.id));
+      }
+    });
   }
 
   async delete(id: string): Promise<void> {

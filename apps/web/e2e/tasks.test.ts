@@ -17,8 +17,8 @@ test.describe('タスク一覧', () => {
   test('タスクのステータスと日付が表示される', async ({ page }) => {
     await page.goto('/tasks');
 
-    await expect(page.getByText('未着手')).toBeVisible();
-    await expect(page.getByText('完了')).toBeVisible();
+    await expect(page.getByText('未着手').first()).toBeVisible();
+    await expect(page.getByText('完了').first()).toBeVisible();
     await expect(page.getByText('2026/02/17（火）')).toBeVisible();
   });
 

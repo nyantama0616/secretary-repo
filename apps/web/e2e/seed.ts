@@ -9,6 +9,11 @@ import { projects } from '../src/server/infrastructure/db/schema/projects';
 import { tasks } from '../src/server/infrastructure/db/schema/tasks';
 import { weeklyReports } from '../src/server/infrastructure/db/schema/weekly-reports';
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const tomorrow = new Date(today);
+tomorrow.setDate(tomorrow.getDate() + 1);
+
 const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
@@ -24,6 +29,14 @@ const SEED_DAILY_REPORTS = [
     summary: 'テストの基本を学んだが体調不良で早退した',
     wakeUpTime: new Date('2026-02-17T21:30:00Z'),
     notes: '体調不良のため早退',
+  },
+  {
+    date: today,
+    goal: '今日の目標',
+  },
+  {
+    date: tomorrow,
+    goal: '明日の目標',
   },
 ];
 
@@ -69,6 +82,37 @@ const SEED_TASKS = [
   },
 ];
 
+const SEED_TODAY_TASKS = [
+  {
+    title: 'ダッシュボードUIを実装する',
+    status: 'in_progress' as const,
+    sortOrder: 0,
+  },
+  {
+    title: 'テストを追加する',
+    status: 'not_started' as const,
+    sortOrder: 1,
+  },
+  {
+    title: '日報を書く',
+    status: 'done' as const,
+    sortOrder: 2,
+  },
+];
+
+const SEED_TOMORROW_TASKS = [
+  {
+    title: 'コードレビュー対応',
+    status: 'not_started' as const,
+    sortOrder: 0,
+  },
+  {
+    title: 'ドキュメント更新',
+    status: 'not_started' as const,
+    sortOrder: 1,
+  },
+];
+
 export const seed = async () => {
   const client = postgres(DATABASE_URL_TEST!);
   const db = drizzle(client);
@@ -101,13 +145,27 @@ export const seed = async () => {
         .insert(projects)
         .values(SEED_PROJECTS)
         .returning();
-      await tx.insert(tasks).values(
-        SEED_TASKS.map((task, i) => ({
+      const todayReport = insertedReports.find(
+        (r) => r.date.getTime() === today.getTime(),
+      )!;
+      const tomorrowReport = insertedReports.find(
+        (r) => r.date.getTime() === tomorrow.getTime(),
+      )!;
+      await tx.insert(tasks).values([
+        ...SEED_TASKS.map((task, i) => ({
           ...task,
-          dailyReportId: insertedReports[i % insertedReports.length].id,
+          dailyReportId: insertedReports[i % 2].id,
           projectId: i === 0 ? insertedProjects[0].id : null,
         })),
-      );
+        ...SEED_TODAY_TASKS.map((task) => ({
+          ...task,
+          dailyReportId: todayReport.id,
+        })),
+        ...SEED_TOMORROW_TASKS.map((task) => ({
+          ...task,
+          dailyReportId: tomorrowReport.id,
+        })),
+      ]);
     });
     console.log('Seeding for E2E completed.');
   } finally {

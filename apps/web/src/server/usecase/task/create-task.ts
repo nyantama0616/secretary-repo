@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 
+import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { NotFoundError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
 import type { ProjectRepository } from '@/server/domain/project/project-repository';
@@ -12,6 +13,7 @@ export const CreateTaskInputSchema = v.object({
   deadline: v.optional(v.nullable(v.date())),
   estimatedMinutes: v.optional(v.nullable(v.number())),
   projectId: v.optional(v.nullable(v.string())),
+  dailyReportId: v.optional(v.nullable(v.string())),
 });
 
 type CreateTaskInput = v.InferOutput<typeof CreateTaskInputSchema>;
@@ -20,6 +22,7 @@ export class CreateTaskUseCase {
   constructor(
     private readonly taskRepository: TaskRepository,
     private readonly projectRepository: ProjectRepository,
+    private readonly dailyReportRepository: DailyReportRepository,
   ) {}
 
   async execute(input: CreateTaskInput): Promise<Task> {
@@ -31,9 +34,19 @@ export class CreateTaskUseCase {
       }
     }
 
+    if (input.dailyReportId) {
+      const dailyReport = await this.dailyReportRepository.findById(
+        input.dailyReportId,
+      );
+
+      if (!dailyReport) {
+        throw new NotFoundError('日報', input.dailyReportId);
+      }
+    }
+
     const task = createTask({
       id: generateId(),
-      dailyReportId: null,
+      dailyReportId: input.dailyReportId ?? null,
       projectId: input.projectId ?? null,
       title: input.title,
       description: input.description ?? null,
