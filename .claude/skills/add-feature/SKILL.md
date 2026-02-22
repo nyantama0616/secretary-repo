@@ -32,7 +32,7 @@ pnpm --filter web test
 
 ステップ1で定義した Domain 層をベースに、残りの層を以下の順で実装する:
 
-1. **UseCase 層**: Domain の Repository インターフェースに依存し、クラスとして定義する
+1. **UseCase 層**: Domain の Repository インターフェースに依存し、クラスとして定義する。UseCase はユーザーの意図ごとに用意する
 2. **Infrastructure 層**: Domain の Repository インターフェースを実装し、DI コンテナに登録する
 3. **API 層**: tRPC ルーターで UseCase を呼び出す
 
