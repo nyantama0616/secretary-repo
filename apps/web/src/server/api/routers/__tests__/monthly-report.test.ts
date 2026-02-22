@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { createCaller } from '@/server/api';
 import { db } from '@/server/infrastructure/db/client';
-import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 import { monthlyReports } from '@/server/infrastructure/db/schema/monthly-reports';
+import { weeklyReports } from '@/server/infrastructure/db/schema/weekly-reports';
 
 const caller = createCaller({ isAuthenticated: true });
 const unauthenticatedCaller = createCaller({ isAuthenticated: false });
@@ -25,10 +25,10 @@ const TEST_MONTHLY_REPORTS = [
   },
 ];
 
-const TEST_DAILY_REPORTS = [
-  { date: new Date('2026-01-15') },
-  { date: new Date('2026-01-20') },
-  { date: new Date('2026-02-10') },
+const TEST_WEEKLY_REPORTS = [
+  { startDate: new Date('2026-01-05'), goal: '設計を固める' },
+  { startDate: new Date('2026-01-19'), goal: '実装を進める' },
+  { startDate: new Date('2026-02-02'), goal: 'テストを書く' },
 ];
 
 describe('認証', () => {
@@ -82,15 +82,15 @@ describe('monthlyReport.list', () => {
 });
 
 describe('monthlyReport.detail', () => {
-  it('月報の詳細と紐づく日報一覧を返す', async () => {
+  it('月報の詳細と紐づく週報一覧を返す', async () => {
     const [inserted] = await db
       .insert(monthlyReports)
       .values(TEST_MONTHLY_REPORTS[0])
       .returning();
 
-    const [dr1, dr2] = await db
-      .insert(dailyReports)
-      .values([TEST_DAILY_REPORTS[0], TEST_DAILY_REPORTS[1]])
+    const [wr1, wr2] = await db
+      .insert(weeklyReports)
+      .values([TEST_WEEKLY_REPORTS[0], TEST_WEEKLY_REPORTS[1]])
       .returning();
 
     const result = await caller.monthlyReport.detail({ id: inserted.id });
@@ -103,15 +103,23 @@ describe('monthlyReport.detail', () => {
       review: TEST_MONTHLY_REPORTS[0].review,
       notes: TEST_MONTHLY_REPORTS[0].notes,
       createdAt: expect.any(Date),
-      dailyReports: expect.arrayContaining([
-        { id: dr1.id, date: TEST_DAILY_REPORTS[0].date, summary: null },
-        { id: dr2.id, date: TEST_DAILY_REPORTS[1].date, summary: null },
+      weeklyReports: expect.arrayContaining([
+        {
+          id: wr1.id,
+          startDate: TEST_WEEKLY_REPORTS[0].startDate,
+          goal: TEST_WEEKLY_REPORTS[0].goal,
+        },
+        {
+          id: wr2.id,
+          startDate: TEST_WEEKLY_REPORTS[1].startDate,
+          goal: TEST_WEEKLY_REPORTS[1].goal,
+        },
       ]),
     });
-    expect(result.dailyReports).toHaveLength(2);
+    expect(result.weeklyReports).toHaveLength(2);
   });
 
-  it('日報が紐づかない場合、dailyReports は空配列を返す', async () => {
+  it('週報が紐づかない場合、weeklyReports は空配列を返す', async () => {
     const [inserted] = await db
       .insert(monthlyReports)
       .values(TEST_MONTHLY_REPORTS[0])
@@ -119,7 +127,7 @@ describe('monthlyReport.detail', () => {
 
     const result = await caller.monthlyReport.detail({ id: inserted.id });
 
-    expect(result.dailyReports).toStrictEqual([]);
+    expect(result.weeklyReports).toStrictEqual([]);
   });
 
   it('存在しない月報の場合、NOT_FOUND エラーを返す', async () => {
