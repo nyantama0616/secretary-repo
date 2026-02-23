@@ -26,6 +26,12 @@ const taskStatusEnum = z.enum([
   "cancelled",
   "deferred",
 ]);
+const manualTaskStatusEnum = z.enum([
+  "not_started",
+  "in_progress",
+  "done",
+  "cancelled",
+]);
 
 export const registerTaskTools = (server: McpServer): void => {
   server.registerTool(
@@ -117,7 +123,7 @@ export const registerTaskTools = (server: McpServer): void => {
           .optional(z.number())
           .describe("見積もり時間（分）"),
         incompletionReason: optionalString.describe(
-          "未達成の理由（cancelled / deferred にする場合に記録する）",
+          "未達成の理由（cancelled にする場合に記録する）",
         ),
       },
     },
@@ -143,12 +149,12 @@ export const registerTaskTools = (server: McpServer): void => {
     "update_task_status",
     {
       description:
-        "タスクのステータスを変更する。cancelled は「やる必要がなくなった」、deferred は「後日やる」を意味する",
+        "タスクのステータスを変更する。cancelled は「やる必要がなくなった」を意味する。deferred にしたい場合は defer_task を使う",
       inputSchema: {
         id: z.string().describe("タスクの ID"),
-        status: taskStatusEnum.describe("変更後のステータス"),
+        status: manualTaskStatusEnum.describe("変更後のステータス"),
         incompletionReason: optionalString.describe(
-          "未達成の理由（cancelled / deferred にする場合に記録する）",
+          "未達成の理由（cancelled にする場合に記録する）",
         ),
       },
     },
