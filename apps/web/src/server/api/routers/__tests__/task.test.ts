@@ -524,6 +524,22 @@ describe('task.updateStatus', () => {
     expect(updated.incompletionReason).toBe('優先度が下がったため');
   });
 
+  it('deferred を指定した場合、BAD_REQUEST エラーを返す', async () => {
+    const [inserted] = await db
+      .insert(tasks)
+      .values(TEST_TASKS[0])
+      .returning();
+
+    await expect(
+      // @ts-expect-error -- 型レベルでは除外済みだが、ランタイムのバリデーションを検証する
+      caller.task.updateStatus({ id: inserted.id, status: 'deferred' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+      }),
+    );
+  });
+
   it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
     const nonExistentId = generateId();
 

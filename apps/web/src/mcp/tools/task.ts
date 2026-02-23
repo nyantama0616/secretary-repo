@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 import {
   assignDailyReportUseCase,
   createTaskUseCase,
+  deferTaskUseCase,
   deleteTaskUseCase,
   getTaskDetailUseCase,
   getTasksUseCase,
@@ -24,6 +25,12 @@ const taskStatusEnum = z.enum([
   "done",
   "cancelled",
   "deferred",
+]);
+const manualTaskStatusEnum = z.enum([
+  "not_started",
+  "in_progress",
+  "done",
+  "cancelled",
 ]);
 
 export const registerTaskTools = (server: McpServer): void => {
@@ -115,7 +122,9 @@ export const registerTaskTools = (server: McpServer): void => {
         estimatedMinutes: z
           .optional(z.number())
           .describe("見積もり時間（分）"),
-        incompletionReason: optionalString.describe("未達成の理由"),
+        incompletionReason: optionalString.describe(
+          "未達成の理由（cancelled にする場合に記録する）",
+        ),
       },
     },
     async (args) => {
@@ -139,11 +148,14 @@ export const registerTaskTools = (server: McpServer): void => {
   server.registerTool(
     "update_task_status",
     {
-      description: "タスクのステータスを変更する",
+      description:
+        "タスクのステータスを変更する。cancelled は「やる必要がなくなった」を意味する。deferred にしたい場合は defer_task を使う",
       inputSchema: {
         id: z.string().describe("タスクの ID"),
-        status: taskStatusEnum.describe("変更後のステータス"),
-        incompletionReason: optionalString.describe("未達成の理由"),
+        status: manualTaskStatusEnum.describe("変更後のステータス"),
+        incompletionReason: optionalString.describe(
+          "未達成の理由（cancelled にする場合に記録する）",
+        ),
       },
     },
     async (args) => {
@@ -170,6 +182,29 @@ export const registerTaskTools = (server: McpServer): void => {
       try {
         await deleteTaskUseCase.execute({ id });
         return toSuccess("タスクを削除しました");
+      } catch (error) {
+        return toErrorResult(error);
+      }
+    },
+  );
+
+  server.registerTool(
+    "defer_task",
+    {
+      description:
+        "タスクを延期する。元タスクを deferred にし、同じ内容の新しいタスクを作成する。not_started または in_progress のタスクのみ延期できる",
+      inputSchema: {
+        id: z.string().describe("タスクの ID"),
+        incompletionReason: optionalString.describe("延期する理由"),
+      },
+    },
+    async (args) => {
+      try {
+        const newTask = await deferTaskUseCase.execute({
+          id: args.id,
+          incompletionReason: args.incompletionReason,
+        });
+        return toSuccess(JSON.stringify(newTask, null, 2));
       } catch (error) {
         return toErrorResult(error);
       }
@@ -204,7 +239,7 @@ export const registerTaskTools = (server: McpServer): void => {
     "reorder_tasks",
     {
       description:
-        "タスクの並び順を変更する。配列の先頭が最も優先度が高い",
+        "タスクの並び順を変更する。配列の先頭が最も優先度が高い。並べ替え対象のタスク ID を全て含める必要がある",
       inputSchema: {
         taskIds: z
           .array(z.string())

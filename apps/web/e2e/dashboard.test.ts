@@ -122,9 +122,9 @@ test.describe('ダッシュボード', () => {
       .locator('..');
     await card.getByText('着手中').click();
 
-    await page.getByRole('menuitemradio', { name: '延期' }).click();
+    await page.getByRole('menuitemradio', { name: '中止' }).click();
 
-    await expect(card.getByText('延期')).toBeVisible();
+    await expect(card.getByText('中止')).toBeVisible();
   });
 
   test('タスクをクリックすると、詳細ページに遷移する', async ({ page }) => {

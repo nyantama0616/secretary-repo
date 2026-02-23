@@ -98,7 +98,7 @@ export const DailyTaskSection = ({
     queryClient.invalidateQueries({ queryKey: taskQueryOptions.queryKey });
   };
 
-  const handleStatusChange = (taskId: string, status: TaskStatus) => {
+  const handleStatusChange = (taskId: string, status: SelectableStatus) => {
     updateStatusMutation.mutate(
       { id: taskId, status },
       { onSuccess: invalidateTasks },
@@ -187,13 +187,14 @@ const findNextTaskId = (tasks: TaskItem[]): string | null => {
   return next?.id ?? null;
 };
 
-const ALL_STATUSES: TaskStatus[] = [
+const SELECTABLE_STATUSES = [
   'not_started',
   'in_progress',
   'done',
   'cancelled',
-  'deferred',
-];
+] as const;
+
+type SelectableStatus = (typeof SELECTABLE_STATUSES)[number];
 
 const SortableTaskRow = ({
   task,
@@ -204,7 +205,7 @@ const SortableTaskRow = ({
   task: TaskItem;
   index: number;
   isNext: boolean;
-  onStatusChange: (taskId: string, status: TaskStatus) => void;
+  onStatusChange: (taskId: string, status: SelectableStatus) => void;
 }) => {
   const { ref, isDragging } = useSortable({ id: task.id, index });
   const config = STATUS_CONFIG[task.status];
@@ -258,10 +259,10 @@ const SortableTaskRow = ({
             <DropdownMenuRadioGroup
               value={task.status}
               onValueChange={(value) =>
-                onStatusChange(task.id, value as TaskStatus)
+                onStatusChange(task.id, value as SelectableStatus)
               }
             >
-              {ALL_STATUSES.map((status) => (
+              {SELECTABLE_STATUSES.map((status) => (
                 <DropdownMenuRadioItem key={status} value={status}>
                   <Badge variant={STATUS_CONFIG[status].variant}>
                     {STATUS_CONFIG[status].label}
