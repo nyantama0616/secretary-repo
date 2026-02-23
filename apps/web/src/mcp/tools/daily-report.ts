@@ -48,7 +48,7 @@ export const registerDailyReportTools = (server: McpServer): void => {
   server.registerTool(
     "create_daily_report",
     {
-      description: "新しい日報を作成する",
+      description: "新しい日報を作成する。同じ日付の日報は作成できない",
       inputSchema: {
         date: z.iso.date().describe("日報の日付（例: 2026-02-20）"),
         goal: optionalString,
