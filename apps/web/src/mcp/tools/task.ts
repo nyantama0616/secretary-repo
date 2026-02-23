@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 import {
   assignDailyReportUseCase,
   createTaskUseCase,
+  deferTaskUseCase,
   deleteTaskUseCase,
   getTaskDetailUseCase,
   getTasksUseCase,
@@ -175,6 +176,29 @@ export const registerTaskTools = (server: McpServer): void => {
       try {
         await deleteTaskUseCase.execute({ id });
         return toSuccess("タスクを削除しました");
+      } catch (error) {
+        return toErrorResult(error);
+      }
+    },
+  );
+
+  server.registerTool(
+    "defer_task",
+    {
+      description:
+        "タスクを延期する。元タスクを deferred にし、同じ内容の新しいタスクを作成する。not_started または in_progress のタスクのみ延期できる",
+      inputSchema: {
+        id: z.string().describe("タスクの ID"),
+        incompletionReason: optionalString.describe("延期する理由"),
+      },
+    },
+    async (args) => {
+      try {
+        const newTask = await deferTaskUseCase.execute({
+          id: args.id,
+          incompletionReason: args.incompletionReason,
+        });
+        return toSuccess(JSON.stringify(newTask, null, 2));
       } catch (error) {
         return toErrorResult(error);
       }
