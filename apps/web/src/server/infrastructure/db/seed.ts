@@ -106,6 +106,10 @@ const SEED_PROJECTS = [
       '- tRPC + TanStack Query',
       '- Drizzle ORM + PostgreSQL',
     ].join('\n'),
+    notes: [
+      '- MVP は6月末までにリリースする',
+      '- MCP サーバーを先に安定させる',
+    ].join('\n'),
     status: 'active' as const,
     deadline: new Date('2026-06-30'),
   },
