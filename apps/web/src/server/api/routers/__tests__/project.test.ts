@@ -45,6 +45,7 @@ describe('project.list', () => {
           id: expect.any(String),
           name: TEST_PROJECTS[0].name,
           purpose: TEST_PROJECTS[0].purpose,
+          notes: null,
           status: TEST_PROJECTS[0].status,
           deadline: TEST_PROJECTS[0].deadline,
           createdAt: expect.any(Date),
@@ -53,6 +54,7 @@ describe('project.list', () => {
           id: expect.any(String),
           name: TEST_PROJECTS[1].name,
           purpose: TEST_PROJECTS[1].purpose,
+          notes: null,
           status: TEST_PROJECTS[1].status,
           deadline: TEST_PROJECTS[1].deadline,
           createdAt: expect.any(Date),
@@ -81,6 +83,7 @@ describe('project.detail', () => {
       id: inserted.id,
       name: TEST_PROJECTS[0].name,
       purpose: TEST_PROJECTS[0].purpose,
+      notes: null,
       status: TEST_PROJECTS[0].status,
       deadline: TEST_PROJECTS[0].deadline,
       createdAt: expect.any(Date),
@@ -110,6 +113,7 @@ describe('project.create', () => {
       id: expect.any(String),
       name: '新プロジェクト',
       purpose: 'テスト用のプロジェクトを作成する',
+      notes: null,
       status: 'active',
       deadline: new Date('2026-12-31'),
       createdAt: expect.any(Date),
@@ -149,6 +153,37 @@ describe('project.update', () => {
     expect(detail.name).toBe('変更後の名前');
     expect(detail.purpose).toBe('変更後の目的');
     expect(detail.deadline).toEqual(new Date('2026-12-31'));
+  });
+
+  it('notes を更新できる', async () => {
+    const created = await caller.project.create({
+      name: 'テスト',
+      purpose: 'テスト',
+    });
+
+    await caller.project.update({
+      id: created.id,
+      notes: '追加したメモ',
+    });
+
+    const detail = await caller.project.detail({ id: created.id });
+    expect(detail.notes).toBe('追加したメモ');
+  });
+
+  it('notes を null で消去できる', async () => {
+    const created = await caller.project.create({
+      name: 'テスト',
+      purpose: 'テスト',
+      notes: '消すメモ',
+    });
+
+    await caller.project.update({
+      id: created.id,
+      notes: null,
+    });
+
+    const detail = await caller.project.detail({ id: created.id });
+    expect(detail.notes).toBeNull();
   });
 
   it('一部のフィールドだけ更新できる', async () => {
