@@ -56,6 +56,7 @@ export const registerProjectTools = (server: McpServer): void => {
       inputSchema: {
         name: z.string().describe("プロジェクト名"),
         purpose: z.string().describe("プロジェクトの目的"),
+        notes: optionalString,
         deadline: optionalDatetime.describe("期限"),
       },
     },
@@ -64,6 +65,7 @@ export const registerProjectTools = (server: McpServer): void => {
         const project = await createProjectUseCase.execute({
           name: args.name,
           purpose: args.purpose,
+          notes: args.notes,
           deadline: args.deadline ? new Date(args.deadline) : undefined,
         });
         return toSuccess(JSON.stringify(project, null, 2));
@@ -81,6 +83,7 @@ export const registerProjectTools = (server: McpServer): void => {
         id: z.string().describe("プロジェクトの ID"),
         name: optionalString.describe("プロジェクト名"),
         purpose: optionalString.describe("プロジェクトの目的"),
+        notes: z.optional(z.nullable(z.string())),
         deadline: z
           .optional(z.nullable(z.iso.datetime()))
           .describe(
@@ -94,6 +97,7 @@ export const registerProjectTools = (server: McpServer): void => {
           id: args.id,
           name: args.name,
           purpose: args.purpose,
+          notes: args.notes,
           deadline:
             args.deadline === null
               ? null

@@ -31,6 +31,7 @@ import {
 const ProjectEditFormSchema = v.object({
   name: v.pipe(v.string(), v.minLength(1, 'プロジェクト名は必須です')),
   purpose: v.pipe(v.string(), v.minLength(1, '目的は必須です')),
+  notes: v.optional(v.string()),
   deadline: v.optional(v.string()),
   status: v.picklist(['active', 'done']),
 });
@@ -74,6 +75,7 @@ export const ProjectEditForm = ({ id }: ProjectEditFormProps) => {
 type Project = {
   name: string;
   purpose: string;
+  notes: string | null;
   status: ProjectStatus;
   deadline: Date | null;
 };
@@ -88,6 +90,7 @@ const EditForm = ({ id, project }: { id: string; project: Project }) => {
     defaultValues: {
       name: project.name,
       purpose: project.purpose,
+      notes: project.notes ?? '',
       deadline: project.deadline ? toDateStr(project.deadline) : '',
       status: project.status,
     },
@@ -131,6 +134,7 @@ const EditForm = ({ id, project }: { id: string; project: Project }) => {
         id,
         name: data.name,
         purpose: data.purpose,
+        notes: data.notes || null,
         deadline: data.deadline ? new Date(data.deadline) : null,
       },
       {
@@ -176,6 +180,20 @@ const EditForm = ({ id, project }: { id: string; project: Project }) => {
               {formState.errors.purpose.message}
             </p>
           )}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="notes">メモ</Label>
+          <Controller
+            name="notes"
+            control={control}
+            render={({ field }) => (
+              <MarkdownEditor
+                id="notes"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="deadline">期限</Label>

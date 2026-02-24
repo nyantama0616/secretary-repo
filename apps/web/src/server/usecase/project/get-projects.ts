@@ -5,6 +5,7 @@ type ProjectListItem = {
   id: string;
   name: string;
   purpose: string;
+  notes: string | null;
   status: ProjectStatus;
   deadline: Date | null;
   createdAt: Date;
@@ -20,6 +21,7 @@ export class GetProjectsUseCase {
       id: p.id,
       name: p.name,
       purpose: p.purpose,
+      notes: p.notes,
       status: p.status,
       deadline: p.deadline,
       createdAt: p.createdAt,

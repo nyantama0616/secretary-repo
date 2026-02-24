@@ -65,6 +65,13 @@ export const ProjectDetail = ({ id }: ProjectDetailProps) => {
             <MarkdownViewer content={project.purpose} />
           </ViewerFrame>
         </DetailItem>
+        {project.notes && (
+          <DetailItem label="メモ">
+            <ViewerFrame>
+              <MarkdownViewer content={project.notes} />
+            </ViewerFrame>
+          </DetailItem>
+        )}
         <DetailItem
           label="期限"
           value={project.deadline ? formatDate(project.deadline) : null}

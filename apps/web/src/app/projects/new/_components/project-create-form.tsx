@@ -15,6 +15,7 @@ import { useMutation, useQueryClient, useTRPC } from '@/trpc/client';
 const ProjectCreateFormSchema = v.object({
   name: v.pipe(v.string(), v.minLength(1, 'プロジェクト名は必須です')),
   purpose: v.pipe(v.string(), v.minLength(1, '目的は必須です')),
+  notes: v.optional(v.string()),
   deadline: v.optional(v.string()),
 });
 
@@ -53,6 +54,7 @@ export const ProjectCreateForm = () => {
     mutate({
       name: data.name,
       purpose: data.purpose,
+      notes: data.notes || undefined,
       deadline: data.deadline ? new Date(data.deadline) : undefined,
     });
   };
@@ -84,6 +86,20 @@ export const ProjectCreateForm = () => {
           {errors.purpose && (
             <p className="text-sm text-destructive">{errors.purpose.message}</p>
           )}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="notes">メモ</Label>
+          <Controller
+            name="notes"
+            control={control}
+            render={({ field }) => (
+              <MarkdownEditor
+                id="notes"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="deadline">期限</Label>

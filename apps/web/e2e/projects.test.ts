@@ -63,6 +63,9 @@ test.describe('プロジェクト詳細', () => {
     await expect(
       page.getByText('AI を活用した日報・タスク管理アプリを開発する'),
     ).toBeVisible();
+    await expect(
+      page.getByText('MVP は6月末までにリリースする'),
+    ).toBeVisible();
     await expect(page.getByText('2026/06/30（火）')).toBeVisible();
   });
 
@@ -126,12 +129,14 @@ test.describe('プロジェクト編集', () => {
 
     await page.getByLabel('プロジェクト名').fill('更新後のプロジェクト');
     await page.getByLabel('目的').fill('更新後の目的');
+    await page.getByLabel('メモ').fill('更新後のメモ');
     await page.getByRole('button', { name: '保存する' }).click();
 
     await expect(
       page.getByRole('heading', { name: '更新後のプロジェクト' }),
     ).toBeVisible();
     await expect(page.getByText('更新後の目的')).toBeVisible();
+    await expect(page.getByText('更新後のメモ')).toBeVisible();
   });
 
   test('ステータスを変更して保存すると、詳細ページに反映される', async ({

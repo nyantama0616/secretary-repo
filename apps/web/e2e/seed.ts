@@ -57,6 +57,7 @@ const SEED_PROJECTS = [
   {
     name: 'secretary-repo',
     purpose: 'AI を活用した日報・タスク管理アプリを開発する',
+    notes: 'MVP は6月末までにリリースする',
     status: 'active' as const,
     deadline: new Date('2026-06-30'),
   },

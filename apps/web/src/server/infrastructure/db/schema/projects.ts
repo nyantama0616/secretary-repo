@@ -6,6 +6,7 @@ export const projects = pgTable('projects', {
   id: text('id').primaryKey().$defaultFn(generateId),
   name: text('name').notNull(),
   purpose: text('purpose').notNull(),
+  notes: text('notes'),
   status: text('status', { enum: ['active', 'done'] })
     .notNull()
     .default('active'),

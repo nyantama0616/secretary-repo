@@ -7,6 +7,7 @@ export const UpdateProjectInputSchema = v.object({
   id: v.string(),
   name: v.optional(v.pipe(v.string(), v.minLength(1))),
   purpose: v.optional(v.pipe(v.string(), v.minLength(1))),
+  notes: v.optional(v.nullable(v.string())),
   deadline: v.optional(v.nullable(v.date())),
 });
 
