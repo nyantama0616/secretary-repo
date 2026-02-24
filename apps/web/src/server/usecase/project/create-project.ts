@@ -10,6 +10,7 @@ import type { ProjectRepository } from '@/server/domain/project/project-reposito
 export const CreateProjectInputSchema = v.object({
   name: v.pipe(v.string(), v.minLength(1)),
   purpose: v.pipe(v.string(), v.minLength(1)),
+  notes: v.optional(v.string()),
   deadline: v.optional(v.date()),
 });
 
@@ -23,6 +24,7 @@ export class CreateProjectUseCase {
       id: generateId(),
       name: input.name,
       purpose: input.purpose,
+      notes: input.notes ?? null,
       status: 'active',
       deadline: input.deadline ?? null,
       createdAt: new Date(),

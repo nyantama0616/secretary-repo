@@ -14,6 +14,7 @@ type ProjectDetail = {
   id: string;
   name: string;
   purpose: string;
+  notes: string | null;
   status: ProjectStatus;
   deadline: Date | null;
   createdAt: Date;
@@ -33,6 +34,7 @@ export class GetProjectUseCase {
       id: project.id,
       name: project.name,
       purpose: project.purpose,
+      notes: project.notes,
       status: project.status,
       deadline: project.deadline,
       createdAt: project.createdAt,

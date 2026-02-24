@@ -7,6 +7,7 @@ const ProjectSchema = v.pipe(
     id: v.string(),
     name: v.string(),
     purpose: v.string(),
+    notes: v.nullable(v.string()),
     status: ProjectStatusSchema,
     deadline: v.nullable(v.date()),
     createdAt: v.date(),

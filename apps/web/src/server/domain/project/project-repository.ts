@@ -1,7 +1,7 @@
 import type { Project, ProjectStatus } from '@/server/domain/project/project';
 
 export type ProjectUpdatableFields = Partial<
-  Pick<Project, 'name' | 'purpose' | 'deadline'>
+  Pick<Project, 'name' | 'purpose' | 'notes' | 'deadline'>
 >;
 
 export interface ProjectRepository {

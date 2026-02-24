@@ -28,6 +28,7 @@ export class DrizzleProjectRepository implements ProjectRepository {
       id: project.id,
       name: project.name,
       purpose: project.purpose,
+      notes: project.notes,
       status: project.status,
       deadline: project.deadline,
     });
@@ -50,6 +51,7 @@ const toProject = (row: typeof projects.$inferSelect): Project => {
     id: row.id,
     name: row.name,
     purpose: row.purpose,
+    notes: row.notes,
     status: row.status,
     deadline: row.deadline,
     createdAt: row.createdAt,
