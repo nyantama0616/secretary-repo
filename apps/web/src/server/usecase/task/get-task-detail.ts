@@ -25,6 +25,7 @@ type TaskDetail = {
   deadline: Date | null;
   estimatedMinutes: number | null;
   incompletionReason: string | null;
+  firstAction: string | null;
   dailyReportDate: Date | null;
   project: TaskDetailProject | null;
   createdAt: Date;
@@ -57,6 +58,7 @@ export class GetTaskDetailUseCase {
       deadline: task.deadline,
       estimatedMinutes: task.estimatedMinutes,
       incompletionReason: task.incompletionReason,
+      firstAction: task.firstAction,
       dailyReportDate,
       project,
       createdAt: task.createdAt,

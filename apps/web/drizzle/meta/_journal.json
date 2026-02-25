@@ -148,6 +148,13 @@
       "when": 1771944223553,
       "tag": "0020_thankful_aqueduct",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1771996013222,
+      "tag": "0021_cute_guardian",
+      "breakpoints": true
     }
   ]
 }

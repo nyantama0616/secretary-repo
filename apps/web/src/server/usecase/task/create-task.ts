@@ -12,6 +12,7 @@ export const CreateTaskInputSchema = v.object({
   description: v.optional(v.nullable(v.string())),
   deadline: v.optional(v.nullable(v.date())),
   estimatedMinutes: v.optional(v.nullable(v.number())),
+  firstAction: v.optional(v.nullable(v.string())),
   projectId: v.optional(v.nullable(v.string())),
   dailyReportId: v.optional(v.nullable(v.string())),
 });
@@ -55,6 +56,7 @@ export class CreateTaskUseCase {
       deadline: input.deadline ?? null,
       estimatedMinutes: input.estimatedMinutes ?? null,
       incompletionReason: null,
+      firstAction: input.firstAction ?? null,
       carriedOverFromId: null,
       createdAt: new Date(),
     });

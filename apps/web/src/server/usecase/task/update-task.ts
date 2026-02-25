@@ -10,6 +10,7 @@ export const UpdateTaskInputSchema = v.object({
   description: v.optional(v.nullable(v.string())),
   deadline: v.optional(v.nullable(v.date())),
   estimatedMinutes: v.optional(v.nullable(v.number())),
+  firstAction: v.optional(v.nullable(v.string())),
   projectId: v.optional(v.nullable(v.string())),
   incompletionReason: v.optional(v.nullable(v.string())),
 });

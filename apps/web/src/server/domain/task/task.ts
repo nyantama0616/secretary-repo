@@ -20,6 +20,7 @@ const TaskSchema = v.pipe(
     deadline: v.nullable(v.date()),
     estimatedMinutes: v.nullable(v.number()),
     incompletionReason: v.nullable(v.string()),
+    firstAction: v.nullable(v.string()),
     carriedOverFromId: v.nullable(v.string()),
     createdAt: v.date(),
   }),
