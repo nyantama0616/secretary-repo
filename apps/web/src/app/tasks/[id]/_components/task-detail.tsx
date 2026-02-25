@@ -68,6 +68,14 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
         )}
       </div>
       <dl className="grid gap-4">
+        <DetailItem label="ファーストアクション" value={task.firstAction} />
+        {task.description && (
+          <DetailItem label="説明">
+            <ViewerFrame>
+              <MarkdownViewer content={task.description} />
+            </ViewerFrame>
+          </DetailItem>
+        )}
         {task.project && (
           <div>
             <dt className="text-sm text-muted-foreground">プロジェクト</dt>
@@ -80,14 +88,6 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
               </Link>
             </dd>
           </div>
-        )}
-        <DetailItem label="ファーストアクション" value={task.firstAction} />
-        {task.description && (
-          <DetailItem label="説明">
-            <ViewerFrame>
-              <MarkdownViewer content={task.description} />
-            </ViewerFrame>
-          </DetailItem>
         )}
         <DetailItem
           label="期限"
