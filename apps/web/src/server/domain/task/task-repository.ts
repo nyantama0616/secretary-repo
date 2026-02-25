@@ -17,6 +17,7 @@ export type TaskUpdatableFields = Partial<
     | 'dailyReportId'
     | 'projectId'
     | 'incompletionReason'
+    | 'firstAction'
   >
 >;
 

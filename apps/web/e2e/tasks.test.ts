@@ -53,6 +53,9 @@ test.describe('タスク詳細', () => {
       page.getByRole('heading', { name: 'tRPC ルーターを実装する' }),
     ).toBeVisible();
     await expect(page.getByText('未着手')).toBeVisible();
+    await expect(
+      page.getByText('エディタを開いてファイルを作成する'),
+    ).toBeVisible();
     await expect(page.getByText('タスク一覧APIを実装する')).toBeVisible();
     await expect(page.getByText('120分')).toBeVisible();
     await expect(page.getByText('2026/02/20（金）')).toBeVisible();
@@ -95,12 +98,14 @@ test.describe('タスク編集', () => {
     await page.getByRole('link', { name: '編集' }).click();
 
     await page.getByLabel('タイトル').fill('更新後のタイトル');
+    await page.getByLabel('ファーストアクション').fill('READMEを読む');
     await page.getByLabel('説明').fill('更新後の説明');
     await page.getByRole('button', { name: '保存する' }).click();
 
     await expect(
       page.getByRole('heading', { name: '更新後のタイトル' }),
     ).toBeVisible();
+    await expect(page.getByText('READMEを読む')).toBeVisible();
     await expect(page.getByText('更新後の説明')).toBeVisible();
   });
 });

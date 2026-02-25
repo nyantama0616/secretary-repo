@@ -51,6 +51,7 @@ const CREATE_TASK_INPUT = {
   description: 'タスクの説明',
   deadline: new Date('2026-03-01'),
   estimatedMinutes: 90,
+  firstAction: 'エディタを開いてファイルを作成する',
 };
 
 describe('task.create', () => {
@@ -68,6 +69,7 @@ describe('task.create', () => {
       deadline: CREATE_TASK_INPUT.deadline,
       estimatedMinutes: CREATE_TASK_INPUT.estimatedMinutes,
       incompletionReason: null,
+      firstAction: CREATE_TASK_INPUT.firstAction,
       carriedOverFromId: null,
       createdAt: expect.any(Date),
     });
@@ -96,6 +98,7 @@ describe('task.create', () => {
       deadline: null,
       estimatedMinutes: null,
       incompletionReason: null,
+      firstAction: null,
       carriedOverFromId: null,
       createdAt: expect.any(Date),
     });
@@ -304,6 +307,7 @@ describe('task.detail', () => {
       deadline: TEST_TASKS[0].deadline,
       estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
       incompletionReason: null,
+      firstAction: null,
       dailyReportDate: null,
       project: null,
       createdAt: expect.any(Date),
@@ -372,6 +376,7 @@ describe('task.update', () => {
     description: '更新後の説明',
     deadline: new Date('2026-03-01'),
     estimatedMinutes: 120,
+    firstAction: '更新後の最初の一手',
   };
 
   it('タスクの基本情報を更新する', async () => {
@@ -389,6 +394,7 @@ describe('task.update', () => {
         description: updateInput.description,
         deadline: updateInput.deadline,
         estimatedMinutes: updateInput.estimatedMinutes,
+        firstAction: updateInput.firstAction,
       }),
     );
   });

@@ -166,6 +166,7 @@ const SEED_TASKS = [
       '});',
       '```',
     ].join('\n'),
+    firstAction: 'task.ts にスキーマを定義する',
     status: 'not_started' as const,
     sortOrder: 1,
     deadline: new Date('2026-02-20T09:00:00Z'),
@@ -173,6 +174,7 @@ const SEED_TASKS = [
   },
   {
     title: 'テストを書く',
+    firstAction: 'テストファイルを作成する',
     status: 'done' as const,
     sortOrder: 2,
   },

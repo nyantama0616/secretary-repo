@@ -40,6 +40,7 @@ get_task が返す構造（詳細）:
 - deadline: string | null (ISO 8601)
 - estimatedMinutes: number | null
 - incompletionReason: string | null
+- firstAction: string | null
 - dailyReportDate: string | null (ISO 8601)
 - project: { id: string, name: string } | null
 - createdAt: string (ISO 8601)

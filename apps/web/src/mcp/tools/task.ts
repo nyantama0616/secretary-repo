@@ -90,6 +90,9 @@ export const registerTaskTools = (server: McpServer): void => {
         estimatedMinutes: z
           .optional(z.number())
           .describe("見積もり時間（分）"),
+        firstAction: optionalString.describe(
+          "まず最初にやる具体的な行動",
+        ),
       },
     },
     async (args) => {
@@ -101,6 +104,7 @@ export const registerTaskTools = (server: McpServer): void => {
           projectId: args.projectId,
           deadline: args.deadline ? new Date(args.deadline) : undefined,
           estimatedMinutes: args.estimatedMinutes,
+          firstAction: args.firstAction,
         });
         return toSuccess(JSON.stringify(task, null, 2));
       } catch (error) {
@@ -125,6 +129,9 @@ export const registerTaskTools = (server: McpServer): void => {
         incompletionReason: optionalString.describe(
           "未達成の理由（cancelled にする場合に記録する）",
         ),
+        firstAction: optionalString.describe(
+          "まず最初にやる具体的な行動",
+        ),
       },
     },
     async (args) => {
@@ -137,6 +144,7 @@ export const registerTaskTools = (server: McpServer): void => {
           deadline: args.deadline ? new Date(args.deadline) : undefined,
           estimatedMinutes: args.estimatedMinutes,
           incompletionReason: args.incompletionReason,
+          firstAction: args.firstAction,
         });
         return toSuccess("タスクを更新しました");
       } catch (error) {
