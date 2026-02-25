@@ -81,6 +81,7 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
             </dd>
           </div>
         )}
+        <DetailItem label="ファーストアクション" value={task.firstAction} />
         {task.description && (
           <DetailItem label="説明">
             <ViewerFrame>

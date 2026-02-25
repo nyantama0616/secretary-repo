@@ -33,6 +33,7 @@ import {
 
 const TaskEditFormSchema = v.object({
   title: v.pipe(v.string(), v.minLength(1, 'タイトルは必須です')),
+  firstAction: v.optional(v.string()),
   description: v.optional(v.string()),
   deadline: v.optional(v.string()),
   estimatedMinutes: v.optional(v.string()),
@@ -68,6 +69,7 @@ export const TaskEditForm = ({ id }: TaskEditFormProps) => {
 
 type Task = {
   title: string;
+  firstAction: string | null;
   description: string | null;
   deadline: Date | null;
   estimatedMinutes: number | null;
@@ -82,6 +84,7 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
     resolver: valibotResolver(TaskEditFormSchema),
     defaultValues: {
       title: task.title,
+      firstAction: task.firstAction ?? '',
       description: task.description ?? '',
       deadline: task.deadline ? toDateStr(task.deadline) : '',
       estimatedMinutes:
@@ -122,6 +125,7 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
     mutate({
       id,
       title: data.title,
+      firstAction: emptyToUndefined(data.firstAction),
       description: emptyToUndefined(data.description),
       deadline: data.deadline ? new Date(data.deadline) : undefined,
       estimatedMinutes: data.estimatedMinutes
@@ -142,6 +146,10 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
               {formState.errors.title.message}
             </p>
           )}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="firstAction">ファーストアクション</Label>
+          <Input id="firstAction" {...register('firstAction')} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="description">説明</Label>
