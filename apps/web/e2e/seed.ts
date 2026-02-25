@@ -72,6 +72,7 @@ const SEED_TASKS = [
   {
     title: 'tRPC ルーターを実装する',
     description: 'タスク一覧APIを実装する',
+    firstAction: 'エディタを開いてファイルを作成する',
     status: 'not_started' as const,
     sortOrder: 1,
     deadline: new Date('2026-02-20T09:00:00Z'),
