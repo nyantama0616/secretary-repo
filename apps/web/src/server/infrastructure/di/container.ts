@@ -5,6 +5,7 @@ import { DrizzleTaskRepository } from '@/server/infrastructure/db/drizzle-task-r
 import { DrizzleWeeklyReportRepository } from '@/server/infrastructure/db/drizzle-weekly-report-repository';
 import { CreateDailyReportUseCase } from '@/server/usecase/daily-report/create-daily-report';
 import { GetDailyReportUseCase } from '@/server/usecase/daily-report/get-daily-report';
+import { GetDailyReportByDateUseCase } from '@/server/usecase/daily-report/get-daily-report-by-date';
 import { GetDailyReportsUseCase } from '@/server/usecase/daily-report/get-daily-reports';
 import { UpdateDailyReportUseCase } from '@/server/usecase/daily-report/update-daily-report';
 import { CreateMonthlyReportUseCase } from '@/server/usecase/monthly-report/create-monthly-report';
@@ -39,6 +40,9 @@ export const getDailyReportsUseCase = new GetDailyReportsUseCase(
   dailyReportRepository,
 );
 export const getDailyReportUseCase = new GetDailyReportUseCase(
+  dailyReportRepository,
+);
+export const getDailyReportByDateUseCase = new GetDailyReportByDateUseCase(
   dailyReportRepository,
 );
 export const createDailyReportUseCase = new CreateDailyReportUseCase(
