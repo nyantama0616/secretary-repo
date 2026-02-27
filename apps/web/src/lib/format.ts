@@ -16,6 +16,9 @@ export const formatTime = (date: Date, baseDate?: Date): string => {
           MS_PER_DAY,
       )
     : 0;
+  if (diffDays < 0) {
+    throw new Error('date は baseDate 以降である必要がある');
+  }
   const h = date.getHours() + diffDays * 24;
   const min = String(date.getMinutes()).padStart(2, '0');
   return `${String(h).padStart(2, '0')}:${min}`;
