@@ -20,11 +20,11 @@ export class UpdateProjectUseCase {
     const { id, ...fields } = input;
 
     const project = await this.projectRepository.findById(id);
-
     if (!project) {
       throw new NotFoundError('プロジェクト', id);
     }
 
-    await this.projectRepository.update(id, fields);
+    const updated = project.update(fields);
+    await this.projectRepository.update(updated);
   }
 }
