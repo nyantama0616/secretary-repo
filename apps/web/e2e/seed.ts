@@ -9,34 +9,33 @@ import { projects } from '../src/server/infrastructure/db/schema/projects';
 import { tasks } from '../src/server/infrastructure/db/schema/tasks';
 import { weeklyReports } from '../src/server/infrastructure/db/schema/weekly-reports';
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-const tomorrow = new Date(today);
-tomorrow.setDate(tomorrow.getDate() + 1);
+// NOTE: fixtures.ts の clock.install() と合わせて、テストの実行日時に依存しない固定日付を使う
+export const TODAY = new Date('2026-02-28');
+const TOMORROW = new Date('2026-03-01');
 
 const SEED_DAILY_REPORTS = [
   {
     date: new Date('2026-02-17'),
     goal: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
-    wakeUpTime: new Date('2026-02-16T22:00:00Z'),
-    bedTime: new Date('2026-02-17T14:00:00Z'),
+    wakeUpTime: new Date('2026-02-17T07:00:00Z'),
+    bedTime: new Date('2026-02-17T23:00:00Z'),
     review: '集中して作業できた。休憩を取り忘れたので改善したい。',
   },
   {
     date: new Date('2026-02-18'),
     goal: 'テストを書く',
     summary: 'テストの基本を学んだが体調不良で早退した',
-    wakeUpTime: new Date('2026-02-17T21:30:00Z'),
+    wakeUpTime: new Date('2026-02-18T06:30:00Z'),
     notes: '体調不良のため早退',
   },
   {
-    date: today,
+    date: TODAY,
     goal: 'ダッシュボードの改善を進める',
     review: '## 良かった点\n- 集中して作業できた\n\n## 改善点\n- 休憩を取り忘れた',
   },
   {
-    date: tomorrow,
+    date: TOMORROW,
     goal: '明日の目標',
   },
 ];
@@ -150,10 +149,10 @@ export const seed = async () => {
         .values(SEED_PROJECTS)
         .returning();
       const todayReport = insertedReports.find(
-        (r) => r.date.getTime() === today.getTime(),
+        (r) => r.date.getTime() === TODAY.getTime(),
       )!;
       const tomorrowReport = insertedReports.find(
-        (r) => r.date.getTime() === tomorrow.getTime(),
+        (r) => r.date.getTime() === TOMORROW.getTime(),
       )!;
       await tx.insert(tasks).values([
         ...SEED_TASKS.map((task, i) => ({
