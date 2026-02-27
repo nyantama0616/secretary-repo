@@ -16,6 +16,8 @@ const TEST_DAILY_REPORTS = [
     wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
     bedTime: new Date('2026-02-17T23:00:00+09:00'),
     review: '集中して作業できた。休憩を取り忘れたので改善したい。',
+    reviewStartedAt: new Date('2026-02-17T21:00:00+09:00'),
+    reviewFinishedAt: new Date('2026-02-17T21:15:00+09:00'),
     notes: null,
   },
   {
@@ -25,6 +27,8 @@ const TEST_DAILY_REPORTS = [
     wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
     bedTime: null,
     review: null,
+    reviewStartedAt: null,
+    reviewFinishedAt: null,
     notes: '体調不良のため早退',
   },
 ];
@@ -56,6 +60,8 @@ describe('dailyReport.list', () => {
           wakeUpTime: r.wakeUpTime,
           bedTime: r.bedTime,
           review: r.review,
+          reviewStartedAt: r.reviewStartedAt,
+          reviewFinishedAt: r.reviewFinishedAt,
           notes: r.notes,
           createdAt: expect.any(Date),
         })),
@@ -89,6 +95,8 @@ describe('dailyReport.detail', () => {
       wakeUpTime: testDailyReport.wakeUpTime,
       bedTime: testDailyReport.bedTime,
       review: testDailyReport.review,
+      reviewStartedAt: testDailyReport.reviewStartedAt,
+      reviewFinishedAt: testDailyReport.reviewFinishedAt,
       notes: testDailyReport.notes,
       createdAt: expect.any(Date),
     });
@@ -114,6 +122,8 @@ describe('dailyReport.update', () => {
     wakeUpTime: new Date('2026-02-19T08:00:00+09:00'),
     bedTime: new Date('2026-02-19T00:00:00+09:00'),
     review: '更新後の振り返り',
+    reviewStartedAt: new Date('2026-02-19T21:00:00+09:00'),
+    reviewFinishedAt: new Date('2026-02-19T21:20:00+09:00'),
     notes: '更新後のメモ',
   };
 
@@ -136,6 +146,8 @@ describe('dailyReport.update', () => {
       wakeUpTime: updateInput.wakeUpTime,
       bedTime: updateInput.bedTime,
       review: updateInput.review,
+      reviewStartedAt: updateInput.reviewStartedAt,
+      reviewFinishedAt: updateInput.reviewFinishedAt,
       notes: updateInput.notes,
       createdAt: expect.any(Date),
     });
@@ -160,6 +172,8 @@ describe('dailyReport.update', () => {
       wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
       bedTime: TEST_DAILY_REPORTS[0].bedTime,
       review: TEST_DAILY_REPORTS[0].review,
+      reviewStartedAt: TEST_DAILY_REPORTS[0].reviewStartedAt,
+      reviewFinishedAt: TEST_DAILY_REPORTS[0].reviewFinishedAt,
       notes: TEST_DAILY_REPORTS[0].notes,
       createdAt: expect.any(Date),
     });
@@ -197,6 +211,8 @@ describe('dailyReport.create', () => {
       wakeUpTime: createInput.wakeUpTime,
       bedTime: null,
       review: null,
+      reviewStartedAt: null,
+      reviewFinishedAt: null,
       notes: createInput.notes,
       createdAt: expect.any(Date),
     });
@@ -215,6 +231,8 @@ describe('dailyReport.create', () => {
       wakeUpTime: null,
       bedTime: null,
       review: null,
+      reviewStartedAt: null,
+      reviewFinishedAt: null,
       notes: null,
       createdAt: expect.any(Date),
     });

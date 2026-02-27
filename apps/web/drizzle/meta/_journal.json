@@ -162,6 +162,13 @@
       "when": 1772169724303,
       "tag": "0022_classy_aqueduct",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1772176336222,
+      "tag": "0023_simple_otto_octavius",
+      "breakpoints": true
     }
   ]
 }

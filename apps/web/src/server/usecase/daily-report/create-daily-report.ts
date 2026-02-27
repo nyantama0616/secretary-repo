@@ -42,6 +42,8 @@ export class CreateDailyReportUseCase {
       wakeUpTime: input.wakeUpTime ?? null,
       bedTime: null,
       review: null,
+      reviewStartedAt: null,
+      reviewFinishedAt: null,
       notes: input.notes ?? null,
       createdAt: new Date(),
     });
