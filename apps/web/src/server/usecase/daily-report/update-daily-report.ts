@@ -1,9 +1,6 @@
 import * as v from 'valibot';
 
-import {
-  type DailyReport,
-  createDailyReport,
-} from '@/server/domain/daily-report/daily-report';
+import type { DailyReport } from '@/server/domain/daily-report/daily-report';
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { NotFoundError } from '@/server/domain/error/domain-errors';
 
@@ -36,18 +33,15 @@ export class UpdateDailyReportUseCase {
       throw new NotFoundError('日報', input.id);
     }
 
-    const updated = createDailyReport({
-      id: existing.id,
-      date: existing.date,
-      goal: input.goal ?? existing.goal,
-      summary: input.summary ?? existing.summary,
-      wakeUpTime: input.wakeUpTime ?? existing.wakeUpTime,
-      bedTime: input.bedTime ?? existing.bedTime,
-      review: input.review ?? existing.review,
-      reviewStartedAt: input.reviewStartedAt ?? existing.reviewStartedAt,
-      reviewFinishedAt: input.reviewFinishedAt ?? existing.reviewFinishedAt,
-      notes: input.notes ?? existing.notes,
-      createdAt: existing.createdAt,
+    const updated = existing.update({
+      goal: input.goal,
+      summary: input.summary,
+      wakeUpTime: input.wakeUpTime,
+      bedTime: input.bedTime,
+      review: input.review,
+      reviewStartedAt: input.reviewStartedAt,
+      reviewFinishedAt: input.reviewFinishedAt,
+      notes: input.notes,
     });
 
     await this.dailyReportRepository.update(updated);
