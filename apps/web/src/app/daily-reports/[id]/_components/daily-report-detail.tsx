@@ -72,7 +72,14 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
 
       {report.review && (
         <section className="grid gap-2">
-          <h2 className="border-b pb-2 text-lg font-semibold">振り返り</h2>
+          <h2 className="border-b pb-2 text-lg font-semibold">
+            振り返り
+            {report.reviewStartedAt && report.reviewFinishedAt && (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                {buildReviewDurationLabel(report.reviewStartedAt, report.reviewFinishedAt)}
+              </span>
+            )}
+          </h2>
           <ViewerFrame>
             <MarkdownViewer content={report.review} />
           </ViewerFrame>
@@ -94,6 +101,16 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
       )}
     </div>
   );
+};
+
+const buildReviewDurationLabel = (
+  startedAt: Date,
+  finishedAt: Date,
+): string => {
+  const minutes = Math.round(
+    (finishedAt.getTime() - startedAt.getTime()) / 60000,
+  );
+  return `${minutes}分（${formatTime(startedAt)}〜${formatTime(finishedAt)}）`;
 };
 
 const buildTimeLabel = (
