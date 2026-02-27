@@ -1,26 +1,87 @@
 import * as v from 'valibot';
 
-const DailyReportSchema = v.pipe(
-  v.object({
-    id: v.string(),
-    date: v.date(),
-    goal: v.nullable(v.string()),
-    summary: v.nullable(v.string()),
-    wakeUpTime: v.nullable(v.date()),
-    bedTime: v.nullable(v.date()),
-    review: v.nullable(v.string()),
-    reviewStartedAt: v.nullable(v.date()),
-    reviewFinishedAt: v.nullable(v.date()),
-    notes: v.nullable(v.string()),
-    createdAt: v.date(),
-  }),
-  v.brand('DailyReport'),
-);
+import { omitUndefined } from '@/lib/omit-undefined';
 
-export type DailyReport = v.InferOutput<typeof DailyReportSchema>;
+const DailyReportSchema = v.object({
+  id: v.pipe(v.string(), v.minLength(1)),
+  date: v.date(),
+  goal: v.nullable(v.string()),
+  summary: v.nullable(v.string()),
+  wakeUpTime: v.nullable(v.date()),
+  bedTime: v.nullable(v.date()),
+  review: v.nullable(v.string()),
+  reviewStartedAt: v.nullable(v.date()),
+  reviewFinishedAt: v.nullable(v.date()),
+  notes: v.nullable(v.string()),
+  createdAt: v.date(),
+});
 
-export const createDailyReport = (
-  input: v.InferInput<typeof DailyReportSchema>,
-): DailyReport => {
-  return v.parse(DailyReportSchema, input);
+type DailyReportParams = v.InferInput<typeof DailyReportSchema>;
+
+type CreateDailyReportParams = {
+  id: string;
+  date: Date;
+  goal: string | null;
+  wakeUpTime: Date | null;
+  notes: string | null;
+  createdAt: Date;
 };
+
+type UpdateDailyReportParams = {
+  goal?: string | null;
+  summary?: string | null;
+  wakeUpTime?: Date | null;
+  bedTime?: Date | null;
+  review?: string | null;
+  reviewStartedAt?: Date | null;
+  reviewFinishedAt?: Date | null;
+  notes?: string | null;
+};
+
+export class DailyReport {
+  readonly id: string;
+  readonly date: Date;
+  readonly goal: string | null;
+  readonly summary: string | null;
+  readonly wakeUpTime: Date | null;
+  readonly bedTime: Date | null;
+  readonly review: string | null;
+  readonly reviewStartedAt: Date | null;
+  readonly reviewFinishedAt: Date | null;
+  readonly notes: string | null;
+  readonly createdAt: Date;
+
+  private constructor(params: DailyReportParams) {
+    const validated = v.parse(DailyReportSchema, params);
+    this.id = validated.id;
+    this.date = validated.date;
+    this.goal = validated.goal;
+    this.summary = validated.summary;
+    this.wakeUpTime = validated.wakeUpTime;
+    this.bedTime = validated.bedTime;
+    this.review = validated.review;
+    this.reviewStartedAt = validated.reviewStartedAt;
+    this.reviewFinishedAt = validated.reviewFinishedAt;
+    this.notes = validated.notes;
+    this.createdAt = validated.createdAt;
+  }
+
+  static create(params: CreateDailyReportParams): DailyReport {
+    return new DailyReport({
+      ...params,
+      summary: null,
+      bedTime: null,
+      review: null,
+      reviewStartedAt: null,
+      reviewFinishedAt: null,
+    });
+  }
+
+  static reconstruct(params: DailyReportParams): DailyReport {
+    return new DailyReport(params);
+  }
+
+  update(params: UpdateDailyReportParams): DailyReport {
+    return new DailyReport({ ...this, ...omitUndefined(params) });
+  }
+}

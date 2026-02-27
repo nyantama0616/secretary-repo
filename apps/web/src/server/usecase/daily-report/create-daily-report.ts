@@ -1,9 +1,6 @@
 import * as v from 'valibot';
 
-import {
-  type DailyReport,
-  createDailyReport,
-} from '@/server/domain/daily-report/daily-report';
+import { DailyReport } from '@/server/domain/daily-report/daily-report';
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { AlreadyExistsError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
@@ -34,21 +31,16 @@ export class CreateDailyReportUseCase {
       );
     }
 
-    const dailyReport = createDailyReport({
+    const dailyReport = DailyReport.create({
       id: generateId(),
       date: input.date,
       goal: input.goal ?? null,
-      summary: null,
       wakeUpTime: input.wakeUpTime ?? null,
-      bedTime: null,
-      review: null,
-      reviewStartedAt: null,
-      reviewFinishedAt: null,
       notes: input.notes ?? null,
       createdAt: new Date(),
     });
 
-    await this.dailyReportRepository.save(dailyReport);
+    await this.dailyReportRepository.create(dailyReport);
 
     return dailyReport;
   }

@@ -1,7 +1,6 @@
 import { and, eq, gte, inArray, lt } from 'drizzle-orm';
 
-import type { DailyReport } from '@/server/domain/daily-report/daily-report';
-import { createDailyReport } from '@/server/domain/daily-report/daily-report';
+import { DailyReport } from '@/server/domain/daily-report/daily-report';
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
 import { db } from '@/server/infrastructure/db/client';
 import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
@@ -9,7 +8,7 @@ import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 export class DrizzleDailyReportRepository implements DailyReportRepository {
   async findAll(): Promise<DailyReport[]> {
     const rows = await db.select().from(dailyReports);
-    return rows.map(toDailyReport);
+    return rows.map(toDomain);
   }
 
   async findById(id: string): Promise<DailyReport | null> {
@@ -23,7 +22,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .select()
       .from(dailyReports)
       .where(inArray(dailyReports.id, ids));
-    return rows.map(toDailyReport);
+    return rows.map(toDomain);
   }
 
   async findByDateRange(start: Date, end: Date): Promise<DailyReport[]> {
@@ -33,7 +32,7 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .where(
         and(gte(dailyReports.date, start), lt(dailyReports.date, end)),
       );
-    return rows.map(toDailyReport);
+    return rows.map(toDomain);
   }
 
   async findByDate(date: Date): Promise<DailyReport | null> {
@@ -41,10 +40,10 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .select()
       .from(dailyReports)
       .where(eq(dailyReports.date, date));
-    return rows[0] ? toDailyReport(rows[0]) : null;
+    return rows[0] ? toDomain(rows[0]) : null;
   }
 
-  async save(dailyReport: DailyReport): Promise<void> {
+  async create(dailyReport: DailyReport): Promise<void> {
     await db.insert(dailyReports).values({
       id: dailyReport.id,
       date: dailyReport.date,
@@ -75,13 +74,12 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       })
       .where(eq(dailyReports.id, dailyReport.id));
   }
-
 }
 
-const toDailyReport = (
+const toDomain = (
   row: typeof dailyReports.$inferSelect,
 ): DailyReport => {
-  return createDailyReport({
+  return DailyReport.reconstruct({
     id: row.id,
     date: row.date,
     goal: row.goal,

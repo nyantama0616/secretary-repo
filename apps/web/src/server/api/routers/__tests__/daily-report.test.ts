@@ -87,7 +87,7 @@ describe('dailyReport.detail', () => {
 
     const result = await caller.dailyReport.detail({ id: inserted.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: inserted.id,
       date: testDailyReport.date,
       goal: testDailyReport.goal,
@@ -125,7 +125,7 @@ describe('dailyReport.detailByDate', () => {
       date: testDailyReport.date,
     });
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: expect.any(String),
       date: testDailyReport.date,
       goal: testDailyReport.goal,
@@ -174,7 +174,7 @@ describe('dailyReport.update', () => {
       ...updateInput,
     });
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
       goal: updateInput.goal,
@@ -200,7 +200,7 @@ describe('dailyReport.update', () => {
       summary: '更新後のまとめ',
     });
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: inserted.id,
       date: TEST_DAILY_REPORTS[0].date,
       goal: TEST_DAILY_REPORTS[0].goal,
@@ -208,6 +208,34 @@ describe('dailyReport.update', () => {
       wakeUpTime: TEST_DAILY_REPORTS[0].wakeUpTime,
       bedTime: TEST_DAILY_REPORTS[0].bedTime,
       review: TEST_DAILY_REPORTS[0].review,
+      reviewStartedAt: TEST_DAILY_REPORTS[0].reviewStartedAt,
+      reviewFinishedAt: TEST_DAILY_REPORTS[0].reviewFinishedAt,
+      notes: TEST_DAILY_REPORTS[0].notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('null を渡すとフィールドをクリアできる', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+
+    const result = await caller.dailyReport.update({
+      id: inserted.id,
+      goal: null,
+      review: null,
+      wakeUpTime: null,
+    });
+
+    expect(result).toEqual({
+      id: inserted.id,
+      date: TEST_DAILY_REPORTS[0].date,
+      goal: null,
+      summary: TEST_DAILY_REPORTS[0].summary,
+      wakeUpTime: null,
+      bedTime: TEST_DAILY_REPORTS[0].bedTime,
+      review: null,
       reviewStartedAt: TEST_DAILY_REPORTS[0].reviewStartedAt,
       reviewFinishedAt: TEST_DAILY_REPORTS[0].reviewFinishedAt,
       notes: TEST_DAILY_REPORTS[0].notes,
@@ -239,7 +267,7 @@ describe('dailyReport.create', () => {
   it('日報を作成する', async () => {
     const result = await caller.dailyReport.create(createInput);
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: expect.any(String),
       date: createInput.date,
       goal: createInput.goal,
@@ -259,7 +287,7 @@ describe('dailyReport.create', () => {
       date: new Date('2026-02-20'),
     });
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: expect.any(String),
       date: new Date('2026-02-20'),
       goal: null,

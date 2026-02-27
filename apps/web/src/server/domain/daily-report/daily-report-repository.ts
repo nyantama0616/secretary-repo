@@ -6,6 +6,6 @@ export interface DailyReportRepository {
   findByIds(ids: string[]): Promise<DailyReport[]>;
   findByDate(date: Date): Promise<DailyReport | null>;
   findByDateRange(start: Date, end: Date): Promise<DailyReport[]>;
-  save(dailyReport: DailyReport): Promise<void>;
+  create(dailyReport: DailyReport): Promise<void>;
   update(dailyReport: DailyReport): Promise<void>;
 }
