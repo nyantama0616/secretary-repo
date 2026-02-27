@@ -53,6 +53,8 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       wakeUpTime: dailyReport.wakeUpTime,
       bedTime: dailyReport.bedTime,
       review: dailyReport.review,
+      reviewStartedAt: dailyReport.reviewStartedAt,
+      reviewFinishedAt: dailyReport.reviewFinishedAt,
       notes: dailyReport.notes,
     });
   }
@@ -67,6 +69,8 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
         wakeUpTime: dailyReport.wakeUpTime,
         bedTime: dailyReport.bedTime,
         review: dailyReport.review,
+        reviewStartedAt: dailyReport.reviewStartedAt,
+        reviewFinishedAt: dailyReport.reviewFinishedAt,
         notes: dailyReport.notes,
       })
       .where(eq(dailyReports.id, dailyReport.id));
@@ -85,6 +89,8 @@ const toDailyReport = (
     wakeUpTime: row.wakeUpTime,
     bedTime: row.bedTime,
     review: row.review,
+    reviewStartedAt: row.reviewStartedAt,
+    reviewFinishedAt: row.reviewFinishedAt,
     notes: row.notes,
     createdAt: row.createdAt,
   });

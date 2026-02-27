@@ -15,6 +15,8 @@ export default defineConfig({
   globalSetup: './e2e/setup.ts',
   use: {
     baseURL: `http://localhost:${e2ePort}`,
+    locale: 'ja-JP',
+    timezoneId: 'Asia/Tokyo',
     trace: 'on-first-retry',
   },
   projects: [

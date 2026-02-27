@@ -14,7 +14,7 @@ const SEED_DAILY_REPORTS = [
     summary:
       '機能Aの主要部分を実装し、集中して作業できた。\n予定していたAPI設計も完了した。\n明日はテストを書く予定。',
     wakeUpTime: new Date('2026-02-16T22:00:00Z'),
-    bedTime: new Date('2026-02-17T14:00:00Z'),
+    bedTime: new Date('2026-02-17T16:00:00Z'),
     review: [
       '## 良かった点',
       '- 集中して作業できた',
@@ -27,6 +27,8 @@ const SEED_DAILY_REPORTS = [
       '## ネクストアクション',
       '- 明日はテストを書く',
     ].join('\n'),
+    reviewStartedAt: new Date('2026-02-17T12:00:00Z'),
+    reviewFinishedAt: new Date('2026-02-17T12:15:00Z'),
   },
   {
     date: new Date('2026-02-18'),
@@ -60,6 +62,8 @@ const SEED_DAILY_REPORTS = [
       '## ネクストアクション',
       '- 明日は新機能に着手する',
     ].join('\n'),
+    reviewStartedAt: new Date('2026-02-19T12:30:00Z'),
+    reviewFinishedAt: new Date('2026-02-19T13:00:00Z'),
   },
   {
     date: new Date('2026-02-22'),

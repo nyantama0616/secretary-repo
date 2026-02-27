@@ -9,6 +9,8 @@ const DailyReportSchema = v.pipe(
     wakeUpTime: v.nullable(v.date()),
     bedTime: v.nullable(v.date()),
     review: v.nullable(v.string()),
+    reviewStartedAt: v.nullable(v.date()),
+    reviewFinishedAt: v.nullable(v.date()),
     notes: v.nullable(v.string()),
     createdAt: v.date(),
   }),
