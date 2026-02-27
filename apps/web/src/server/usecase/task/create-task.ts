@@ -57,6 +57,7 @@ export class CreateTaskUseCase {
       estimatedMinutes: input.estimatedMinutes ?? null,
       incompletionReason: null,
       firstAction: input.firstAction ?? null,
+      notes: null,
       carriedOverFromId: null,
       createdAt: new Date(),
     });

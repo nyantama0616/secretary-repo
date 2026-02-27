@@ -42,6 +42,7 @@ export class DeferTaskUseCase {
       estimatedMinutes: task.estimatedMinutes,
       incompletionReason: null,
       firstAction: task.firstAction,
+      notes: task.notes,
       carriedOverFromId: task.id,
       createdAt: new Date(),
     });

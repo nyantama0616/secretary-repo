@@ -57,6 +57,8 @@ test.describe('タスク詳細', () => {
       page.getByText('エディタを開いてファイルを作成する'),
     ).toBeVisible();
     await expect(page.getByText('タスク一覧APIを実装する')).toBeVisible();
+    await expect(page.getByText('デフォルト値')).toBeVisible();
+    await expect(page.getByText('NotFoundError')).toBeVisible();
     await expect(page.getByText('120分')).toBeVisible();
     await expect(page.getByText('2026/02/20（金）')).toBeVisible();
     const projectLink = page.getByRole('link', { name: 'secretary-repo' });
@@ -100,6 +102,7 @@ test.describe('タスク編集', () => {
     await page.getByLabel('タイトル').fill('更新後のタイトル');
     await page.getByLabel('ファーストアクション').fill('READMEを読む');
     await page.getByLabel('説明').fill('更新後の説明');
+    await page.getByLabel('メモ').fill('更新後のメモ');
     await page.getByRole('button', { name: '保存する' }).click();
 
     await expect(
@@ -107,6 +110,7 @@ test.describe('タスク編集', () => {
     ).toBeVisible();
     await expect(page.getByText('READMEを読む')).toBeVisible();
     await expect(page.getByText('更新後の説明')).toBeVisible();
+    await expect(page.getByText('更新後のメモ')).toBeVisible();
   });
 });
 

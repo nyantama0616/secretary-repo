@@ -79,6 +79,13 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
             </ViewerFrame>
           </DetailItem>
         )}
+        {task.notes && (
+          <DetailItem label="メモ">
+            <ViewerFrame>
+              <MarkdownViewer content={task.notes} />
+            </ViewerFrame>
+          </DetailItem>
+        )}
         {task.project && (
           <div>
             <dt className="text-sm text-muted-foreground">プロジェクト</dt>

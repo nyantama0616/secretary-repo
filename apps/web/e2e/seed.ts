@@ -72,6 +72,7 @@ const SEED_TASKS = [
   {
     title: 'tRPC ルーターを実装する',
     description: 'タスク一覧APIを実装する',
+    notes: '- `sortOrder` は **デフォルト値** を設定する\n- エラーは `NotFoundError` を使う',
     firstAction: 'エディタを開いてファイルを作成する',
     status: 'not_started' as const,
     sortOrder: 1,

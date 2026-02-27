@@ -48,6 +48,7 @@ export class DrizzleTaskRepository implements TaskRepository {
       estimatedMinutes: task.estimatedMinutes,
       incompletionReason: task.incompletionReason,
       firstAction: task.firstAction,
+      notes: task.notes,
     });
   }
 
@@ -83,6 +84,7 @@ const toTask = (row: typeof tasks.$inferSelect): Task => {
     estimatedMinutes: row.estimatedMinutes,
     incompletionReason: row.incompletionReason,
     firstAction: row.firstAction,
+    notes: row.notes,
     carriedOverFromId: row.carriedOverFromId,
     createdAt: row.createdAt,
   });
