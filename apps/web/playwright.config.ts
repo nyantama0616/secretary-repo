@@ -16,7 +16,7 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${e2ePort}`,
     locale: 'ja-JP',
-    timezoneId: 'Asia/Tokyo',
+    timezoneId: 'UTC',
     trace: 'on-first-retry',
   },
   projects: [
