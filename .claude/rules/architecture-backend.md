@@ -43,8 +43,15 @@ API → UseCase → Domain ← Infrastructure
 ### 各層のルール
 
 #### Domain 層
-- エンティティは Valibot スキーマ + `v.brand()` で定義する
+- エンティティはクラスで定義する。`domain/project/project.ts` の `Project` クラスを実装の規範とする
+  - constructor は `private` にし、生成経路を static factory methods に限定する
+    - `create()` — 新規作成。ビジネスルール（初期値の設定など）を強制する。`id` と `createdAt` は UseCase から渡す
+    - `reconstruct()` — DB からの復元。全フィールドをそのまま受け取る
+  - フィールドは `readonly` で公開する
+  - constructor 内で Valibot スキーマによるランタイム検証を行い、不正なデータの混入を防ぐ
+  - `update()` メソッドは新しいインスタンスを返す（不変パターン）
 - Repository はインターフェース（`interface`）として定義する
+  - メソッド名は操作の意図を明確にする（`create` / `update` / `findById` / `findAll`）
 - ID は `domain/id.ts` の `generateId()` で生成する（nanoid）。UUID は使わない
 
 #### UseCase 層
@@ -55,6 +62,7 @@ API → UseCase → Domain ← Infrastructure
 #### Infrastructure 層
 - `di/container.ts` で UseCase とその依存を組み立てる
 - Repository の実装は `infrastructure/` 配下に置く
+- DB の行からエンティティへの変換は `toDomain` ヘルパーで行い、エンティティの `reconstruct()` を使う
 
 #### API 層
 - tRPC ルーターは UseCase を呼び出すだけ。ビジネスロジックを持たない
