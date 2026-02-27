@@ -215,6 +215,34 @@ describe('dailyReport.update', () => {
     });
   });
 
+  it('null を渡すとフィールドをクリアできる', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+
+    const result = await caller.dailyReport.update({
+      id: inserted.id,
+      goal: null,
+      review: null,
+      wakeUpTime: null,
+    });
+
+    expect(result).toEqual({
+      id: inserted.id,
+      date: TEST_DAILY_REPORTS[0].date,
+      goal: null,
+      summary: TEST_DAILY_REPORTS[0].summary,
+      wakeUpTime: null,
+      bedTime: TEST_DAILY_REPORTS[0].bedTime,
+      review: null,
+      reviewStartedAt: TEST_DAILY_REPORTS[0].reviewStartedAt,
+      reviewFinishedAt: TEST_DAILY_REPORTS[0].reviewFinishedAt,
+      notes: TEST_DAILY_REPORTS[0].notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
   it('存在しないIDの場合、NOT_FOUND エラーを返す', async () => {
     const nonExistentId = generateId();
 

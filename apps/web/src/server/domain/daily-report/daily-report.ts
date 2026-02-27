@@ -28,14 +28,14 @@ type CreateDailyReportParams = {
 };
 
 type UpdateDailyReportParams = {
-  goal?: string;
-  summary?: string;
-  wakeUpTime?: Date;
-  bedTime?: Date;
-  review?: string;
-  reviewStartedAt?: Date;
-  reviewFinishedAt?: Date;
-  notes?: string;
+  goal?: string | null;
+  summary?: string | null;
+  wakeUpTime?: Date | null;
+  bedTime?: Date | null;
+  review?: string | null;
+  reviewStartedAt?: Date | null;
+  reviewFinishedAt?: Date | null;
+  notes?: string | null;
 };
 
 export class DailyReport {

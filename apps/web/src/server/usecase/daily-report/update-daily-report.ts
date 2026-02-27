@@ -7,14 +7,14 @@ import { NotFoundError } from '@/server/domain/error/domain-errors';
 // NOTE: 日付は日報のアイデンティティであるため、変更を許可しない
 export const UpdateDailyReportInputSchema = v.object({
   id: v.string(),
-  goal: v.optional(v.pipe(v.string(), v.minLength(1))),
-  summary: v.optional(v.pipe(v.string(), v.minLength(1))),
-  wakeUpTime: v.optional(v.date()),
-  bedTime: v.optional(v.date()),
-  review: v.optional(v.pipe(v.string(), v.minLength(1))),
-  reviewStartedAt: v.optional(v.date()),
-  reviewFinishedAt: v.optional(v.date()),
-  notes: v.optional(v.pipe(v.string(), v.minLength(1))),
+  goal: v.optional(v.nullable(v.pipe(v.string(), v.minLength(1)))),
+  summary: v.optional(v.nullable(v.pipe(v.string(), v.minLength(1)))),
+  wakeUpTime: v.optional(v.nullable(v.date())),
+  bedTime: v.optional(v.nullable(v.date())),
+  review: v.optional(v.nullable(v.pipe(v.string(), v.minLength(1)))),
+  reviewStartedAt: v.optional(v.nullable(v.date())),
+  reviewFinishedAt: v.optional(v.nullable(v.date())),
+  notes: v.optional(v.nullable(v.pipe(v.string(), v.minLength(1)))),
 });
 
 type UpdateDailyReportInput = v.InferOutput<
