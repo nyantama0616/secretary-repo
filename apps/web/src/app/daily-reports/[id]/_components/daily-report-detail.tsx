@@ -11,6 +11,8 @@ import { ROUTES } from '@/constants/routes';
 import { formatDate, formatTime } from '@/lib/format';
 import { useQuery, useTRPC } from '@/trpc/client';
 
+import { DailyReportTaskList } from './daily-report-task-list';
+
 type DailyReportDetailProps = {
   id: string;
 };
@@ -76,6 +78,11 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
           </ViewerFrame>
         </section>
       )}
+
+      <section className="grid gap-2">
+        <h2 className="border-b pb-2 text-lg font-semibold">タスク</h2>
+        <DailyReportTaskList dailyReportId={id} />
+      </section>
 
       {report.notes && (
         <section className="grid gap-2">
