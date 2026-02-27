@@ -12,12 +12,16 @@ import {
   DropdownMenuTrigger,
 } from '@repo/ui/dropdown-menu';
 import Link from 'next/link';
-import type { ComponentProps } from 'react';
 import { useState } from 'react';
 
 import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { ROUTES } from '@/constants/routes';
+import {
+  INACTIVE_STATUSES,
+  STATUS_CONFIG,
+  sortInactiveFirst,
+} from '@/lib/task-status';
 import type { TaskStatus } from '@/server/domain/task/task';
 import {
   useMutation,
@@ -27,21 +31,6 @@ import {
 } from '@/trpc/client';
 
 import { TaskAddForm } from './task-add-form';
-
-const STATUS_CONFIG: Record<
-  TaskStatus,
-  {
-    label: string;
-    variant: ComponentProps<typeof Badge>['variant'];
-    muted: boolean;
-  }
-> = {
-  not_started: { label: '未着手', variant: 'secondary', muted: false },
-  in_progress: { label: '着手中', variant: 'info', muted: false },
-  done: { label: '完了', variant: 'success', muted: true },
-  cancelled: { label: '中止', variant: 'destructive', muted: true },
-  deferred: { label: '延期', variant: 'warning', muted: true },
-};
 
 type TaskItem = {
   id: string;
@@ -86,9 +75,7 @@ export const DailyTaskSection = ({
     tasks: TaskItem[];
     dataUpdatedAt: number;
   } | null>(null);
-  // NOTE: 完了済みタスクを上に、未完了タスクを下に表示する
-  // 各グループ内では sortOrder（元の並び順）を維持する
-  const displayTasks = sortByCompletion(
+  const displayTasks = sortInactiveFirst(
     optimisticTasks?.dataUpdatedAt === dataUpdatedAt
       ? optimisticTasks.tasks
       : (tasks ?? []),
@@ -168,18 +155,6 @@ export const DailyTaskSection = ({
       )}
     </section>
   );
-};
-
-const INACTIVE_STATUSES: Set<TaskStatus> = new Set([
-  'done',
-  'cancelled',
-  'deferred',
-]);
-
-const sortByCompletion = (tasks: TaskItem[]): TaskItem[] => {
-  const done = tasks.filter((t) => INACTIVE_STATUSES.has(t.status));
-  const active = tasks.filter((t) => !INACTIVE_STATUSES.has(t.status));
-  return [...done, ...active];
 };
 
 const findNextTaskId = (tasks: TaskItem[]): string | null => {

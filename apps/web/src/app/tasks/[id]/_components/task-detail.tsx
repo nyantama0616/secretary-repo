@@ -51,6 +51,9 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
     );
   }
 
+  const isIncomplete =
+    task.status === 'cancelled' || task.status === 'deferred';
+
   return (
     <div className="grid gap-4 p-8">
       <div className="flex items-center gap-4">
@@ -101,8 +104,11 @@ export const TaskDetail = ({ id }: TaskDetailProps) => {
               : null
           }
         />
-        {task.status === 'cancelled' && (
-          <DetailItem label="中止理由" value={task.incompletionReason} />
+        {isIncomplete && (
+          <DetailItem
+            label="未完了の理由"
+            value={task.incompletionReason}
+          />
         )}
       </dl>
     </div>

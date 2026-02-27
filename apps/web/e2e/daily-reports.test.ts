@@ -43,6 +43,7 @@ test.describe('日報詳細', () => {
     await expect(
       page.getByText('集中して作業できた。休憩を取り忘れたので改善したい。'),
     ).toBeVisible();
+    await expect(page.getByText('tRPC ルーターを実装する')).toBeVisible();
   });
 
   test('存在しないIDにアクセスすると、404ページが表示される', async ({
