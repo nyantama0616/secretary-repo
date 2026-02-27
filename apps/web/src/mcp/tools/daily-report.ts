@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 
 import {
   createDailyReportUseCase,
+  getDailyReportByDateUseCase,
   getDailyReportUseCase,
   getDailyReportsUseCase,
   updateDailyReportUseCase,
@@ -38,6 +39,26 @@ export const registerDailyReportTools = (server: McpServer): void => {
     async ({ id }) => {
       try {
         const report = await getDailyReportUseCase.execute({ id });
+        return toSuccess(JSON.stringify(report, null, 2));
+      } catch (error) {
+        return toErrorResult(error);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_daily_report_by_date",
+    {
+      description: "指定された日付の日報を取得する",
+      inputSchema: {
+        date: z.iso.date().describe("日報の日付（例: 2026-02-20）"),
+      },
+    },
+    async ({ date }) => {
+      try {
+        const report = await getDailyReportByDateUseCase.execute({
+          date: new Date(date),
+        });
         return toSuccess(JSON.stringify(report, null, 2));
       } catch (error) {
         return toErrorResult(error);
