@@ -166,6 +166,10 @@ const SEED_TASKS = [
       '});',
       '```',
     ].join('\n'),
+    notes: [
+      '- `sortOrder` は DB 側で **デフォルト値** を設定するか検討する',
+      '- エラーハンドリングは `NotFoundError` を使う方針に決まった',
+    ].join('\n'),
     firstAction: 'task.ts にスキーマを定義する',
     status: 'not_started' as const,
     sortOrder: 1,

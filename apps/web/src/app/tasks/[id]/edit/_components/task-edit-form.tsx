@@ -35,6 +35,7 @@ const TaskEditFormSchema = v.object({
   title: v.pipe(v.string(), v.minLength(1, 'タイトルは必須です')),
   firstAction: v.optional(v.string()),
   description: v.optional(v.string()),
+  notes: v.optional(v.string()),
   deadline: v.optional(v.string()),
   estimatedMinutes: v.optional(v.string()),
 });
@@ -71,6 +72,7 @@ type Task = {
   title: string;
   firstAction: string | null;
   description: string | null;
+  notes: string | null;
   deadline: Date | null;
   estimatedMinutes: number | null;
 };
@@ -86,6 +88,7 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
       title: task.title,
       firstAction: task.firstAction ?? '',
       description: task.description ?? '',
+      notes: task.notes ?? '',
       deadline: task.deadline ? toDateStr(task.deadline) : '',
       estimatedMinutes:
         task.estimatedMinutes !== null ? String(task.estimatedMinutes) : '',
@@ -127,6 +130,7 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
       title: data.title,
       firstAction: emptyToUndefined(data.firstAction),
       description: emptyToUndefined(data.description),
+      notes: emptyToUndefined(data.notes),
       deadline: data.deadline ? new Date(data.deadline) : undefined,
       estimatedMinutes: data.estimatedMinutes
         ? Number(data.estimatedMinutes)
@@ -159,6 +163,20 @@ const EditForm = ({ id, task }: { id: string; task: Task }) => {
             render={({ field }) => (
               <MarkdownEditor
                 id="description"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="notes">メモ</Label>
+          <Controller
+            name="notes"
+            control={control}
+            render={({ field }) => (
+              <MarkdownEditor
+                id="notes"
                 value={field.value ?? ''}
                 onChange={field.onChange}
               />
