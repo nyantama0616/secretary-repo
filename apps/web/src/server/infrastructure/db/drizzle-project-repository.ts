@@ -1,18 +1,14 @@
 import { eq } from 'drizzle-orm';
 
-import type { Project, ProjectStatus } from '@/server/domain/project/project';
-import { createProject } from '@/server/domain/project/project';
-import type {
-  ProjectRepository,
-  ProjectUpdatableFields,
-} from '@/server/domain/project/project-repository';
+import { Project } from '@/server/domain/project/project';
+import type { ProjectRepository } from '@/server/domain/project/project-repository';
 import { db } from '@/server/infrastructure/db/client';
 import { projects } from '@/server/infrastructure/db/schema/projects';
 
 export class DrizzleProjectRepository implements ProjectRepository {
   async findAll(): Promise<Project[]> {
     const rows = await db.select().from(projects);
-    return rows.map(toProject);
+    return rows.map(toDomain);
   }
 
   async findById(id: string): Promise<Project | null> {
@@ -20,10 +16,10 @@ export class DrizzleProjectRepository implements ProjectRepository {
       .select()
       .from(projects)
       .where(eq(projects.id, id));
-    return row ? toProject(row) : null;
+    return row ? toDomain(row) : null;
   }
 
-  async save(project: Project): Promise<void> {
+  async create(project: Project): Promise<void> {
     await db.insert(projects).values({
       id: project.id,
       name: project.name,
@@ -34,20 +30,22 @@ export class DrizzleProjectRepository implements ProjectRepository {
     });
   }
 
-  async update(id: string, fields: ProjectUpdatableFields): Promise<void> {
-    await db.update(projects).set(fields).where(eq(projects.id, id));
-  }
-
-  async updateStatus(id: string, status: ProjectStatus): Promise<void> {
+  async update(project: Project): Promise<void> {
     await db
       .update(projects)
-      .set({ status })
-      .where(eq(projects.id, id));
+      .set({
+        name: project.name,
+        purpose: project.purpose,
+        notes: project.notes,
+        status: project.status,
+        deadline: project.deadline,
+      })
+      .where(eq(projects.id, project.id));
   }
 }
 
-const toProject = (row: typeof projects.$inferSelect): Project => {
-  return createProject({
+const toDomain = (row: typeof projects.$inferSelect): Project => {
+  return Project.reconstruct({
     id: row.id,
     name: row.name,
     purpose: row.purpose,

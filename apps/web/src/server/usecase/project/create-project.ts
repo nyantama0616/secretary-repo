@@ -1,10 +1,7 @@
 import * as v from 'valibot';
 
 import { generateId } from '@/server/domain/id';
-import {
-  type Project,
-  createProject,
-} from '@/server/domain/project/project';
+import { Project } from '@/server/domain/project/project';
 import type { ProjectRepository } from '@/server/domain/project/project-repository';
 
 export const CreateProjectInputSchema = v.object({
@@ -20,17 +17,16 @@ export class CreateProjectUseCase {
   constructor(private readonly projectRepository: ProjectRepository) {}
 
   async execute(input: CreateProjectInput): Promise<Project> {
-    const project = createProject({
+    const project = Project.create({
       id: generateId(),
       name: input.name,
       purpose: input.purpose,
       notes: input.notes ?? null,
-      status: 'active',
       deadline: input.deadline ?? null,
       createdAt: new Date(),
     });
 
-    await this.projectRepository.save(project);
+    await this.projectRepository.create(project);
 
     return project;
   }

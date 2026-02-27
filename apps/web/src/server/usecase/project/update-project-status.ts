@@ -18,11 +18,11 @@ export class UpdateProjectStatusUseCase {
 
   async execute(input: UpdateProjectStatusInput): Promise<void> {
     const project = await this.projectRepository.findById(input.id);
-
     if (!project) {
       throw new NotFoundError('プロジェクト', input.id);
     }
 
-    await this.projectRepository.updateStatus(input.id, input.status);
+    const updated = project.update({ status: input.status });
+    await this.projectRepository.update(updated);
   }
 }
