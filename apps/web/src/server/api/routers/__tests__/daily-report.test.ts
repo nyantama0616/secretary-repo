@@ -115,6 +115,42 @@ describe('dailyReport.detail', () => {
   });
 });
 
+describe('dailyReport.detailByDate', () => {
+  const testDailyReport = TEST_DAILY_REPORTS[0];
+
+  it('指定した日付の日報を返す', async () => {
+    await db.insert(dailyReports).values(testDailyReport);
+
+    const result = await caller.dailyReport.detailByDate({
+      date: testDailyReport.date,
+    });
+
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      date: testDailyReport.date,
+      goal: testDailyReport.goal,
+      summary: testDailyReport.summary,
+      wakeUpTime: testDailyReport.wakeUpTime,
+      bedTime: testDailyReport.bedTime,
+      review: testDailyReport.review,
+      reviewStartedAt: testDailyReport.reviewStartedAt,
+      reviewFinishedAt: testDailyReport.reviewFinishedAt,
+      notes: testDailyReport.notes,
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('存在しない日付の場合、NOT_FOUND エラーを返す', async () => {
+    await expect(
+      caller.dailyReport.detailByDate({ date: new Date('2099-01-01') }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'NOT_FOUND',
+      }),
+    );
+  });
+});
+
 describe('dailyReport.update', () => {
   const updateInput = {
     goal: '更新後の計画',
