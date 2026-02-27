@@ -21,6 +21,7 @@ const TaskSchema = v.pipe(
     estimatedMinutes: v.nullable(v.number()),
     incompletionReason: v.nullable(v.string()),
     firstAction: v.nullable(v.string()),
+    notes: v.nullable(v.string()),
     carriedOverFromId: v.nullable(v.string()),
     createdAt: v.date(),
   }),

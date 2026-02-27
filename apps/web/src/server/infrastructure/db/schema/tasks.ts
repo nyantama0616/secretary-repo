@@ -25,6 +25,7 @@ export const tasks = pgTable('tasks', {
   estimatedMinutes: integer('estimated_minutes'),
   incompletionReason: text('incompletion_reason'),
   firstAction: text('first_action'),
+  notes: text('notes'),
   carriedOverFromId: text('carried_over_from_id').references(
     (): AnyPgColumn => tasks.id,
     { onDelete: 'set null' },

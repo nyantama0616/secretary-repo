@@ -13,6 +13,7 @@ export const UpdateTaskInputSchema = v.object({
   firstAction: v.optional(v.nullable(v.string())),
   projectId: v.optional(v.nullable(v.string())),
   incompletionReason: v.optional(v.nullable(v.string())),
+  notes: v.optional(v.nullable(v.string())),
 });
 
 type UpdateTaskInput = v.InferOutput<typeof UpdateTaskInputSchema>;

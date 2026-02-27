@@ -132,6 +132,7 @@ export const registerTaskTools = (server: McpServer): void => {
         firstAction: optionalString.describe(
           "まず最初にやる具体的な行動",
         ),
+        notes: optionalString.describe("メモ"),
       },
     },
     async (args) => {
@@ -145,6 +146,7 @@ export const registerTaskTools = (server: McpServer): void => {
           estimatedMinutes: args.estimatedMinutes,
           incompletionReason: args.incompletionReason,
           firstAction: args.firstAction,
+          notes: args.notes,
         });
         return toSuccess("タスクを更新しました");
       } catch (error) {

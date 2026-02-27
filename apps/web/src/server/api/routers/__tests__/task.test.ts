@@ -70,6 +70,7 @@ describe('task.create', () => {
       estimatedMinutes: CREATE_TASK_INPUT.estimatedMinutes,
       incompletionReason: null,
       firstAction: CREATE_TASK_INPUT.firstAction,
+      notes: null,
       carriedOverFromId: null,
       createdAt: expect.any(Date),
     });
@@ -99,6 +100,7 @@ describe('task.create', () => {
       estimatedMinutes: null,
       incompletionReason: null,
       firstAction: null,
+      notes: null,
       carriedOverFromId: null,
       createdAt: expect.any(Date),
     });
@@ -308,6 +310,7 @@ describe('task.detail', () => {
       estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
       incompletionReason: null,
       firstAction: null,
+      notes: null,
       dailyReportDate: null,
       project: null,
       createdAt: expect.any(Date),
@@ -377,6 +380,7 @@ describe('task.update', () => {
     deadline: new Date('2026-03-01'),
     estimatedMinutes: 120,
     firstAction: '更新後の最初の一手',
+    notes: '調査した結果、APIの仕様変更が必要',
   };
 
   it('タスクの基本情報を更新する', async () => {
@@ -395,6 +399,7 @@ describe('task.update', () => {
         deadline: updateInput.deadline,
         estimatedMinutes: updateInput.estimatedMinutes,
         firstAction: updateInput.firstAction,
+        notes: updateInput.notes,
       }),
     );
   });

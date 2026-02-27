@@ -155,6 +155,13 @@
       "when": 1771996013222,
       "tag": "0021_cute_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1772169724303,
+      "tag": "0022_classy_aqueduct",
+      "breakpoints": true
     }
   ]
 }
