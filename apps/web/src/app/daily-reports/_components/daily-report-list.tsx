@@ -70,7 +70,7 @@ const DailyReportCard = ({
   wakeUpTime: Date | null;
   bedTime: Date | null;
 }) => {
-  const timeLabel = buildTimeLabel(wakeUpTime, bedTime);
+  const timeLabel = buildTimeLabel(wakeUpTime, bedTime, date);
 
   return (
     <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
@@ -88,10 +88,11 @@ const DailyReportCard = ({
 const buildTimeLabel = (
   wakeUpTime: Date | null,
   bedTime: Date | null,
+  baseDate: Date,
 ): string | null => {
   if (!wakeUpTime && !bedTime) return null;
   const parts: string[] = [];
-  if (wakeUpTime) parts.push(`起床 ${formatTime(wakeUpTime)}`);
-  if (bedTime) parts.push(`就寝 ${formatTime(bedTime)}`);
+  if (wakeUpTime) parts.push(`起床 ${formatTime(wakeUpTime, baseDate)}`);
+  if (bedTime) parts.push(`就寝 ${formatTime(bedTime, baseDate)}`);
   return parts.join(' / ');
 };

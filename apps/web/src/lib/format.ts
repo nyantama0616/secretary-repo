@@ -7,11 +7,22 @@ export const formatDate = (date: Date): string => {
   return `${y}/${m}/${d}（${w}）`;
 };
 
-export const formatTime = (date: Date): string => {
-  const h = String(date.getHours()).padStart(2, '0');
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+export const formatTime = (date: Date, baseDate?: Date): string => {
+  const diffDays = baseDate
+    ? Math.floor(
+        (startOfDay(date).getTime() - startOfDay(baseDate).getTime()) /
+          MS_PER_DAY,
+      )
+    : 0;
+  const h = date.getHours() + diffDays * 24;
   const min = String(date.getMinutes()).padStart(2, '0');
-  return `${h}:${min}`;
+  return `${String(h).padStart(2, '0')}:${min}`;
 };
+
+const startOfDay = (date: Date): Date =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
 export const formatMonth = (date: Date): string => {
   const y = date.getFullYear();

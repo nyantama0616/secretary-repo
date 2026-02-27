@@ -39,7 +39,7 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
     );
   }
 
-  const timeLabel = buildTimeLabel(report.wakeUpTime, report.bedTime);
+  const timeLabel = buildTimeLabel(report.wakeUpTime, report.bedTime, report.date);
   return (
     <div className="grid gap-6 p-8">
       <div className="flex items-center gap-4">
@@ -76,7 +76,7 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
             振り返り
             {report.reviewStartedAt && report.reviewFinishedAt && (
               <span className="ml-2 text-sm font-normal text-muted-foreground">
-                {buildReviewDurationLabel(report.reviewStartedAt, report.reviewFinishedAt)}
+                {buildReviewDurationLabel(report.reviewStartedAt, report.reviewFinishedAt, report.date)}
               </span>
             )}
           </h2>
@@ -106,20 +106,22 @@ export const DailyReportDetail = ({ id }: DailyReportDetailProps) => {
 const buildReviewDurationLabel = (
   startedAt: Date,
   finishedAt: Date,
+  baseDate: Date,
 ): string => {
   const minutes = Math.round(
     (finishedAt.getTime() - startedAt.getTime()) / 60000,
   );
-  return `${minutes}分（${formatTime(startedAt)}〜${formatTime(finishedAt)}）`;
+  return `${minutes}分（${formatTime(startedAt, baseDate)}〜${formatTime(finishedAt, baseDate)}）`;
 };
 
 const buildTimeLabel = (
   wakeUpTime: Date | null,
   bedTime: Date | null,
+  baseDate: Date,
 ): string | null => {
   if (!wakeUpTime && !bedTime) return null;
   const parts: string[] = [];
-  if (wakeUpTime) parts.push(`起床 ${formatTime(wakeUpTime)}`);
-  if (bedTime) parts.push(`就寝 ${formatTime(bedTime)}`);
+  if (wakeUpTime) parts.push(`起床 ${formatTime(wakeUpTime, baseDate)}`);
+  if (bedTime) parts.push(`就寝 ${formatTime(bedTime, baseDate)}`);
   return parts.join(' / ');
 };
