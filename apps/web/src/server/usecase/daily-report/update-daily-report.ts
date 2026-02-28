@@ -33,16 +33,19 @@ export class UpdateDailyReportUseCase {
       throw new NotFoundError('日報', input.id);
     }
 
-    const updated = existing.update({
-      goal: input.goal,
-      summary: input.summary,
-      wakeUpTime: input.wakeUpTime,
-      bedTime: input.bedTime,
-      review: input.review,
-      reviewStartedAt: input.reviewStartedAt,
-      reviewFinishedAt: input.reviewFinishedAt,
-      notes: input.notes,
-    });
+    const updated = existing.update(
+      {
+        goal: input.goal,
+        summary: input.summary,
+        wakeUpTime: input.wakeUpTime,
+        bedTime: input.bedTime,
+        review: input.review,
+        reviewStartedAt: input.reviewStartedAt,
+        reviewFinishedAt: input.reviewFinishedAt,
+        notes: input.notes,
+      },
+      new Date(),
+    );
 
     await this.dailyReportRepository.update(updated);
 

@@ -9,9 +9,24 @@ import { projects } from '../src/server/infrastructure/db/schema/projects';
 import { tasks } from '../src/server/infrastructure/db/schema/tasks';
 import { weeklyReports } from '../src/server/infrastructure/db/schema/weekly-reports';
 
-// NOTE: fixtures.ts の clock.install() と合わせて、テストの実行日時に依存しない固定日付を使う
-export const TODAY = new Date('2026-02-28');
-const TOMORROW = new Date('2026-03-01');
+// NOTE: サーバー側の時刻依存ロジック（48時間制限など）が正しく動作するよう、実時刻ベースの日付を使う
+// NOTE: fixtures.ts の clock.setFixedTime() でブラウザの時計をこの値に固定する
+// NOTE: new Date('YYYY-MM-DD') で UTC 午前0時にする。DB の date 型と一致させるためである
+const toUTCDate = (date: Date): Date => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return new Date(`${y}-${m}-${d}`);
+};
+
+const addDays = (date: Date, days: number): Date => {
+  const result = new Date(date);
+  result.setUTCDate(result.getUTCDate() + days);
+  return result;
+};
+
+export const TODAY = toUTCDate(new Date());
+const TOMORROW = addDays(TODAY, 1);
 
 const SEED_DAILY_REPORTS = [
   {
@@ -32,6 +47,7 @@ const SEED_DAILY_REPORTS = [
   {
     date: TODAY,
     goal: 'ダッシュボードの改善を進める',
+    summary: '今日の進捗を記録した',
     review: '## 良かった点\n- 集中して作業できた\n\n## 改善点\n- 休憩を取り忘れた',
   },
   {
