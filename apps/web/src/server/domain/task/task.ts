@@ -48,10 +48,12 @@ type CreateDeferredTaskParams = CreateTaskParams & {
   carriedOverFromId: string;
 };
 
+type UpdatableStatus = Exclude<TaskStatus, 'deferred'>;
+
 type UpdateTaskParams = {
   title?: string;
   description?: string | null;
-  status?: TaskStatus;
+  status?: UpdatableStatus;
 
   deadline?: Date | null;
   estimatedMinutes?: number | null;
@@ -121,6 +123,14 @@ export class Task {
 
   update(params: UpdateTaskParams): Task {
     return new Task({ ...this, ...omitUndefined(params) });
+  }
+
+  defer(incompletionReason?: string | null): Task {
+    return new Task({
+      ...this,
+      status: 'deferred',
+      incompletionReason: incompletionReason ?? null,
+    });
   }
 
   withSortOrder(sortOrder: number): Task {

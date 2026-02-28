@@ -24,10 +24,7 @@ export const deferTask = (
     );
   }
 
-  const deferred = task.update({
-    status: 'deferred',
-    incompletionReason: params.incompletionReason,
-  });
+  const deferred = task.defer(params.incompletionReason);
 
   const newTask = Task.createDeferred({
     id: params.id,
