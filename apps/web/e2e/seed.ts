@@ -104,11 +104,13 @@ const SEED_TASKS = [
 const SEED_TODAY_TASKS = [
   {
     title: 'ダッシュボードUIを実装する',
+    firstAction: 'コンポーネントファイルを開く',
     status: 'in_progress' as const,
     sortOrder: 0,
   },
   {
     title: 'テストを追加する',
+    firstAction: 'テストファイルを作成する',
     status: 'not_started' as const,
     sortOrder: 1,
   },

@@ -35,6 +35,7 @@ import { TaskAddForm } from './task-add-form';
 type TaskItem = {
   id: string;
   title: string;
+  firstAction: string | null;
   status: TaskStatus;
 };
 
@@ -80,6 +81,10 @@ export const DailyTaskSection = ({
       ? optimisticTasks.tasks
       : (tasks ?? []),
   );
+
+  const defaultSpotlightId = findNextTaskId(displayTasks);
+  const [spotlightId, setSpotlightId] = useState<string | null>(null);
+  const activeSpotlightId = spotlightId ?? defaultSpotlightId;
 
   const invalidateTasks = () => {
     queryClient.invalidateQueries({ queryKey: taskQueryOptions.queryKey });
@@ -131,16 +136,29 @@ export const DailyTaskSection = ({
             );
           }}
         >
-          <div className="grid gap-2">
-            {displayTasks.map((task, index) => (
-              <SortableTaskRow
-                key={task.id}
-                task={task}
-                index={index}
-                isNext={task.id === findNextTaskId(displayTasks)}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
+          <div
+            className="grid gap-2"
+            onMouseLeave={() => setSpotlightId(null)}
+          >
+            {displayTasks.map((task, index) => {
+              const isInactive = INACTIVE_STATUSES.has(task.status);
+              return (
+                <SortableTaskRow
+                  key={task.id}
+                  task={task}
+                  index={index}
+                  variant={
+                    task.id === activeSpotlightId ? 'spotlight' : 'default'
+                  }
+                  onStatusChange={handleStatusChange}
+                  onMouseEnter={
+                    isInactive
+                      ? undefined
+                      : () => setSpotlightId(task.id)
+                  }
+                />
+              );
+            })}
           </div>
         </DragDropProvider>
       )}
@@ -174,17 +192,20 @@ type SelectableStatus = (typeof SELECTABLE_STATUSES)[number];
 const SortableTaskRow = ({
   task,
   index,
-  isNext,
+  variant,
   onStatusChange,
+  onMouseEnter,
 }: {
   task: TaskItem;
   index: number;
-  isNext: boolean;
+  variant: 'default' | 'spotlight';
   onStatusChange: (taskId: string, status: SelectableStatus) => void;
+  onMouseEnter?: () => void;
 }) => {
   const { ref, isDragging } = useSortable({ id: task.id, index });
   const config = STATUS_CONFIG[task.status];
   const isDone = task.status === 'done';
+  const isSpotlight = variant === 'spotlight';
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -195,68 +216,76 @@ const SortableTaskRow = ({
   return (
     <div
       ref={ref}
-      className={`flex items-center gap-2 ${isDragging ? 'opacity-50' : ''} ${config.muted ? 'opacity-50' : ''} ${isNext ? '-translate-x-2' : ''}`}
+      className={`flex items-start gap-2 ${isDragging ? 'opacity-50' : ''} ${config.muted ? 'opacity-50' : ''} ${isSpotlight ? '-translate-x-2' : ''}`}
+      onMouseEnter={onMouseEnter}
     >
-      <div className="flex w-6 shrink-0 cursor-grab items-center justify-center text-sm font-medium text-muted-foreground active:cursor-grabbing">
+      <div className="flex w-6 shrink-0 cursor-grab items-center justify-center pt-3 text-sm font-medium text-muted-foreground active:cursor-grabbing">
         {index + 1}
       </div>
       <div
-        className={`flex min-w-0 flex-1 items-center gap-2 rounded-lg border transition-colors ${isNext ? 'shadow-md p-4' : 'p-3'}`}
+        className={`flex min-w-0 flex-1 flex-col rounded-lg border transition-all ${isSpotlight ? 'shadow-md p-4' : 'p-3'}`}
       >
-        <button
-          type="button"
-          aria-label={isDone ? 'タスクを未完了にする' : 'タスクを完了にする'}
-          onClick={handleCheckboxClick}
-          className={`flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 transition-colors ${isDone ? 'border-success bg-success text-white' : 'border-muted-foreground/40 hover:border-success hover:bg-success/10'}`}
-        >
-          {isDone && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={3}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="size-3"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          )}
-        </button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button type="button" className="shrink-0 cursor-pointer">
-              <Badge variant={config.variant}>{config.label}</Badge>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuRadioGroup
-              value={task.status}
-              onValueChange={(value) =>
-                onStatusChange(task.id, value as SelectableStatus)
-              }
-            >
-              {SELECTABLE_STATUSES.map((status) => (
-                <DropdownMenuRadioItem key={status} value={status}>
-                  <Badge variant={STATUS_CONFIG[status].variant}>
-                    {STATUS_CONFIG[status].label}
-                  </Badge>
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Link
-          href={ROUTES.taskDetail(task.id)}
-          className="min-w-0 flex-1 hover:underline"
-        >
-          <span
-            className={`truncate font-medium ${isNext ? 'text-base' : 'text-sm'} ${config.muted ? 'text-muted-foreground line-through' : ''}`}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label={isDone ? 'タスクを未完了にする' : 'タスクを完了にする'}
+            onClick={handleCheckboxClick}
+            className={`flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 transition-colors ${isDone ? 'border-success bg-success text-white' : 'border-muted-foreground/40 hover:border-success hover:bg-success/10'}`}
           >
-            {task.title}
-          </span>
-        </Link>
+            {isDone && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="size-3"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="shrink-0 cursor-pointer">
+                <Badge variant={config.variant}>{config.label}</Badge>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuRadioGroup
+                value={task.status}
+                onValueChange={(value) =>
+                  onStatusChange(task.id, value as SelectableStatus)
+                }
+              >
+                {SELECTABLE_STATUSES.map((status) => (
+                  <DropdownMenuRadioItem key={status} value={status}>
+                    <Badge variant={STATUS_CONFIG[status].variant}>
+                      {STATUS_CONFIG[status].label}
+                    </Badge>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Link
+            href={ROUTES.taskDetail(task.id)}
+            className="min-w-0 flex-1 hover:underline"
+          >
+            <span
+              className={`truncate font-medium ${isSpotlight ? 'text-base' : 'text-sm'} ${config.muted ? 'text-muted-foreground line-through' : ''}`}
+            >
+              {task.title}
+            </span>
+          </Link>
+        </div>
+        {isSpotlight && task.firstAction && (
+          <p className="mt-1 pl-7 text-sm text-muted-foreground">
+            → {task.firstAction}
+          </p>
+        )}
       </div>
     </div>
   );
