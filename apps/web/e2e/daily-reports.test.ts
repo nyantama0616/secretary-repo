@@ -60,15 +60,12 @@ test.describe('日報編集', () => {
     await page.goto('/daily-reports');
     await page
       .getByRole('link', {
-        name: /機能Aの主要部分を実装し、集中して作業できた/,
+        name: /今日の進捗を記録した/,
       })
       .click();
     await page.getByRole('link', { name: '編集' }).click();
 
-    await expect(page.getByLabel('目標')).toHaveValue('機能Aの実装を進める');
-    await expect(page.getByLabel('振り返り')).toHaveValue(
-      '集中して作業できた。休憩を取り忘れたので改善したい。',
-    );
+    await expect(page.getByLabel('目標')).toHaveValue('ダッシュボードの改善を進める');
   });
 
   test('詳細画面から編集ページに遷移し、日報を更新すると、詳細に反映される', async ({
@@ -77,7 +74,7 @@ test.describe('日報編集', () => {
     await page.goto('/daily-reports');
     await page
       .getByRole('link', {
-        name: /機能Aの主要部分を実装し、集中して作業できた/,
+        name: /今日の進捗を記録した/,
       })
       .click();
     await page.getByRole('link', { name: '編集' }).click();
