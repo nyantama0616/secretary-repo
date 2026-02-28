@@ -16,6 +16,7 @@ type GetTasksInput = v.InferOutput<typeof GetTasksInputSchema>;
 type TaskListItem = {
   id: string;
   title: string;
+  firstAction: string | null;
   status: TaskStatus;
   dailyReportDate: Date | null;
 };
@@ -44,6 +45,7 @@ export class GetTasksUseCase {
     return tasks.map((t) => ({
       id: t.id,
       title: t.title,
+      firstAction: t.firstAction,
       status: t.status,
       dailyReportDate: t.dailyReportId
         ? (dateById.get(t.dailyReportId) ?? null)

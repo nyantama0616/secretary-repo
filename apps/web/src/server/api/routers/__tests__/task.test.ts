@@ -28,11 +28,13 @@ const TEST_TASKS = [
     description: 'tRPC ルーターの実装タスク',
     deadline: new Date('2026-02-20'),
     estimatedMinutes: 60,
+    firstAction: 'エディタを開いてファイルを作成する',
   },
   {
     title: 'テストを書く',
     status: 'done' as const,
     sortOrder: 2,
+    firstAction: null,
   },
 ];
 
@@ -182,6 +184,7 @@ describe('task.list', () => {
         TEST_TASKS.map((t) => ({
           id: expect.any(String),
           title: t.title,
+          firstAction: t.firstAction,
           status: t.status,
           dailyReportDate: null,
         })),
@@ -309,7 +312,7 @@ describe('task.detail', () => {
       deadline: TEST_TASKS[0].deadline,
       estimatedMinutes: TEST_TASKS[0].estimatedMinutes,
       incompletionReason: null,
-      firstAction: null,
+      firstAction: TEST_TASKS[0].firstAction,
       notes: null,
       dailyReportDate: null,
       project: null,
