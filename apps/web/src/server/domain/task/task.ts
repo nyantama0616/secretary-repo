@@ -19,7 +19,7 @@ const TaskSchema = v.object({
   title: v.string(),
   description: v.nullable(v.string()),
   status: TaskStatusSchema,
-  sortOrder: v.number(),
+  sortOrder: v.pipe(v.number(), v.minValue(0)),
   deadline: v.nullable(v.date()),
   estimatedMinutes: v.nullable(v.number()),
   incompletionReason: v.nullable(v.string()),
