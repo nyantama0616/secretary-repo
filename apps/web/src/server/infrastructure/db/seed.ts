@@ -66,12 +66,12 @@ const SEED_DAILY_REPORTS = [
     reviewFinishedAt: new Date('2026-02-19T13:00:00Z'),
   },
   {
-    date: new Date('2026-02-22'),
+    date: new Date('2026-02-28'),
     goal: 'ダッシュボードUIを実装する',
-    wakeUpTime: new Date('2026-02-21T22:00:00Z'),
+    wakeUpTime: new Date('2026-02-27T22:00:00Z'),
   },
   {
-    date: new Date('2026-02-23'),
+    date: new Date('2026-03-01'),
     goal: 'E2Eテストを書く',
   },
 ];
@@ -210,12 +210,14 @@ const SEED_TASKS = [
 const SEED_TODAY_TASKS = [
   {
     title: 'ダッシュボードUIを実装する',
+    firstAction: 'daily-task-section.tsx を開く',
     status: 'in_progress' as const,
     sortOrder: 0,
     estimatedMinutes: 180,
   },
   {
     title: 'コンポーネントのテストを書く',
+    firstAction: 'テストファイルを作成する',
     status: 'not_started' as const,
     sortOrder: 1,
     estimatedMinutes: 60,
@@ -292,10 +294,10 @@ const main = async () => {
       .values(SEED_PROJECTS)
       .returning();
     const todayReport = insertedReports.find(
-      (r) => r.date.toISOString().startsWith('2026-02-22'),
+      (r) => r.date.toISOString().startsWith('2026-02-28'),
     )!;
     const tomorrowReport = insertedReports.find(
-      (r) => r.date.toISOString().startsWith('2026-02-23'),
+      (r) => r.date.toISOString().startsWith('2026-03-01'),
     )!;
     await tx.insert(tasks).values([
       ...SEED_TASKS.map((task, i) => ({
