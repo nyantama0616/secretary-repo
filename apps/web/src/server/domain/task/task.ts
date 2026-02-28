@@ -19,7 +19,7 @@ const TaskSchema = v.object({
   title: v.string(),
   description: v.nullable(v.string()),
   status: TaskStatusSchema,
-  sortOrder: v.number(),
+  sortOrder: v.pipe(v.number(), v.minValue(0)),
   deadline: v.nullable(v.date()),
   estimatedMinutes: v.nullable(v.number()),
   incompletionReason: v.nullable(v.string()),
@@ -49,7 +49,7 @@ type UpdateTaskParams = {
   title?: string;
   description?: string | null;
   status?: TaskStatus;
-  sortOrder?: number;
+
   deadline?: Date | null;
   estimatedMinutes?: number | null;
   dailyReportId?: string | null;
@@ -108,5 +108,9 @@ export class Task {
 
   update(params: UpdateTaskParams): Task {
     return new Task({ ...this, ...omitUndefined(params) });
+  }
+
+  withSortOrder(sortOrder: number): Task {
+    return new Task({ ...this, sortOrder });
   }
 }
