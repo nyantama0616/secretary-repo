@@ -41,6 +41,7 @@ export class UpdateTaskUseCase {
       }
     }
 
-    await this.taskRepository.update(id, fields);
+    const updated = task.update(fields);
+    await this.taskRepository.update(updated);
   }
 }

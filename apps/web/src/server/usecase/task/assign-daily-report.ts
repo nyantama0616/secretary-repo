@@ -34,8 +34,7 @@ export class AssignDailyReportUseCase {
       }
     }
 
-    await this.taskRepository.update(input.id, {
-      dailyReportId: input.dailyReportId,
-    });
+    const updated = task.update({ dailyReportId: input.dailyReportId });
+    await this.taskRepository.update(updated);
   }
 }

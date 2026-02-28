@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 
 import { NotFoundError } from '@/server/domain/error/domain-errors';
+import type { Task } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
 export const ReorderTasksInputSchema = v.object({
@@ -13,16 +14,18 @@ export class ReorderTasksUseCase {
   constructor(private readonly taskRepository: TaskRepository) {}
 
   async execute(input: ReorderTasksInput): Promise<void> {
-    for (const id of input.taskIds) {
+    const updatedTasks: Task[] = [];
+
+    for (const [i, id] of input.taskIds.entries()) {
       const task = await this.taskRepository.findById(id);
 
       if (!task) {
         throw new NotFoundError('タスク', id);
       }
+
+      updatedTasks.push(task.update({ sortOrder: i }));
     }
 
-    await this.taskRepository.updateMany(
-      input.taskIds.map((id, i) => ({ id, fields: { sortOrder: i } })),
-    );
+    await this.taskRepository.updateMany(updatedTasks);
   }
 }
