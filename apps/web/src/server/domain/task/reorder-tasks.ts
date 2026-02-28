@@ -24,5 +24,5 @@ export const reorderTasks = (tasks: Task[]): Task[] => {
     );
   }
 
-  return tasks.map((task, i) => task.update({ sortOrder: i }));
+  return tasks.map((task, i) => task.withSortOrder(i));
 };

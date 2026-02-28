@@ -49,7 +49,7 @@ type UpdateTaskParams = {
   title?: string;
   description?: string | null;
   status?: TaskStatus;
-  sortOrder?: number;
+
   deadline?: Date | null;
   estimatedMinutes?: number | null;
   dailyReportId?: string | null;
@@ -108,5 +108,9 @@ export class Task {
 
   update(params: UpdateTaskParams): Task {
     return new Task({ ...this, ...omitUndefined(params) });
+  }
+
+  withSortOrder(sortOrder: number): Task {
+    return new Task({ ...this, sortOrder });
   }
 }
