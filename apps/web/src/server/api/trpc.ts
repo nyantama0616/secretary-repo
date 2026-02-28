@@ -4,6 +4,7 @@ import { logger } from '@/lib/logger';
 import {
   AlreadyExistsError,
   DomainError,
+  ForbiddenError,
   NotFoundError,
   UnauthorizedError,
   ValidationError,
@@ -53,6 +54,13 @@ const throwDomainTRPCError = (cause: unknown): void => {
   if (cause instanceof UnauthorizedError) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
+      message: cause.message,
+      cause,
+    });
+  }
+  if (cause instanceof ForbiddenError) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
       message: cause.message,
       cause,
     });

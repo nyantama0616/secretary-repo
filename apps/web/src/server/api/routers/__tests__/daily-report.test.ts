@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCaller } from '@/server/api';
 import { generateId } from '@/server/domain/id';
@@ -10,21 +10,21 @@ const unauthenticatedCaller = createCaller({ isAuthenticated: false });
 
 const TEST_DAILY_REPORTS = [
   {
-    date: new Date('2026-02-17'),
+    date: new Date('2026-01-01'),
     goal: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
-    wakeUpTime: new Date('2026-02-17T07:00:00+09:00'),
-    bedTime: new Date('2026-02-17T23:00:00+09:00'),
+    wakeUpTime: new Date('2026-01-01T07:00:00+09:00'),
+    bedTime: new Date('2026-01-01T23:00:00+09:00'),
     review: '集中して作業できた。休憩を取り忘れたので改善したい。',
-    reviewStartedAt: new Date('2026-02-17T21:00:00+09:00'),
-    reviewFinishedAt: new Date('2026-02-17T21:15:00+09:00'),
+    reviewStartedAt: new Date('2026-01-01T21:00:00+09:00'),
+    reviewFinishedAt: new Date('2026-01-01T21:15:00+09:00'),
     notes: null,
   },
   {
-    date: new Date('2026-02-18'),
+    date: new Date('2026-01-02'),
     goal: 'テストを書く',
     summary: null,
-    wakeUpTime: new Date('2026-02-18T06:30:00+09:00'),
+    wakeUpTime: new Date('2026-01-02T06:30:00+09:00'),
     bedTime: null,
     review: null,
     reviewStartedAt: null,
@@ -151,15 +151,28 @@ describe('dailyReport.detailByDate', () => {
   });
 });
 
+const hoursAfterDate = (date: Date, hours: number): Date =>
+  new Date(date.getTime() + hours * 60 * 60 * 1000);
+
 describe('dailyReport.update', () => {
+  // NOTE: 48時間制限のため、テストデータの日付に近い時刻に固定する
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(hoursAfterDate(TEST_DAILY_REPORTS[0].date, 12));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const updateInput = {
     goal: '更新後の計画',
     summary: '更新後のまとめ',
-    wakeUpTime: new Date('2026-02-19T08:00:00+09:00'),
-    bedTime: new Date('2026-02-19T00:00:00+09:00'),
+    wakeUpTime: new Date('2026-01-01T08:00:00+09:00'),
+    bedTime: new Date('2026-01-02T00:00:00+09:00'),
     review: '更新後の振り返り',
-    reviewStartedAt: new Date('2026-02-19T21:00:00+09:00'),
-    reviewFinishedAt: new Date('2026-02-19T21:20:00+09:00'),
+    reviewStartedAt: new Date('2026-01-01T21:00:00+09:00'),
+    reviewFinishedAt: new Date('2026-01-01T21:20:00+09:00'),
     notes: '更新後のメモ',
   };
 
@@ -254,13 +267,30 @@ describe('dailyReport.update', () => {
       }),
     );
   });
+
+  it('dateから48時間を過ぎた日報を更新しようとすると、FORBIDDEN エラーを返す', async () => {
+    const [inserted] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORTS[0])
+      .returning();
+
+    vi.setSystemTime(hoursAfterDate(TEST_DAILY_REPORTS[0].date, 49));
+
+    await expect(
+      caller.dailyReport.update({ id: inserted.id, summary: 'テスト' }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'FORBIDDEN',
+      }),
+    );
+  });
 });
 
 describe('dailyReport.create', () => {
   const createInput = {
-    date: new Date('2026-02-19'),
+    date: new Date('2026-01-03'),
     goal: '日報作成機能の実装',
-    wakeUpTime: new Date('2026-02-19T07:30:00+09:00'),
+    wakeUpTime: new Date('2026-01-03T07:30:00+09:00'),
     notes: '特になし',
   };
 
@@ -284,12 +314,12 @@ describe('dailyReport.create', () => {
 
   it('日付のみで日報を作成できる', async () => {
     const result = await caller.dailyReport.create({
-      date: new Date('2026-02-20'),
+      date: new Date('2026-01-04'),
     });
 
     expect(result).toEqual({
       id: expect.any(String),
-      date: new Date('2026-02-20'),
+      date: new Date('2026-01-04'),
       goal: null,
       summary: null,
       wakeUpTime: null,

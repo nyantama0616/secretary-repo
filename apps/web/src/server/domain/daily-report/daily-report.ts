@@ -1,6 +1,9 @@
 import * as v from 'valibot';
 
 import { omitUndefined } from '@/lib/omit-undefined';
+import { ForbiddenError } from '@/server/domain/error/domain-errors';
+
+const EDITABLE_HOURS = 48;
 
 const DailyReportSchema = v.object({
   id: v.pipe(v.string(), v.minLength(1)),
@@ -81,7 +84,18 @@ export class DailyReport {
     return new DailyReport(params);
   }
 
-  update(params: UpdateDailyReportParams): DailyReport {
+  update(params: UpdateDailyReportParams, now: Date): DailyReport {
+    if (!this.isEditable(now)) {
+      throw new ForbiddenError(
+        '日報は date から48時間を過ぎると変更できません',
+      );
+    }
     return new DailyReport({ ...this, ...omitUndefined(params) });
+  }
+
+  private isEditable(now: Date): boolean {
+    const deadlineMs =
+      this.date.getTime() + EDITABLE_HOURS * 60 * 60 * 1000;
+    return now.getTime() < deadlineMs;
   }
 }
