@@ -81,6 +81,30 @@ test.describe('ダッシュボード', () => {
     ).toBeVisible();
   });
 
+  test('次のタスクにファーストアクションが表示される', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText('ダッシュボードUIを実装する')).toBeVisible();
+
+    await expect(page.getByText('→ コンポーネントファイルを開く')).toBeVisible();
+    await expect(
+      page.getByText('→ テストファイルを作成する'),
+    ).not.toBeVisible();
+  });
+
+  test('タスクをホバーすると、そのタスクのファーストアクションが表示される', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await expect(page.getByText('ダッシュボードUIを実装する')).toBeVisible();
+
+    await page.getByText('テストを追加する').hover();
+
+    await expect(page.getByText('→ テストファイルを作成する')).toBeVisible();
+    await expect(
+      page.getByText('→ コンポーネントファイルを開く'),
+    ).not.toBeVisible();
+  });
+
   test('完了済みタスクが未完了タスクより上に表示される', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByText('日報を書く')).toBeVisible();
