@@ -32,9 +32,10 @@ export class UpdateTaskStatusUseCase {
       throw new NotFoundError('タスク', input.id);
     }
 
-    await this.taskRepository.update(input.id, {
+    const updated = task.update({
       status: input.status,
       incompletionReason: input.incompletionReason,
     });
+    await this.taskRepository.update(updated);
   }
 }

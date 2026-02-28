@@ -1,11 +1,9 @@
 import { type SQL, and, asc, eq, inArray } from 'drizzle-orm';
 
-import type { Task } from '@/server/domain/task/task';
-import { createTask } from '@/server/domain/task/task';
+import { Task } from '@/server/domain/task/task';
 import type {
   TaskFilters,
   TaskRepository,
-  TaskUpdatableFields,
 } from '@/server/domain/task/task-repository';
 import { db } from '@/server/infrastructure/db/client';
 import { tasks } from '@/server/infrastructure/db/schema/tasks';
@@ -27,15 +25,15 @@ export class DrizzleTaskRepository implements TaskRepository {
       .from(tasks)
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(asc(tasks.sortOrder));
-    return rows.map(toTask);
+    return rows.map(toDomain);
   }
 
   async findById(id: string): Promise<Task | null> {
     const [row] = await db.select().from(tasks).where(eq(tasks.id, id));
-    return row ? toTask(row) : null;
+    return row ? toDomain(row) : null;
   }
 
-  async save(task: Task): Promise<void> {
+  async create(task: Task): Promise<void> {
     await db.insert(tasks).values({
       id: task.id,
       dailyReportId: task.dailyReportId,
@@ -52,16 +50,44 @@ export class DrizzleTaskRepository implements TaskRepository {
     });
   }
 
-  async update(id: string, fields: TaskUpdatableFields): Promise<void> {
-    await this.updateMany([{ id, fields }]);
+  async update(task: Task): Promise<void> {
+    await db
+      .update(tasks)
+      .set({
+        dailyReportId: task.dailyReportId,
+        projectId: task.projectId,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        sortOrder: task.sortOrder,
+        deadline: task.deadline,
+        estimatedMinutes: task.estimatedMinutes,
+        incompletionReason: task.incompletionReason,
+        firstAction: task.firstAction,
+        notes: task.notes,
+      })
+      .where(eq(tasks.id, task.id));
   }
 
-  async updateMany(
-    items: { id: string; fields: TaskUpdatableFields }[],
-  ): Promise<void> {
+  async updateMany(taskList: Task[]): Promise<void> {
     await db.transaction(async (tx) => {
-      for (const item of items) {
-        await tx.update(tasks).set(item.fields).where(eq(tasks.id, item.id));
+      for (const task of taskList) {
+        await tx
+          .update(tasks)
+          .set({
+            dailyReportId: task.dailyReportId,
+            projectId: task.projectId,
+            title: task.title,
+            description: task.description,
+            status: task.status,
+            sortOrder: task.sortOrder,
+            deadline: task.deadline,
+            estimatedMinutes: task.estimatedMinutes,
+            incompletionReason: task.incompletionReason,
+            firstAction: task.firstAction,
+            notes: task.notes,
+          })
+          .where(eq(tasks.id, task.id));
       }
     });
   }
@@ -71,8 +97,8 @@ export class DrizzleTaskRepository implements TaskRepository {
   }
 }
 
-const toTask = (row: typeof tasks.$inferSelect): Task => {
-  return createTask({
+const toDomain = (row: typeof tasks.$inferSelect): Task => {
+  return Task.reconstruct({
     id: row.id,
     dailyReportId: row.dailyReportId,
     projectId: row.projectId,

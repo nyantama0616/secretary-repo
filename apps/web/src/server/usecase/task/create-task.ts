@@ -4,7 +4,7 @@ import type { DailyReportRepository } from '@/server/domain/daily-report/daily-r
 import { NotFoundError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
 import type { ProjectRepository } from '@/server/domain/project/project-repository';
-import { type Task, createTask } from '@/server/domain/task/task';
+import { Task } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
 export const CreateTaskInputSchema = v.object({
@@ -45,24 +45,21 @@ export class CreateTaskUseCase {
       }
     }
 
-    const task = createTask({
+    const task = Task.create({
       id: generateId(),
       dailyReportId: input.dailyReportId ?? null,
       projectId: input.projectId ?? null,
       title: input.title,
       description: input.description ?? null,
-      status: 'not_started',
-      sortOrder: 0,
       deadline: input.deadline ?? null,
       estimatedMinutes: input.estimatedMinutes ?? null,
-      incompletionReason: null,
       firstAction: input.firstAction ?? null,
       notes: null,
       carriedOverFromId: null,
       createdAt: new Date(),
     });
 
-    await this.taskRepository.save(task);
+    await this.taskRepository.create(task);
 
     return task;
   }

@@ -58,7 +58,7 @@ describe('task.create', () => {
   it('タスクを作成し、一覧に表示される', async () => {
     const result = await caller.task.create(CREATE_TASK_INPUT);
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: expect.any(String),
       dailyReportId: null,
       projectId: null,
@@ -88,7 +88,7 @@ describe('task.create', () => {
       title: CREATE_TASK_INPUT.title,
     });
 
-    expect(result).toStrictEqual({
+    expect(result).toEqual({
       id: expect.any(String),
       dailyReportId: null,
       projectId: null,

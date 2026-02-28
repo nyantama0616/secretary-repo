@@ -2,7 +2,7 @@ import * as v from 'valibot';
 
 import { NotFoundError, ValidationError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
-import { type Task, createTask } from '@/server/domain/task/task';
+import { Task } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
 export const DeferTaskInputSchema = v.object({
@@ -30,28 +30,27 @@ export class DeferTaskUseCase {
       );
     }
 
-    const newTask = createTask({
+    const newTask = Task.create({
       id: generateId(),
       dailyReportId: null,
       projectId: task.projectId,
       title: task.title,
       description: task.description,
-      status: 'not_started',
-      sortOrder: 0,
       deadline: task.deadline,
       estimatedMinutes: task.estimatedMinutes,
-      incompletionReason: null,
       firstAction: task.firstAction,
       notes: task.notes,
       carriedOverFromId: task.id,
       createdAt: new Date(),
     });
 
-    await this.taskRepository.save(newTask);
-    await this.taskRepository.update(input.id, {
+    const deferred = task.update({
       status: 'deferred',
       incompletionReason: input.incompletionReason,
     });
+
+    await this.taskRepository.update(deferred);
+    await this.taskRepository.create(newTask);
 
     return newTask;
   }
