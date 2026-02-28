@@ -639,17 +639,23 @@ describe('task.assignDailyReport', () => {
 });
 
 describe('task.reorder', () => {
-  it('タスクの並び順を更新する', async () => {
+  it('同一日報に属するタスクの並び順を更新する', async () => {
+    const [report] = await db
+      .insert(dailyReports)
+      .values(TEST_DAILY_REPORT)
+      .returning();
     const inserted = await db
       .insert(tasks)
-      .values(TEST_TASKS)
+      .values(
+        TEST_TASKS.map((t) => ({ ...t, dailyReportId: report.id })),
+      )
       .returning();
     const [first, second] = inserted;
 
-await caller.task.reorder({ taskIds: [second.id, first.id] });
+    await caller.task.reorder({ taskIds: [second.id, first.id] });
 
     // NOTE: list は sortOrder 順で返すため、並び順の変更を検証できる
-    const list = await caller.task.list();
+    const list = await caller.task.list({ dailyReportId: report.id });
     expect(list[0].id).toBe(second.id);
     expect(list[1].id).toBe(first.id);
   });
@@ -658,10 +664,52 @@ await caller.task.reorder({ taskIds: [second.id, first.id] });
     const nonExistentId = generateId();
 
     await expect(
-    caller.task.reorder({ taskIds: [nonExistentId] }),
+      caller.task.reorder({ taskIds: [nonExistentId] }),
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'NOT_FOUND',
+      }),
+    );
+  });
+
+  it('日報に紐づいていないタスクの場合、BAD_REQUEST エラーを返す', async () => {
+    const inserted = await db
+      .insert(tasks)
+      .values(TEST_TASKS)
+      .returning();
+
+    await expect(
+      caller.task.reorder({ taskIds: inserted.map((t) => t.id) }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+      }),
+    );
+  });
+
+  it('異なる日報に属するタスクの場合、BAD_REQUEST エラーを返す', async () => {
+    const [report1] = await db
+      .insert(dailyReports)
+      .values({ date: new Date('2026-02-17') })
+      .returning();
+    const [report2] = await db
+      .insert(dailyReports)
+      .values({ date: new Date('2026-02-18') })
+      .returning();
+    const [task1] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[0], dailyReportId: report1.id })
+      .returning();
+    const [task2] = await db
+      .insert(tasks)
+      .values({ ...TEST_TASKS[1], dailyReportId: report2.id })
+      .returning();
+
+    await expect(
+      caller.task.reorder({ taskIds: [task1.id, task2.id] }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
       }),
     );
   });
