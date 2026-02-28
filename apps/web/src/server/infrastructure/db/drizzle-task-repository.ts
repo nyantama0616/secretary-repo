@@ -29,8 +29,16 @@ export class DrizzleTaskRepository implements TaskRepository {
   }
 
   async findById(id: string): Promise<Task | null> {
-    const [row] = await db.select().from(tasks).where(eq(tasks.id, id));
-    return row ? toDomain(row) : null;
+    const results = await this.findByIds([id]);
+    return results[0] ?? null;
+  }
+
+  async findByIds(ids: string[]): Promise<Task[]> {
+    const rows = await db
+      .select()
+      .from(tasks)
+      .where(inArray(tasks.id, ids));
+    return rows.map(toDomain);
   }
 
   async create(task: Task): Promise<void> {
