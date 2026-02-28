@@ -29,7 +29,7 @@ export const deferTask = (
     incompletionReason: params.incompletionReason,
   });
 
-  const newTask = Task.create({
+  const newTask = Task.createDeferred({
     id: params.id,
     dailyReportId: null,
     projectId: task.projectId,

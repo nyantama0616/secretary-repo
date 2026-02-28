@@ -41,8 +41,11 @@ type CreateTaskParams = {
   estimatedMinutes: number | null;
   firstAction: string | null;
   notes: string | null;
-  carriedOverFromId: string | null;
   createdAt: Date;
+};
+
+type CreateDeferredTaskParams = CreateTaskParams & {
+  carriedOverFromId: string;
 };
 
 type UpdateTaskParams = {
@@ -94,6 +97,16 @@ export class Task {
   }
 
   static create(params: CreateTaskParams): Task {
+    return new Task({
+      ...params,
+      status: 'not_started',
+      sortOrder: 0,
+      incompletionReason: null,
+      carriedOverFromId: null,
+    });
+  }
+
+  static createDeferred(params: CreateDeferredTaskParams): Task {
     return new Task({
       ...params,
       status: 'not_started',
