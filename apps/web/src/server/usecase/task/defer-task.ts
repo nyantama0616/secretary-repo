@@ -1,8 +1,9 @@
 import * as v from 'valibot';
 
-import { NotFoundError, ValidationError } from '@/server/domain/error/domain-errors';
+import { NotFoundError } from '@/server/domain/error/domain-errors';
 import { generateId } from '@/server/domain/id';
-import { Task } from '@/server/domain/task/task';
+import { deferTask } from '@/server/domain/task/defer-task';
+import type { Task } from '@/server/domain/task/task';
 import type { TaskRepository } from '@/server/domain/task/task-repository';
 
 export const DeferTaskInputSchema = v.object({
@@ -11,8 +12,6 @@ export const DeferTaskInputSchema = v.object({
 });
 
 type DeferTaskInput = v.InferOutput<typeof DeferTaskInputSchema>;
-
-const DEFERRABLE_STATUSES = new Set(['not_started', 'in_progress']);
 
 export class DeferTaskUseCase {
   constructor(private readonly taskRepository: TaskRepository) {}
@@ -24,28 +23,9 @@ export class DeferTaskUseCase {
       throw new NotFoundError('タスク', input.id);
     }
 
-    if (!DEFERRABLE_STATUSES.has(task.status)) {
-      throw new ValidationError(
-        `ステータスが「${task.status}」のタスクは延期できません`,
-      );
-    }
-
-    const newTask = Task.create({
+    const { deferred, newTask } = deferTask(task, {
       id: generateId(),
-      dailyReportId: null,
-      projectId: task.projectId,
-      title: task.title,
-      description: task.description,
-      deadline: task.deadline,
-      estimatedMinutes: task.estimatedMinutes,
-      firstAction: task.firstAction,
-      notes: task.notes,
-      carriedOverFromId: task.id,
       createdAt: new Date(),
-    });
-
-    const deferred = task.update({
-      status: 'deferred',
       incompletionReason: input.incompletionReason,
     });
 
