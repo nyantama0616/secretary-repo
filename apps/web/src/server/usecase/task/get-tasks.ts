@@ -31,6 +31,7 @@ export class GetTasksUseCase {
     const tasks = await this.taskRepository.findAll({
       dailyReportId: input?.dailyReportId,
       statuses: input?.statuses,
+      limit: 100,
     });
 
     const dailyReportIds = [
