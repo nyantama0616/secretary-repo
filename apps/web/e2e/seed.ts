@@ -96,14 +96,16 @@ const SEED_DAILY_REPORTS = [
 ];
 
 const SEED_WEEKLY_REPORTS = [
+  // NOTE: 全フィールド入力済みの週報（詳細表示・編集プリフィル・月報紐づき確認用）
   {
     startDate: TWO_WEEKS_AGO_MONDAY,
-    goal: '機能Aの設計を固める',
-    summary: '設計レビューを実施し、API仕様を確定した',
+    goal: '週報の目標A',
+    summary: 'サマリーテキスト',
   },
+  // NOTE: 目標のみの週報（サマリー/振り返り非表示・日報紐づき確認用）
   {
     startDate: THIS_MONDAY,
-    goal: 'テストを充実させる',
+    goal: '週報の目標B',
   },
 ];
 

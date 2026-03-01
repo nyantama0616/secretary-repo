@@ -100,8 +100,8 @@ test.describe('月報詳細', () => {
     await expect(
       page.getByRole('heading', { name: '週報' }),
     ).toBeVisible();
-    await expect(page.getByText('機能Aの設計を固める')).toBeVisible();
-    await expect(page.getByText('テストを充実させる')).toBeVisible();
+    await expect(page.getByText('週報の目標A')).toBeVisible();
+    await expect(page.getByText('週報の目標B')).toBeVisible();
   });
 
   test('存在しないIDにアクセスすると、404ページが表示される', async ({
