@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import { DAYS_AGO_4, formatDate, seed, TASK_DEADLINE } from './seed';
 
 test.beforeAll(seed);
 
@@ -19,7 +19,7 @@ test.describe('タスク一覧', () => {
 
     await expect(page.getByText('未着手').first()).toBeVisible();
     await expect(page.getByText('完了').first()).toBeVisible();
-    await expect(page.getByText('2026/02/17（火）')).toBeVisible();
+    await expect(page.getByText(formatDate(DAYS_AGO_4))).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションからタスク一覧に遷移できる', async ({
@@ -60,7 +60,7 @@ test.describe('タスク詳細', () => {
     await expect(page.getByText('デフォルト値')).toBeVisible();
     await expect(page.getByText('NotFoundError')).toBeVisible();
     await expect(page.getByText('120分')).toBeVisible();
-    await expect(page.getByText('2026/02/20（金）')).toBeVisible();
+    await expect(page.getByText(formatDate(TASK_DEADLINE))).toBeVisible();
     const projectLink = page.getByRole('link', { name: 'secretary-repo' });
     await expect(projectLink).toBeVisible();
     await projectLink.click();

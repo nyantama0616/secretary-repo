@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import { formatDate, PROJECT_DEADLINE, seed } from './seed';
 
 test.beforeAll(seed);
 
@@ -63,7 +63,7 @@ test.describe('ダッシュボード', () => {
     await expect(page.getByText('secretary-repo')).toBeVisible();
     await expect(page.getByText('読書記録アプリ')).toBeVisible();
     await expect(page.getByText('進行中')).toBeVisible();
-    await expect(page.getByText('期限: 2026/06/30')).toBeVisible();
+    await expect(page.getByText(`期限: ${formatDate(PROJECT_DEADLINE)}`)).toBeVisible();
   });
 
   test('プロジェクトをクリックすると、詳細ページに遷移する', async ({

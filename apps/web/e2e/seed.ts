@@ -25,23 +25,58 @@ const addDays = (date: Date, days: number): Date => {
   return result;
 };
 
+/** TODAY から遡って直近の月曜日を返す */
+const previousMonday = (from: Date): Date => {
+  const day = from.getUTCDay();
+  // NOTE: 日曜(0)は -6、月曜(1)は 0、火曜(2)は -1 … 土曜(6)は -5
+  const diff = day === 0 ? -6 : 1 - day;
+  return addDays(from, diff);
+};
+
+/** TODAY の属する月の1日を返す */
+const startOfMonth = (from: Date): Date =>
+  new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), 1));
+
+/** 前月の1日を返す */
+const previousMonthStart = (from: Date): Date =>
+  new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth() - 1, 1));
+
+export {
+  formatDate,
+  formatMonth,
+  formatWeekRange,
+  toDateStr,
+} from '../src/lib/format';
+
 export const TODAY = toUTCDate(new Date());
 const TOMORROW = addDays(TODAY, 1);
+export const DAYS_AGO_3 = addDays(TODAY, -3);
+export const DAYS_AGO_4 = addDays(TODAY, -4);
+export const DAYS_AGO_7 = addDays(TODAY, -7);
+export const TASK_DEADLINE = addDays(TODAY, 3);
+export const PROJECT_DEADLINE = addDays(TODAY, 120);
+export const THIS_MONDAY = previousMonday(TODAY);
+export const TWO_WEEKS_AGO_MONDAY = addDays(THIS_MONDAY, -14);
+export const THIS_MONTH_START = startOfMonth(TODAY);
+export const LAST_MONTH_START = previousMonthStart(TODAY);
+export const NEXT_MONTH_START = new Date(
+  Date.UTC(TODAY.getUTCFullYear(), TODAY.getUTCMonth() + 1, 1),
+);
 
 const SEED_DAILY_REPORTS = [
   {
-    date: new Date('2026-02-17'),
+    date: DAYS_AGO_4,
     goal: '機能Aの実装を進める',
     summary: '機能Aの主要部分を実装し、集中して作業できた',
-    wakeUpTime: new Date('2026-02-17T07:00:00Z'),
-    bedTime: new Date('2026-02-17T23:00:00Z'),
+    wakeUpTime: new Date(DAYS_AGO_4.getTime() + 7 * 60 * 60 * 1000),
+    bedTime: new Date(DAYS_AGO_4.getTime() + 23 * 60 * 60 * 1000),
     review: '集中して作業できた。休憩を取り忘れたので改善したい。',
   },
   {
-    date: new Date('2026-02-18'),
+    date: DAYS_AGO_3,
     goal: 'テストを書く',
     summary: 'テストの基本を学んだが体調不良で早退した',
-    wakeUpTime: new Date('2026-02-18T06:30:00Z'),
+    wakeUpTime: new Date(DAYS_AGO_3.getTime() + 6.5 * 60 * 60 * 1000),
     notes: '体調不良のため早退',
   },
   {
@@ -58,12 +93,12 @@ const SEED_DAILY_REPORTS = [
 
 const SEED_WEEKLY_REPORTS = [
   {
-    startDate: new Date('2026-02-02'),
+    startDate: TWO_WEEKS_AGO_MONDAY,
     goal: '機能Aの設計を固める',
     summary: '設計レビューを実施し、API仕様を確定した',
   },
   {
-    startDate: new Date('2026-02-16'),
+    startDate: THIS_MONDAY,
     goal: 'テストを充実させる',
   },
 ];
@@ -74,7 +109,7 @@ const SEED_PROJECTS = [
     purpose: 'AI を活用した日報・タスク管理アプリを開発する',
     notes: 'MVP は6月末までにリリースする',
     status: 'active' as const,
-    deadline: new Date('2026-06-30'),
+    deadline: PROJECT_DEADLINE,
   },
   {
     name: '読書記録アプリ',
@@ -91,7 +126,7 @@ const SEED_TASKS = [
     firstAction: 'エディタを開いてファイルを作成する',
     status: 'not_started' as const,
     sortOrder: 1,
-    deadline: new Date('2026-02-20T09:00:00Z'),
+    deadline: TASK_DEADLINE,
     estimatedMinutes: 120,
   },
   {
@@ -146,14 +181,14 @@ export const seed = async () => {
       );
       await tx.insert(monthlyReports).values([
         {
-          startDate: new Date('2026-02-01'),
+          startDate: LAST_MONTH_START,
           goal: '機能Aをリリースする',
           summary: '新機能の開発を進めた月だった',
           review:
             '機能Aの実装とテストが完了した。テストの書き方に慣れてきた。レビューを早めに出すことで手戻りを減らせる。',
         },
         {
-          startDate: new Date('2026-03-01'),
+          startDate: THIS_MONTH_START,
           goal: 'テストカバレッジを80%にする',
         },
       ]);

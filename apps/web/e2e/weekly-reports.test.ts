@@ -1,5 +1,10 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import {
+  formatWeekRange,
+  seed,
+  THIS_MONDAY,
+  TWO_WEEKS_AGO_MONDAY,
+} from './seed';
 
 test.beforeAll(seed);
 
@@ -11,10 +16,10 @@ test.describe('週報一覧', () => {
       page.getByRole('heading', { name: '週報一覧' }),
     ).toBeVisible();
     await expect(
-      page.getByText('02/02（月）〜 02/08（日）'),
+      page.getByText(formatWeekRange(TWO_WEEKS_AGO_MONDAY)),
     ).toBeVisible();
     await expect(
-      page.getByText('02/16（月）〜 02/22（日）'),
+      page.getByText(formatWeekRange(THIS_MONDAY)),
     ).toBeVisible();
     await expect(page.getByText('機能Aの設計を固める')).toBeVisible();
     await expect(page.getByText('テストを充実させる')).toBeVisible();
@@ -42,7 +47,7 @@ test.describe('週報詳細', () => {
 
     await expect(page).toHaveURL(/\/weekly-reports\/[\w-]+/);
     await expect(
-      page.getByRole('heading', { name: /02\/02（月）〜 02\/08（日）/ }),
+      page.getByRole('heading', { name: formatWeekRange(TWO_WEEKS_AGO_MONDAY) }),
     ).toBeVisible();
     await expect(
       page.getByText('設計レビューを実施し、API仕様を確定した'),

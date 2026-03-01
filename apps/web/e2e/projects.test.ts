@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import { formatDate, PROJECT_DEADLINE, seed, toDateStr, TODAY } from './seed';
 
 test.beforeAll(seed);
 
@@ -24,7 +24,7 @@ test.describe('プロジェクト一覧', () => {
   test('期限があるプロジェクトは期限が表示される', async ({ page }) => {
     await page.goto('/projects');
 
-    await expect(page.getByText('期限: 2026/06/30（火）')).toBeVisible();
+    await expect(page.getByText(`期限: ${formatDate(PROJECT_DEADLINE)}`)).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションからプロジェクト一覧に遷移できる', async ({
@@ -66,7 +66,7 @@ test.describe('プロジェクト詳細', () => {
     await expect(
       page.getByText('MVP は6月末までにリリースする'),
     ).toBeVisible();
-    await expect(page.getByText('2026/06/30（火）')).toBeVisible();
+    await expect(page.getByText(formatDate(PROJECT_DEADLINE))).toBeVisible();
   });
 
   test('存在しないプロジェクトにアクセスすると、404ページが表示される', async ({
@@ -89,7 +89,7 @@ test.describe('プロジェクト作成', () => {
 
     await page.getByLabel('プロジェクト名').fill('新しいプロジェクト');
     await page.getByLabel('目的').fill('テスト用のプロジェクトである');
-    await page.getByLabel('期限').fill('2026-12-31');
+    await page.getByLabel('期限').fill(toDateStr(TODAY));
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page).toHaveURL('/projects');
