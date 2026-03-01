@@ -13,9 +13,9 @@ import { weeklyReports } from '../src/server/infrastructure/db/schema/weekly-rep
 // NOTE: fixtures.ts の clock.setFixedTime() でブラウザの時計をこの値に固定する
 // NOTE: new Date('YYYY-MM-DD') で UTC 午前0時にする。DB の date 型と一致させるためである
 const toUTCDate = (date: Date): Date => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(date.getUTCDate()).padStart(2, '0');
   return new Date(`${y}-${m}-${d}`);
 };
 
