@@ -92,3 +92,44 @@ test.describe('週報詳細', () => {
     expect(response?.status()).toBe(404);
   });
 });
+
+test.describe('週報編集', () => {
+  test('詳細ページから編集ページに遷移すると、既存の値がプリフィルされる', async ({
+    page,
+  }) => {
+    await page.goto('/weekly-reports');
+    await page
+      .getByRole('link', { name: /機能Aの設計を固める/ })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await expect(page).toHaveURL(/\/weekly-reports\/[\w-]+\/edit/);
+    await expect(
+      page.getByRole('heading', { name: '週報編集' }),
+    ).toBeVisible();
+    await expect(page.getByLabel('目標')).toHaveValue(
+      '機能Aの設計を固める',
+    );
+    await expect(page.getByLabel('サマリー')).toHaveValue(
+      '設計レビューを実施し、API仕様を確定した',
+    );
+  });
+
+  test('フォームを編集して更新すると、詳細ページに反映される', async ({
+    page,
+  }) => {
+    await page.goto('/weekly-reports');
+    await page
+      .getByRole('link', { name: /テストを充実させる/ })
+      .click();
+    await page.getByRole('link', { name: '編集' }).click();
+
+    await page.getByLabel('サマリー').fill('テストカバレッジを大幅に改善した');
+    await page.getByRole('button', { name: '更新' }).click();
+
+    await expect(page).toHaveURL(/\/weekly-reports\/[\w-]+$/);
+    await expect(
+      page.getByText('テストカバレッジを大幅に改善した'),
+    ).toBeVisible();
+  });
+});
