@@ -24,6 +24,27 @@ list_projects / get_project が返す構造:
 - deadline: string | null (ISO 8601)
 - createdAt: string (ISO 8601)
 
+## WeeklyReport
+
+list_weekly_reports が返す構造:
+- id: string
+- startDate: string (ISO 8601)
+- goal: string | null
+- summary: string | null
+- review: string | null
+- notes: string | null
+- createdAt: string (ISO 8601)
+
+get_weekly_report が返す構造:
+- id: string
+- startDate: string (ISO 8601)
+- goal: string | null
+- summary: string | null
+- review: string | null
+- notes: string | null
+- createdAt: string (ISO 8601)
+- dailyReports: { id: string, date: string (ISO 8601), summary: string | null }[]
+
 ## Task
 
 list_tasks が返す構造（概要）:
