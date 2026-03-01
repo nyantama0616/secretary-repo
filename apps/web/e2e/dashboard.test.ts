@@ -60,8 +60,8 @@ test.describe('ダッシュボード', () => {
     await expect(
       page.getByRole('heading', { name: 'プロジェクト' }),
     ).toBeVisible();
-    await expect(page.getByText('secretary-repo')).toBeVisible();
-    await expect(page.getByText('読書記録アプリ')).toBeVisible();
+    await expect(page.getByText('プロジェクトA')).toBeVisible();
+    await expect(page.getByText('プロジェクトB')).toBeVisible();
     await expect(page.getByText('進行中')).toBeVisible();
     await expect(page.getByText(`期限: ${formatDate(PROJECT_DEADLINE)}`)).toBeVisible();
   });
@@ -74,10 +74,10 @@ test.describe('ダッシュボード', () => {
     const projectSection = page
       .locator('section')
       .filter({ has: page.getByRole('heading', { name: 'プロジェクト' }) });
-    await projectSection.getByText('secretary-repo').click();
+    await projectSection.getByText('プロジェクトA').click();
 
     await expect(
-      page.getByRole('heading', { name: 'secretary-repo' }),
+      page.getByRole('heading', { name: 'プロジェクトA' }),
     ).toBeVisible();
   });
 

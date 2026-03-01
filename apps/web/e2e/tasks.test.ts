@@ -10,8 +10,8 @@ test.describe('タスク一覧', () => {
     await expect(
       page.getByRole('heading', { name: 'タスク一覧' }),
     ).toBeVisible();
-    await expect(page.getByText('tRPC ルーターを実装する')).toBeVisible();
-    await expect(page.getByText('テストを書く')).toBeVisible();
+    await expect(page.getByText('タスクA')).toBeVisible();
+    await expect(page.getByText('タスクB')).toBeVisible();
   });
 
   test('タスクのステータスと日付が表示される', async ({ page }) => {
@@ -36,10 +36,10 @@ test.describe('タスク一覧', () => {
 
   test('タスクをクリックすると、詳細ページに遷移する', async ({ page }) => {
     await page.goto('/tasks');
-    await page.getByText('tRPC ルーターを実装する').click();
+    await page.getByText('タスクA').click();
 
     await expect(
-      page.getByRole('heading', { name: 'tRPC ルーターを実装する' }),
+      page.getByRole('heading', { name: 'タスクA' }),
     ).toBeVisible();
   });
 });
@@ -47,26 +47,26 @@ test.describe('タスク一覧', () => {
 test.describe('タスク詳細', () => {
   test('タスクの詳細情報が表示される', async ({ page }) => {
     await page.goto('/tasks');
-    await page.getByText('tRPC ルーターを実装する').click();
+    await page.getByText('タスクA').click();
 
     await expect(
-      page.getByRole('heading', { name: 'tRPC ルーターを実装する' }),
+      page.getByRole('heading', { name: 'タスクA' }),
     ).toBeVisible();
     await expect(page.getByText('未着手')).toBeVisible();
     await expect(
-      page.getByText('エディタを開いてファイルを作成する'),
+      page.getByText('ファーストアクション'),
     ).toBeVisible();
-    await expect(page.getByText('タスク一覧APIを実装する')).toBeVisible();
-    await expect(page.getByText('デフォルト値')).toBeVisible();
-    await expect(page.getByText('NotFoundError')).toBeVisible();
+    await expect(page.getByText('説明テキスト')).toBeVisible();
+    await expect(page.getByText('太字テキスト')).toBeVisible();
+    await expect(page.getByText('コードテキスト')).toBeVisible();
     await expect(page.getByText('120分')).toBeVisible();
     await expect(page.getByText(formatDate(TASK_DEADLINE))).toBeVisible();
-    const projectLink = page.getByRole('link', { name: 'secretary-repo' });
+    const projectLink = page.getByRole('link', { name: 'プロジェクトA' });
     await expect(projectLink).toBeVisible();
     await projectLink.click();
 
     await expect(
-      page.getByRole('heading', { name: 'secretary-repo' }),
+      page.getByRole('heading', { name: 'プロジェクトA' }),
     ).toBeVisible();
   });
 
@@ -82,7 +82,7 @@ test.describe('タスク詳細', () => {
     page,
   }) => {
     await page.goto('/tasks');
-    await page.getByText('tRPC ルーターを実装する').click();
+    await page.getByText('タスクA').click();
     await page.getByRole('link', { name: '編集' }).click();
 
     await expect(
@@ -96,7 +96,7 @@ test.describe('タスク編集', () => {
     page,
   }) => {
     await page.goto('/tasks');
-    await page.getByText('tRPC ルーターを実装する').click();
+    await page.getByText('タスクA').click();
     await page.getByRole('link', { name: '編集' }).click();
 
     await page.getByLabel('タイトル').fill('更新後のタイトル');
@@ -117,7 +117,7 @@ test.describe('タスク編集', () => {
 test.describe('タスク削除', () => {
   test('編集画面からタスクを削除すると、一覧から消える', async ({ page }) => {
     await page.goto('/tasks');
-    await page.getByText('テストを書く').click();
+    await page.getByText('タスクB').click();
     await page.getByRole('link', { name: '編集' }).click();
     await page.getByRole('button', { name: '削除' }).click();
 
@@ -127,6 +127,6 @@ test.describe('タスク削除', () => {
     await page.getByRole('button', { name: '削除する' }).click();
 
     await expect(page).toHaveURL('/tasks');
-    await expect(page.getByText('テストを書く')).not.toBeVisible();
+    await expect(page.getByText('タスクB')).not.toBeVisible();
   });
 });

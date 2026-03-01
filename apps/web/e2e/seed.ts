@@ -110,33 +110,37 @@ const SEED_WEEKLY_REPORTS = [
 ];
 
 const SEED_PROJECTS = [
+  // NOTE: 全フィールド入力済みのプロジェクト（詳細表示・編集・タスク紐づき確認用）
   {
-    name: 'secretary-repo',
-    purpose: 'AI を活用した日報・タスク管理アプリを開発する',
-    notes: 'MVP は6月末までにリリースする',
+    name: 'プロジェクトA',
+    purpose: '目的テキスト',
+    notes: 'メモテキスト',
     status: 'active' as const,
     deadline: PROJECT_DEADLINE,
   },
+  // NOTE: 最小構成のプロジェクト（完了ステータス表示確認用）
   {
-    name: '読書記録アプリ',
-    purpose: '読んだ本の感想を記録して振り返る',
+    name: 'プロジェクトB',
+    purpose: '目的テキスト',
     status: 'done' as const,
   },
 ];
 
 const SEED_TASKS = [
+  // NOTE: 全フィールド入力済みのタスク（詳細表示・編集・プロジェクト紐づき確認用）
   {
-    title: 'tRPC ルーターを実装する',
-    description: 'タスク一覧APIを実装する',
-    notes: '- `sortOrder` は **デフォルト値** を設定する\n- エラーは `NotFoundError` を使う',
-    firstAction: 'エディタを開いてファイルを作成する',
+    title: 'タスクA',
+    description: '説明テキスト',
+    notes: '- **太字テキスト**\n- `コードテキスト`',
+    firstAction: 'ファーストアクション',
     status: 'not_started' as const,
     sortOrder: 1,
     deadline: TASK_DEADLINE,
     estimatedMinutes: 120,
   },
+  // NOTE: 最小構成のタスク（削除テスト用）
   {
-    title: 'テストを書く',
+    title: 'タスクB',
     status: 'done' as const,
     sortOrder: 2,
   },
