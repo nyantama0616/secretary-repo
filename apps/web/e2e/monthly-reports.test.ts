@@ -134,7 +134,7 @@ test.describe('月報作成', () => {
   test('同じ月の月報が存在する場合、エラーが表示される', async ({ page }) => {
     await page.goto('/monthly-reports/new');
     await page.getByLabel('月').click();
-    await page.getByRole('option', { name: '2026年02月' }).click();
+    await page.getByRole('option', { name: '2026年03月' }).click();
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page.getByText(/の月報はすでに存在します/)).toBeVisible();
