@@ -13,9 +13,9 @@ import { weeklyReports } from '../src/server/infrastructure/db/schema/weekly-rep
 // NOTE: fixtures.ts の clock.setFixedTime() でブラウザの時計をこの値に固定する
 // NOTE: new Date('YYYY-MM-DD') で UTC 午前0時にする。DB の date 型と一致させるためである
 const toUTCDate = (date: Date): Date => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(date.getUTCDate()).padStart(2, '0');
   return new Date(`${y}-${m}-${d}`);
 };
 
@@ -25,77 +25,122 @@ const addDays = (date: Date, days: number): Date => {
   return result;
 };
 
+/** TODAY から遡って直近の月曜日を返す */
+const previousMonday = (from: Date): Date => {
+  const day = from.getUTCDay();
+  // NOTE: 日曜(0)は -6、月曜(1)は 0、火曜(2)は -1 … 土曜(6)は -5
+  const diff = day === 0 ? -6 : 1 - day;
+  return addDays(from, diff);
+};
+
+/** TODAY の属する月の1日を返す */
+const startOfMonth = (from: Date): Date =>
+  new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), 1));
+
+/** 前月の1日を返す */
+const previousMonthStart = (from: Date): Date =>
+  new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth() - 1, 1));
+
+export {
+  formatDate,
+  formatMonth,
+  formatWeekRange,
+  toDateStr,
+} from '../src/lib/format';
+
 export const TODAY = toUTCDate(new Date());
 const TOMORROW = addDays(TODAY, 1);
+export const DAYS_AGO_3 = addDays(TODAY, -3);
+export const DAYS_AGO_4 = addDays(TODAY, -4);
+export const DAYS_AGO_7 = addDays(TODAY, -7);
+export const TASK_DEADLINE = addDays(TODAY, 3);
+export const PROJECT_DEADLINE = addDays(TODAY, 120);
+export const THIS_MONDAY = previousMonday(TODAY);
+export const TWO_WEEKS_AGO_MONDAY = addDays(THIS_MONDAY, -14);
+export const THIS_MONTH_START = startOfMonth(TODAY);
+export const LAST_MONTH_START = previousMonthStart(TODAY);
+export const NEXT_MONTH_START = new Date(
+  Date.UTC(TODAY.getUTCFullYear(), TODAY.getUTCMonth() + 1, 1),
+);
 
 const SEED_DAILY_REPORTS = [
+  // NOTE: 全フィールド入力済みの日報（詳細表示・タスク紐づき確認用）
   {
-    date: new Date('2026-02-17'),
-    goal: '機能Aの実装を進める',
-    summary: '機能Aの主要部分を実装し、集中して作業できた',
-    wakeUpTime: new Date('2026-02-17T07:00:00Z'),
-    bedTime: new Date('2026-02-17T23:00:00Z'),
-    review: '集中して作業できた。休憩を取り忘れたので改善したい。',
+    date: DAYS_AGO_4,
+    goal: '目標テキスト',
+    summary: 'サマリーA',
+    wakeUpTime: new Date(DAYS_AGO_4.getTime() + 7 * 60 * 60 * 1000),
+    bedTime: new Date(DAYS_AGO_4.getTime() + 23 * 60 * 60 * 1000),
+    review: '振り返りテキスト',
   },
+  // NOTE: 備考ありの日報（一覧表示確認用）
   {
-    date: new Date('2026-02-18'),
-    goal: 'テストを書く',
-    summary: 'テストの基本を学んだが体調不良で早退した',
-    wakeUpTime: new Date('2026-02-18T06:30:00Z'),
-    notes: '体調不良のため早退',
+    date: DAYS_AGO_3,
+    goal: '目標テキスト',
+    summary: 'サマリーB',
+    wakeUpTime: new Date(DAYS_AGO_3.getTime() + 6.5 * 60 * 60 * 1000),
+    notes: '備考テキスト',
   },
+  // NOTE: 今日の日報（ダッシュボード表示・編集テスト用）
   {
     date: TODAY,
-    goal: 'ダッシュボードの改善を進める',
-    summary: '今日の進捗を記録した',
-    review: '## 良かった点\n- 集中して作業できた\n\n## 改善点\n- 休憩を取り忘れた',
+    goal: '目標テキスト',
+    summary: 'サマリーC',
+    review: '## 見出し\n- 箇条書き',
   },
+  // NOTE: 目標のみの日報（明日タスクの親）
   {
     date: TOMORROW,
-    goal: '明日の目標',
+    goal: '目標テキスト',
   },
 ];
 
 const SEED_WEEKLY_REPORTS = [
+  // NOTE: 全フィールド入力済みの週報（詳細表示・編集プリフィル・月報紐づき確認用）
   {
-    startDate: new Date('2026-02-02'),
-    goal: '機能Aの設計を固める',
-    summary: '設計レビューを実施し、API仕様を確定した',
+    startDate: TWO_WEEKS_AGO_MONDAY,
+    goal: '週報の目標A',
+    summary: 'サマリーテキスト',
   },
+  // NOTE: 目標のみの週報（サマリー/振り返り非表示・日報紐づき確認用）
   {
-    startDate: new Date('2026-02-16'),
-    goal: 'テストを充実させる',
+    startDate: THIS_MONDAY,
+    goal: '週報の目標B',
   },
 ];
 
 const SEED_PROJECTS = [
+  // NOTE: 全フィールド入力済みのプロジェクト（詳細表示・編集・タスク紐づき確認用）
   {
-    name: 'secretary-repo',
-    purpose: 'AI を活用した日報・タスク管理アプリを開発する',
-    notes: 'MVP は6月末までにリリースする',
+    name: 'プロジェクトA',
+    purpose: '目的テキスト',
+    notes: 'メモテキスト',
     status: 'active' as const,
-    deadline: new Date('2026-06-30'),
+    deadline: PROJECT_DEADLINE,
   },
+  // NOTE: 最小構成のプロジェクト（完了ステータス表示確認用）
   {
-    name: '読書記録アプリ',
-    purpose: '読んだ本の感想を記録して振り返る',
+    name: 'プロジェクトB',
+    purpose: '目的テキスト',
     status: 'done' as const,
   },
 ];
 
 const SEED_TASKS = [
+  // NOTE: 全フィールド入力済みのタスク（詳細表示・編集・プロジェクト紐づき確認用）
   {
-    title: 'tRPC ルーターを実装する',
-    description: 'タスク一覧APIを実装する',
-    notes: '- `sortOrder` は **デフォルト値** を設定する\n- エラーは `NotFoundError` を使う',
-    firstAction: 'エディタを開いてファイルを作成する',
+    title: 'タスクA',
+    description: '説明テキスト',
+    notes: '- **太字テキスト**\n- `コードテキスト`',
+    firstAction: 'アクションテキスト',
     status: 'not_started' as const,
     sortOrder: 1,
-    deadline: new Date('2026-02-20T09:00:00Z'),
+    deadline: TASK_DEADLINE,
     estimatedMinutes: 120,
   },
+  // NOTE: 最小構成のタスク（削除テスト用）
   {
-    title: 'テストを書く',
+    title: 'タスクB',
     status: 'done' as const,
     sortOrder: 2,
   },
@@ -103,19 +148,19 @@ const SEED_TASKS = [
 
 const SEED_TODAY_TASKS = [
   {
-    title: 'ダッシュボードUIを実装する',
-    firstAction: 'コンポーネントファイルを開く',
+    title: '今日タスクX',
+    firstAction: 'アクションA',
     status: 'in_progress' as const,
     sortOrder: 0,
   },
   {
-    title: 'テストを追加する',
-    firstAction: 'テストファイルを作成する',
+    title: '今日タスクY',
+    firstAction: 'アクションB',
     status: 'not_started' as const,
     sortOrder: 1,
   },
   {
-    title: '日報を書く',
+    title: '今日タスクZ',
     status: 'done' as const,
     sortOrder: 2,
   },
@@ -123,12 +168,12 @@ const SEED_TODAY_TASKS = [
 
 const SEED_TOMORROW_TASKS = [
   {
-    title: 'コードレビュー対応',
+    title: '明日タスクX',
     status: 'not_started' as const,
     sortOrder: 0,
   },
   {
-    title: 'ドキュメント更新',
+    title: '明日タスクY',
     status: 'not_started' as const,
     sortOrder: 1,
   },
@@ -145,16 +190,18 @@ export const seed = async () => {
         sql`TRUNCATE ${tasks}, ${dailyReports}, ${weeklyReports}, ${monthlyReports}, ${projects}`,
       );
       await tx.insert(monthlyReports).values([
+        // NOTE: 全フィールド入力済みの月報（詳細表示・振り返りセクション・週報紐づき確認用）
         {
-          startDate: new Date('2026-02-01'),
-          goal: '機能Aをリリースする',
-          summary: '新機能の開発を進めた月だった',
+          startDate: LAST_MONTH_START,
+          goal: '月報の目標A',
+          summary: 'サマリーテキスト',
           review:
-            '機能Aの実装とテストが完了した。テストの書き方に慣れてきた。レビューを早めに出すことで手戻りを減らせる。',
+            '振り返りテキストA。振り返りテキストB。振り返りテキストC。',
         },
+        // NOTE: 目標のみの月報（振り返り非表示確認用）
         {
-          startDate: new Date('2026-03-01'),
-          goal: 'テストカバレッジを80%にする',
+          startDate: THIS_MONTH_START,
+          goal: '月報の目標B',
         },
       ]);
       await tx.insert(weeklyReports).values(SEED_WEEKLY_REPORTS);

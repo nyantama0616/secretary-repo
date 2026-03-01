@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import { formatDate, PROJECT_DEADLINE, seed, toDateStr, TODAY } from './seed';
 
 test.beforeAll(seed);
 
@@ -10,8 +10,8 @@ test.describe('プロジェクト一覧', () => {
     await expect(
       page.getByRole('heading', { name: 'プロジェクト一覧' }),
     ).toBeVisible();
-    await expect(page.getByText('secretary-repo')).toBeVisible();
-    await expect(page.getByText('読書記録アプリ')).toBeVisible();
+    await expect(page.getByText('プロジェクトA')).toBeVisible();
+    await expect(page.getByText('プロジェクトB')).toBeVisible();
   });
 
   test('プロジェクトのステータスが表示される', async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe('プロジェクト一覧', () => {
   test('期限があるプロジェクトは期限が表示される', async ({ page }) => {
     await page.goto('/projects');
 
-    await expect(page.getByText('期限: 2026/06/30（火）')).toBeVisible();
+    await expect(page.getByText(`期限: ${formatDate(PROJECT_DEADLINE)}`)).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションからプロジェクト一覧に遷移できる', async ({
@@ -43,10 +43,10 @@ test.describe('プロジェクト一覧', () => {
     page,
   }) => {
     await page.goto('/projects');
-    await page.getByText('secretary-repo').click();
+    await page.getByText('プロジェクトA').click();
 
     await expect(
-      page.getByRole('heading', { name: 'secretary-repo' }),
+      page.getByRole('heading', { name: 'プロジェクトA' }),
     ).toBeVisible();
   });
 });
@@ -54,19 +54,19 @@ test.describe('プロジェクト一覧', () => {
 test.describe('プロジェクト詳細', () => {
   test('プロジェクトの詳細情報が表示される', async ({ page }) => {
     await page.goto('/projects');
-    await page.getByText('secretary-repo').click();
+    await page.getByText('プロジェクトA').click();
 
     await expect(
-      page.getByRole('heading', { name: 'secretary-repo' }),
+      page.getByRole('heading', { name: 'プロジェクトA' }),
     ).toBeVisible();
     await expect(page.getByText('進行中')).toBeVisible();
     await expect(
-      page.getByText('AI を活用した日報・タスク管理アプリを開発する'),
+      page.getByText('目的テキスト'),
     ).toBeVisible();
     await expect(
-      page.getByText('MVP は6月末までにリリースする'),
+      page.getByText('メモテキスト'),
     ).toBeVisible();
-    await expect(page.getByText('2026/06/30（火）')).toBeVisible();
+    await expect(page.getByText(formatDate(PROJECT_DEADLINE))).toBeVisible();
   });
 
   test('存在しないプロジェクトにアクセスすると、404ページが表示される', async ({
@@ -89,7 +89,7 @@ test.describe('プロジェクト作成', () => {
 
     await page.getByLabel('プロジェクト名').fill('新しいプロジェクト');
     await page.getByLabel('目的').fill('テスト用のプロジェクトである');
-    await page.getByLabel('期限').fill('2026-12-31');
+    await page.getByLabel('期限').fill(toDateStr(TODAY));
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page).toHaveURL('/projects');
@@ -112,7 +112,7 @@ test.describe('プロジェクト編集', () => {
     page,
   }) => {
     await page.goto('/projects');
-    await page.getByText('secretary-repo').click();
+    await page.getByText('プロジェクトA').click();
     await page.getByRole('link', { name: '編集' }).click();
 
     await expect(
@@ -124,7 +124,7 @@ test.describe('プロジェクト編集', () => {
     page,
   }) => {
     await page.goto('/projects');
-    await page.getByText('secretary-repo').click();
+    await page.getByText('プロジェクトA').click();
     await page.getByRole('link', { name: '編集' }).click();
 
     await page.getByLabel('プロジェクト名').fill('更新後のプロジェクト');

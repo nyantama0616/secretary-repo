@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import { formatDate, PROJECT_DEADLINE, seed } from './seed';
 
 test.beforeAll(seed);
 
@@ -19,10 +19,10 @@ test.describe('ダッシュボード', () => {
       page.getByRole('heading', { name: '明日のタスク' }),
     ).toBeVisible();
 
-    await expect(page.getByText('ダッシュボードUIを実装する')).toBeVisible();
-    await expect(page.getByText('テストを追加する')).toBeVisible();
-    await expect(page.getByText('コードレビュー対応')).toBeVisible();
-    await expect(page.getByText('ドキュメント更新')).toBeVisible();
+    await expect(page.getByText('今日タスクX')).toBeVisible();
+    await expect(page.getByText('今日タスクY')).toBeVisible();
+    await expect(page.getByText('明日タスクX')).toBeVisible();
+    await expect(page.getByText('明日タスクY')).toBeVisible();
   });
 
   test('今日の目標と振り返りが表示される', async ({ page }) => {
@@ -31,12 +31,12 @@ test.describe('ダッシュボード', () => {
     await expect(
       page.getByRole('heading', { name: '今日の目標' }),
     ).toBeVisible();
-    await expect(page.getByText('ダッシュボードの改善を進める')).toBeVisible();
+    await expect(page.getByText('目標テキスト')).toBeVisible();
 
     await expect(
       page.getByRole('heading', { name: '振り返り' }),
     ).toBeVisible();
-    await expect(page.getByText('集中して作業できた')).toBeVisible();
+    await expect(page.getByText('箇条書き')).toBeVisible();
   });
 
   test('編集ボタンをクリックすると、日報編集ページに遷移する', async ({
@@ -60,10 +60,10 @@ test.describe('ダッシュボード', () => {
     await expect(
       page.getByRole('heading', { name: 'プロジェクト' }),
     ).toBeVisible();
-    await expect(page.getByText('secretary-repo')).toBeVisible();
-    await expect(page.getByText('読書記録アプリ')).toBeVisible();
+    await expect(page.getByText('プロジェクトA')).toBeVisible();
+    await expect(page.getByText('プロジェクトB')).toBeVisible();
     await expect(page.getByText('進行中')).toBeVisible();
-    await expect(page.getByText('期限: 2026/06/30')).toBeVisible();
+    await expect(page.getByText(`期限: ${formatDate(PROJECT_DEADLINE)}`)).toBeVisible();
   });
 
   test('プロジェクトをクリックすると、詳細ページに遷移する', async ({
@@ -74,20 +74,20 @@ test.describe('ダッシュボード', () => {
     const projectSection = page
       .locator('section')
       .filter({ has: page.getByRole('heading', { name: 'プロジェクト' }) });
-    await projectSection.getByText('secretary-repo').click();
+    await projectSection.getByText('プロジェクトA').click();
 
     await expect(
-      page.getByRole('heading', { name: 'secretary-repo' }),
+      page.getByRole('heading', { name: 'プロジェクトA' }),
     ).toBeVisible();
   });
 
   test('次のタスクにファーストアクションが表示される', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('ダッシュボードUIを実装する')).toBeVisible();
+    await expect(page.getByText('今日タスクX')).toBeVisible();
 
-    await expect(page.getByText('→ コンポーネントファイルを開く')).toBeVisible();
+    await expect(page.getByText('→ アクションA')).toBeVisible();
     await expect(
-      page.getByText('→ テストファイルを作成する'),
+      page.getByText('→ アクションB'),
     ).not.toBeVisible();
   });
 
@@ -95,19 +95,19 @@ test.describe('ダッシュボード', () => {
     page,
   }) => {
     await page.goto('/');
-    await expect(page.getByText('ダッシュボードUIを実装する')).toBeVisible();
+    await expect(page.getByText('今日タスクX')).toBeVisible();
 
-    await page.getByText('テストを追加する').hover();
+    await page.getByText('今日タスクY').hover();
 
-    await expect(page.getByText('→ テストファイルを作成する')).toBeVisible();
+    await expect(page.getByText('→ アクションB')).toBeVisible();
     await expect(
-      page.getByText('→ コンポーネントファイルを開く'),
+      page.getByText('→ アクションA'),
     ).not.toBeVisible();
   });
 
   test('完了済みタスクが未完了タスクより上に表示される', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('日報を書く')).toBeVisible();
+    await expect(page.getByText('今日タスクZ')).toBeVisible();
 
     const todaySection = page
       .locator('section')
@@ -115,9 +115,9 @@ test.describe('ダッシュボード', () => {
     const taskLinks = todaySection.locator('a');
     const titles = await taskLinks.allTextContents();
 
-    const doneIndex = titles.findIndex((t) => t.includes('日報を書く'));
+    const doneIndex = titles.findIndex((t) => t.includes('今日タスクZ'));
     const activeIndex = titles.findIndex((t) =>
-      t.includes('ダッシュボードUIを実装する'),
+      t.includes('今日タスクX'),
     );
     expect(doneIndex).toBeLessThan(activeIndex);
   });
@@ -126,10 +126,10 @@ test.describe('ダッシュボード', () => {
     page,
   }) => {
     await page.goto('/');
-    await expect(page.getByText('テストを追加する')).toBeVisible();
+    await expect(page.getByText('今日タスクY')).toBeVisible();
 
     // NOTE: リンクの親（カード div）を基点にチェックボックスを探す
-    const card = page.getByRole('link', { name: 'テストを追加する' }).locator('..');
+    const card = page.getByRole('link', { name: '今日タスクY' }).locator('..');
     await card.getByRole('button', { name: 'タスクを完了にする' }).click();
 
     await expect(card.getByText('完了')).toBeVisible();
@@ -139,10 +139,10 @@ test.describe('ダッシュボード', () => {
     page,
   }) => {
     await page.goto('/');
-    await expect(page.getByText('ダッシュボードUIを実装する')).toBeVisible();
+    await expect(page.getByText('今日タスクX')).toBeVisible();
 
     const card = page
-      .getByRole('link', { name: 'ダッシュボードUIを実装する' })
+      .getByRole('link', { name: '今日タスクX' })
       .locator('..');
     await card.getByText('着手中').click();
 
@@ -153,10 +153,10 @@ test.describe('ダッシュボード', () => {
 
   test('タスクをクリックすると、詳細ページに遷移する', async ({ page }) => {
     await page.goto('/');
-    await page.getByText('ダッシュボードUIを実装する').click();
+    await page.getByText('今日タスクX').click();
 
     await expect(
-      page.getByRole('heading', { name: 'ダッシュボードUIを実装する' }),
+      page.getByRole('heading', { name: '今日タスクX' }),
     ).toBeVisible();
   });
 

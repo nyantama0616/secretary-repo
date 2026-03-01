@@ -1,5 +1,11 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import {
+  formatMonth,
+  LAST_MONTH_START,
+  NEXT_MONTH_START,
+  seed,
+  THIS_MONTH_START,
+} from './seed';
 
 test.beforeAll(seed);
 
@@ -10,10 +16,10 @@ test.describe('月報一覧', () => {
     await expect(
       page.getByRole('heading', { name: '月報一覧' }),
     ).toBeVisible();
-    await expect(page.getByText('2026年02月')).toBeVisible();
-    await expect(page.getByText('2026年03月')).toBeVisible();
+    await expect(page.getByText(formatMonth(LAST_MONTH_START))).toBeVisible();
+    await expect(page.getByText(formatMonth(THIS_MONTH_START))).toBeVisible();
     await expect(
-      page.getByText('新機能の開発を進めた月だった'),
+      page.getByText('サマリーテキスト'),
     ).toBeVisible();
   });
 
@@ -34,15 +40,15 @@ test.describe('月報詳細', () => {
   test('一覧から月報をクリックすると、詳細が表示される', async ({ page }) => {
     await page.goto('/monthly-reports');
     await page
-      .getByRole('link', { name: /新機能の開発を進めた月だった/ })
+      .getByRole('link', { name: /サマリーテキスト/ })
       .click();
 
     await expect(page).toHaveURL(/\/monthly-reports\/[\w-]+/);
     await expect(
-      page.getByRole('heading', { name: '2026年02月' }),
+      page.getByRole('heading', { name: formatMonth(LAST_MONTH_START) }),
     ).toBeVisible();
     await expect(
-      page.getByText('新機能の開発を進めた月だった'),
+      page.getByText('サマリーテキスト'),
     ).toBeVisible();
   });
 
@@ -51,20 +57,20 @@ test.describe('月報詳細', () => {
   }) => {
     await page.goto('/monthly-reports');
     await page
-      .getByRole('link', { name: /新機能の開発を進めた月だった/ })
+      .getByRole('link', { name: /サマリーテキスト/ })
       .click();
 
     await expect(
       page.getByRole('heading', { name: '振り返り' }),
     ).toBeVisible();
     await expect(
-      page.getByText('機能Aの実装とテストが完了した'),
+      page.getByText('振り返りテキストA'),
     ).toBeVisible();
     await expect(
-      page.getByText('テストの書き方に慣れてきた'),
+      page.getByText('振り返りテキストB'),
     ).toBeVisible();
     await expect(
-      page.getByText('レビューを早めに出すことで手戻りを減らせる'),
+      page.getByText('振り返りテキストC'),
     ).toBeVisible();
   });
 
@@ -72,13 +78,13 @@ test.describe('月報詳細', () => {
     page,
   }) => {
     await page.goto('/monthly-reports');
-    await page.getByRole('link', { name: /2026年03月/ }).click();
+    await page.getByRole('link', { name: new RegExp(formatMonth(THIS_MONTH_START)) }).click();
 
     await expect(
-      page.getByRole('heading', { name: '2026年03月' }),
+      page.getByRole('heading', { name: formatMonth(THIS_MONTH_START) }),
     ).toBeVisible();
     await expect(
-      page.getByText('テストカバレッジを80%にする'),
+      page.getByText('月報の目標B'),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: '振り返り' }),
@@ -88,14 +94,14 @@ test.describe('月報詳細', () => {
   test('月報に紐づく週報が一覧表示される', async ({ page }) => {
     await page.goto('/monthly-reports');
     await page
-      .getByRole('link', { name: /新機能の開発を進めた月だった/ })
+      .getByRole('link', { name: /サマリーテキスト/ })
       .click();
 
     await expect(
       page.getByRole('heading', { name: '週報' }),
     ).toBeVisible();
-    await expect(page.getByText('機能Aの設計を固める')).toBeVisible();
-    await expect(page.getByText('テストを充実させる')).toBeVisible();
+    await expect(page.getByText('週報の目標A')).toBeVisible();
+    await expect(page.getByText('週報の目標B')).toBeVisible();
   });
 
   test('存在しないIDにアクセスすると、404ページが表示される', async ({
@@ -111,12 +117,12 @@ test.describe('月報作成', () => {
   test('フォームから月報を作成すると、一覧に反映される', async ({ page }) => {
     await page.goto('/monthly-reports/new');
     await page.getByLabel('月').click();
-    await page.getByRole('option', { name: '2026年04月' }).click();
-    await page.getByLabel('目標').fill('リファクタリングを完了する');
+    await page.getByRole('option', { name: formatMonth(NEXT_MONTH_START) }).click();
+    await page.getByLabel('目標').fill('目標テキスト');
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page).toHaveURL('/monthly-reports');
-    await expect(page.getByText('2026年04月')).toBeVisible();
+    await expect(page.getByText(formatMonth(NEXT_MONTH_START))).toBeVisible();
   });
 
   test('一覧の「月報を作成」ボタンから作成ページに遷移できる', async ({
@@ -134,7 +140,7 @@ test.describe('月報作成', () => {
   test('同じ月の月報が存在する場合、エラーが表示される', async ({ page }) => {
     await page.goto('/monthly-reports/new');
     await page.getByLabel('月').click();
-    await page.getByRole('option', { name: '2026年03月' }).click();
+    await page.getByRole('option', { name: formatMonth(THIS_MONTH_START) }).click();
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(page.getByText(/の月報はすでに存在します/)).toBeVisible();

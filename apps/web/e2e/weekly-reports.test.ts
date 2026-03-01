@@ -1,5 +1,10 @@
 import { expect, test } from './fixtures';
-import { seed } from './seed';
+import {
+  formatWeekRange,
+  seed,
+  THIS_MONDAY,
+  TWO_WEEKS_AGO_MONDAY,
+} from './seed';
 
 test.beforeAll(seed);
 
@@ -11,13 +16,13 @@ test.describe('週報一覧', () => {
       page.getByRole('heading', { name: '週報一覧' }),
     ).toBeVisible();
     await expect(
-      page.getByText('02/02（月）〜 02/08（日）'),
+      page.getByText(formatWeekRange(TWO_WEEKS_AGO_MONDAY)),
     ).toBeVisible();
     await expect(
-      page.getByText('02/16（月）〜 02/22（日）'),
+      page.getByText(formatWeekRange(THIS_MONDAY)),
     ).toBeVisible();
-    await expect(page.getByText('機能Aの設計を固める')).toBeVisible();
-    await expect(page.getByText('テストを充実させる')).toBeVisible();
+    await expect(page.getByText('週報の目標A')).toBeVisible();
+    await expect(page.getByText('週報の目標B')).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションから週報一覧に遷移できる', async ({
@@ -37,33 +42,33 @@ test.describe('週報詳細', () => {
   test('一覧から週報をクリックすると、詳細が表示される', async ({ page }) => {
     await page.goto('/weekly-reports');
     await page
-      .getByRole('link', { name: /機能Aの設計を固める/ })
+      .getByRole('link', { name: /週報の目標A/ })
       .click();
 
     await expect(page).toHaveURL(/\/weekly-reports\/[\w-]+/);
     await expect(
-      page.getByRole('heading', { name: /02\/02（月）〜 02\/08（日）/ }),
+      page.getByRole('heading', { name: formatWeekRange(TWO_WEEKS_AGO_MONDAY) }),
     ).toBeVisible();
     await expect(
-      page.getByText('設計レビューを実施し、API仕様を確定した'),
+      page.getByText('サマリーテキスト'),
     ).toBeVisible();
-    await expect(page.getByText('機能Aの設計を固める')).toBeVisible();
+    await expect(page.getByText('週報の目標A')).toBeVisible();
   });
 
   test('日報が紐づく週報では、日報一覧が表示される', async ({ page }) => {
     await page.goto('/weekly-reports');
     await page
-      .getByRole('link', { name: /テストを充実させる/ })
+      .getByRole('link', { name: /週報の目標B/ })
       .click();
 
     await expect(
       page.getByRole('heading', { name: '日報' }),
     ).toBeVisible();
     await expect(
-      page.getByText('機能Aの主要部分を実装し、集中して作業できた'),
+      page.getByText('サマリーA'),
     ).toBeVisible();
     await expect(
-      page.getByText('テストの基本を学んだが体調不良で早退した'),
+      page.getByText('サマリーB'),
     ).toBeVisible();
   });
 
@@ -72,10 +77,10 @@ test.describe('週報詳細', () => {
   }) => {
     await page.goto('/weekly-reports');
     await page
-      .getByRole('link', { name: /テストを充実させる/ })
+      .getByRole('link', { name: /週報の目標B/ })
       .click();
 
-    await expect(page.getByText('テストを充実させる')).toBeVisible();
+    await expect(page.getByText('週報の目標B')).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'サマリー' }),
     ).not.toBeVisible();
@@ -99,7 +104,7 @@ test.describe('週報編集', () => {
   }) => {
     await page.goto('/weekly-reports');
     await page
-      .getByRole('link', { name: /機能Aの設計を固める/ })
+      .getByRole('link', { name: /週報の目標A/ })
       .click();
     await page.getByRole('link', { name: '編集' }).click();
 
@@ -108,10 +113,10 @@ test.describe('週報編集', () => {
       page.getByRole('heading', { name: '週報編集' }),
     ).toBeVisible();
     await expect(page.getByLabel('目標')).toHaveValue(
-      '機能Aの設計を固める',
+      '週報の目標A',
     );
     await expect(page.getByLabel('サマリー')).toHaveValue(
-      '設計レビューを実施し、API仕様を確定した',
+      'サマリーテキスト',
     );
   });
 
@@ -120,16 +125,16 @@ test.describe('週報編集', () => {
   }) => {
     await page.goto('/weekly-reports');
     await page
-      .getByRole('link', { name: /テストを充実させる/ })
+      .getByRole('link', { name: /週報の目標B/ })
       .click();
     await page.getByRole('link', { name: '編集' }).click();
 
-    await page.getByLabel('サマリー').fill('テストカバレッジを大幅に改善した');
+    await page.getByLabel('サマリー').fill('編集後のサマリー');
     await page.getByRole('button', { name: '更新' }).click();
 
     await expect(page).toHaveURL(/\/weekly-reports\/[\w-]+$/);
     await expect(
-      page.getByText('テストカバレッジを大幅に改善した'),
+      page.getByText('編集後のサマリー'),
     ).toBeVisible();
   });
 });
