@@ -186,16 +186,18 @@ export const seed = async () => {
         sql`TRUNCATE ${tasks}, ${dailyReports}, ${weeklyReports}, ${monthlyReports}, ${projects}`,
       );
       await tx.insert(monthlyReports).values([
+        // NOTE: 全フィールド入力済みの月報（詳細表示・振り返りセクション・週報紐づき確認用）
         {
           startDate: LAST_MONTH_START,
-          goal: '機能Aをリリースする',
-          summary: '新機能の開発を進めた月だった',
+          goal: '月報の目標A',
+          summary: 'サマリーテキスト',
           review:
-            '機能Aの実装とテストが完了した。テストの書き方に慣れてきた。レビューを早めに出すことで手戻りを減らせる。',
+            '振り返りテキストA。振り返りテキストB。振り返りテキストC。',
         },
+        // NOTE: 目標のみの月報（振り返り非表示確認用）
         {
           startDate: THIS_MONTH_START,
-          goal: 'テストカバレッジを80%にする',
+          goal: '月報の目標B',
         },
       ]);
       await tx.insert(weeklyReports).values(SEED_WEEKLY_REPORTS);
