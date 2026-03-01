@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 import type { MonthlyReport } from '@/server/domain/monthly-report/monthly-report';
 import { createMonthlyReport } from '@/server/domain/monthly-report/monthly-report';
@@ -10,7 +10,10 @@ export class DrizzleMonthlyReportRepository
   implements MonthlyReportRepository
 {
   async findAll(): Promise<MonthlyReport[]> {
-    const rows = await db.select().from(monthlyReports);
+    const rows = await db
+      .select()
+      .from(monthlyReports)
+      .orderBy(desc(monthlyReports.startDate));
     return rows.map(toMonthlyReport);
   }
 

@@ -1,4 +1,4 @@
-import { and, eq, gte, lt } from 'drizzle-orm';
+import { and, desc, eq, gte, lt } from 'drizzle-orm';
 
 import type { WeeklyReport } from '@/server/domain/weekly-report/weekly-report';
 import { createWeeklyReport } from '@/server/domain/weekly-report/weekly-report';
@@ -10,7 +10,10 @@ export class DrizzleWeeklyReportRepository
   implements WeeklyReportRepository
 {
   async findAll(): Promise<WeeklyReport[]> {
-    const rows = await db.select().from(weeklyReports);
+    const rows = await db
+      .select()
+      .from(weeklyReports)
+      .orderBy(desc(weeklyReports.startDate));
     return rows.map(toWeeklyReport);
   }
 
@@ -39,7 +42,8 @@ export class DrizzleWeeklyReportRepository
           gte(weeklyReports.startDate, start),
           lt(weeklyReports.startDate, end),
         ),
-      );
+      )
+      .orderBy(desc(weeklyReports.startDate));
     return rows.map(toWeeklyReport);
   }
 
