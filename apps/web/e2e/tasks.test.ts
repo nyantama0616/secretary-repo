@@ -54,7 +54,7 @@ test.describe('タスク詳細', () => {
     ).toBeVisible();
     await expect(page.getByText('未着手')).toBeVisible();
     await expect(
-      page.getByText('ファーストアクション'),
+      page.getByText('アクションテキスト'),
     ).toBeVisible();
     await expect(page.getByText('説明テキスト')).toBeVisible();
     await expect(page.getByText('太字テキスト')).toBeVisible();

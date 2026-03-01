@@ -132,7 +132,7 @@ const SEED_TASKS = [
     title: 'タスクA',
     description: '説明テキスト',
     notes: '- **太字テキスト**\n- `コードテキスト`',
-    firstAction: 'ファーストアクション',
+    firstAction: 'アクションテキスト',
     status: 'not_started' as const,
     sortOrder: 1,
     deadline: TASK_DEADLINE,
@@ -148,19 +148,19 @@ const SEED_TASKS = [
 
 const SEED_TODAY_TASKS = [
   {
-    title: 'ダッシュボードUIを実装する',
-    firstAction: 'コンポーネントファイルを開く',
+    title: '今日タスクX',
+    firstAction: 'アクションA',
     status: 'in_progress' as const,
     sortOrder: 0,
   },
   {
-    title: 'テストを追加する',
-    firstAction: 'テストファイルを作成する',
+    title: '今日タスクY',
+    firstAction: 'アクションB',
     status: 'not_started' as const,
     sortOrder: 1,
   },
   {
-    title: '日報を書く',
+    title: '今日タスクZ',
     status: 'done' as const,
     sortOrder: 2,
   },
@@ -168,12 +168,12 @@ const SEED_TODAY_TASKS = [
 
 const SEED_TOMORROW_TASKS = [
   {
-    title: 'コードレビュー対応',
+    title: '明日タスクX',
     status: 'not_started' as const,
     sortOrder: 0,
   },
   {
-    title: 'ドキュメント更新',
+    title: '明日タスクY',
     status: 'not_started' as const,
     sortOrder: 1,
   },
