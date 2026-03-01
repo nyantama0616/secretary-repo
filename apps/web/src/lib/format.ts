@@ -33,6 +33,22 @@ export const formatMonth = (date: Date): string => {
   return `${y}年${m}月`;
 };
 
+export const formatWeekRange = (startDate: Date): string => {
+  const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+  const endDate = new Date(startDate.getTime() + 6 * MS_PER_DAY);
+
+  const sy = startDate.getFullYear();
+  const sm = String(startDate.getMonth() + 1).padStart(2, '0');
+  const sd = String(startDate.getDate()).padStart(2, '0');
+  const sw = weekdays[startDate.getDay()];
+
+  const em = String(endDate.getMonth() + 1).padStart(2, '0');
+  const ed = String(endDate.getDate()).padStart(2, '0');
+  const ew = weekdays[endDate.getDay()];
+
+  return `${sy}/${sm}/${sd}（${sw}）〜 ${em}/${ed}（${ew}）`;
+};
+
 export const toDateStr = (date: Date): string => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');

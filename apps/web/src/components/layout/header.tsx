@@ -9,6 +9,7 @@ import { AuthButton } from './auth-button';
 const NAV_ITEMS = [
   { href: ROUTES.dashboard, label: 'ダッシュボード' },
   { href: ROUTES.dailyReports, label: '日報一覧' },
+  { href: ROUTES.weeklyReports, label: '週報一覧' },
   { href: ROUTES.monthlyReports, label: '月報一覧' },
   { href: ROUTES.tasks, label: 'タスク一覧' },
   { href: ROUTES.projects, label: 'プロジェクト一覧' },
