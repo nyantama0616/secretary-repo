@@ -31,12 +31,12 @@ test.describe('ダッシュボード', () => {
     await expect(
       page.getByRole('heading', { name: '今日の目標' }),
     ).toBeVisible();
-    await expect(page.getByText('ダッシュボードの改善を進める')).toBeVisible();
+    await expect(page.getByText('目標テキスト')).toBeVisible();
 
     await expect(
       page.getByRole('heading', { name: '振り返り' }),
     ).toBeVisible();
-    await expect(page.getByText('集中して作業できた')).toBeVisible();
+    await expect(page.getByText('箇条書き')).toBeVisible();
   });
 
   test('編集ボタンをクリックすると、日報編集ページに遷移する', async ({

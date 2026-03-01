@@ -65,10 +65,10 @@ test.describe('週報詳細', () => {
       page.getByRole('heading', { name: '日報' }),
     ).toBeVisible();
     await expect(
-      page.getByText('機能Aの主要部分を実装し、集中して作業できた'),
+      page.getByText('サマリーA'),
     ).toBeVisible();
     await expect(
-      page.getByText('テストの基本を学んだが体調不良で早退した'),
+      page.getByText('サマリーB'),
     ).toBeVisible();
   });
 

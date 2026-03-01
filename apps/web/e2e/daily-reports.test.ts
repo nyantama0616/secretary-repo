@@ -10,8 +10,8 @@ test.describe('日報一覧', () => {
     await expect(
       page.getByRole('heading', { name: '日報一覧' }),
     ).toBeVisible();
-    await expect(page.getByText('機能Aの主要部分を実装し、集中して作業できた')).toBeVisible();
-    await expect(page.getByText('テストの基本を学んだが体調不良で早退した')).toBeVisible();
+    await expect(page.getByText('サマリーA')).toBeVisible();
+    await expect(page.getByText('サマリーB')).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションから日報一覧に遷移できる', async ({
@@ -34,14 +34,14 @@ test.describe('日報詳細', () => {
     await page.goto('/daily-reports');
     await page
       .getByRole('link', {
-        name: /機能Aの主要部分を実装し、集中して作業できた/,
+        name: /サマリーA/,
       })
       .click();
 
     await expect(page).toHaveURL(/\/daily-reports\/[\w-]+/);
-    await expect(page.getByText('機能Aの実装を進める')).toBeVisible();
+    await expect(page.getByText('目標テキスト')).toBeVisible();
     await expect(
-      page.getByText('集中して作業できた。休憩を取り忘れたので改善したい。'),
+      page.getByText('振り返りテキスト'),
     ).toBeVisible();
     await expect(page.getByText('tRPC ルーターを実装する')).toBeVisible();
   });
@@ -60,12 +60,12 @@ test.describe('日報編集', () => {
     await page.goto('/daily-reports');
     await page
       .getByRole('link', {
-        name: /今日の進捗を記録した/,
+        name: /サマリーC/,
       })
       .click();
     await page.getByRole('link', { name: '編集' }).click();
 
-    await expect(page.getByLabel('目標')).toHaveValue('ダッシュボードの改善を進める');
+    await expect(page.getByLabel('目標')).toHaveValue('目標テキスト');
   });
 
   test('詳細画面から編集ページに遷移し、日報を更新すると、詳細に反映される', async ({
@@ -74,7 +74,7 @@ test.describe('日報編集', () => {
     await page.goto('/daily-reports');
     await page
       .getByRole('link', {
-        name: /今日の進捗を記録した/,
+        name: /サマリーC/,
       })
       .click();
     await page.getByRole('link', { name: '編集' }).click();

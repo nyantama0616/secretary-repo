@@ -64,30 +64,34 @@ export const NEXT_MONTH_START = new Date(
 );
 
 const SEED_DAILY_REPORTS = [
+  // NOTE: 全フィールド入力済みの日報（詳細表示・タスク紐づき確認用）
   {
     date: DAYS_AGO_4,
-    goal: '機能Aの実装を進める',
-    summary: '機能Aの主要部分を実装し、集中して作業できた',
+    goal: '目標テキスト',
+    summary: 'サマリーA',
     wakeUpTime: new Date(DAYS_AGO_4.getTime() + 7 * 60 * 60 * 1000),
     bedTime: new Date(DAYS_AGO_4.getTime() + 23 * 60 * 60 * 1000),
-    review: '集中して作業できた。休憩を取り忘れたので改善したい。',
+    review: '振り返りテキスト',
   },
+  // NOTE: 備考ありの日報（一覧表示確認用）
   {
     date: DAYS_AGO_3,
-    goal: 'テストを書く',
-    summary: 'テストの基本を学んだが体調不良で早退した',
+    goal: '目標テキスト',
+    summary: 'サマリーB',
     wakeUpTime: new Date(DAYS_AGO_3.getTime() + 6.5 * 60 * 60 * 1000),
-    notes: '体調不良のため早退',
+    notes: '備考テキスト',
   },
+  // NOTE: 今日の日報（ダッシュボード表示・編集テスト用）
   {
     date: TODAY,
-    goal: 'ダッシュボードの改善を進める',
-    summary: '今日の進捗を記録した',
-    review: '## 良かった点\n- 集中して作業できた\n\n## 改善点\n- 休憩を取り忘れた',
+    goal: '目標テキスト',
+    summary: 'サマリーC',
+    review: '## 見出し\n- 箇条書き',
   },
+  // NOTE: 目標のみの日報（明日タスクの親）
   {
     date: TOMORROW,
-    goal: '明日の目標',
+    goal: '目標テキスト',
   },
 ];
 
