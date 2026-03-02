@@ -1,4 +1,4 @@
-import { and, eq, gte, inArray, lt } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, lt } from 'drizzle-orm';
 
 import { DailyReport } from '@/server/domain/daily-report/daily-report';
 import type { DailyReportRepository } from '@/server/domain/daily-report/daily-report-repository';
@@ -7,7 +7,10 @@ import { dailyReports } from '@/server/infrastructure/db/schema/daily-reports';
 
 export class DrizzleDailyReportRepository implements DailyReportRepository {
   async findAll(): Promise<DailyReport[]> {
-    const rows = await db.select().from(dailyReports);
+    const rows = await db
+      .select()
+      .from(dailyReports)
+      .orderBy(desc(dailyReports.date));
     return rows.map(toDomain);
   }
 
@@ -31,7 +34,8 @@ export class DrizzleDailyReportRepository implements DailyReportRepository {
       .from(dailyReports)
       .where(
         and(gte(dailyReports.date, start), lt(dailyReports.date, end)),
-      );
+      )
+      .orderBy(desc(dailyReports.date));
     return rows.map(toDomain);
   }
 

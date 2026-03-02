@@ -1,4 +1,4 @@
-import { type SQL, and, asc, eq, inArray } from 'drizzle-orm';
+import { type SQL, and, desc, eq, inArray } from 'drizzle-orm';
 
 import { Task } from '@/server/domain/task/task';
 import type {
@@ -20,11 +20,15 @@ export class DrizzleTaskRepository implements TaskRepository {
       conditions.push(inArray(tasks.status, filters.statuses));
     }
 
-    const rows = await db
+    const query = db
       .select()
       .from(tasks)
       .where(conditions.length > 0 ? and(...conditions) : undefined)
-      .orderBy(asc(tasks.sortOrder));
+      .orderBy(desc(tasks.createdAt));
+
+    const rows = filters?.limit
+      ? await query.limit(filters.limit)
+      : await query;
     return rows.map(toDomain);
   }
 

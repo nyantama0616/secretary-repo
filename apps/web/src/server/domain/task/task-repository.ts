@@ -3,6 +3,7 @@ import type { Task, TaskStatus } from '@/server/domain/task/task';
 export type TaskFilters = {
   dailyReportId?: string;
   statuses?: TaskStatus[];
+  limit?: number;
 };
 
 export interface TaskRepository {

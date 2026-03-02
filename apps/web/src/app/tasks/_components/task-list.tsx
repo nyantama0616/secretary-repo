@@ -8,6 +8,7 @@ import { ErrorDisplay } from '@/components/feedback/error-display';
 import { Loading } from '@/components/feedback/loading';
 import { ROUTES } from '@/constants/routes';
 import { formatDate } from '@/lib/format';
+import { INACTIVE_STATUSES } from '@/lib/task-status';
 import type { TaskStatus } from '@/server/domain/task/task';
 import { useQuery, useTRPC } from '@/trpc/client';
 
@@ -48,7 +49,7 @@ export const TaskList = () => {
         <p className="text-muted-foreground">タスクがまだありません</p>
       ) : (
         <div className="grid gap-3">
-          {tasks.map((task) => (
+          {sortByDateThenStatus(tasks).map((task) => (
             <TaskCard
               key={task.id}
               href={ROUTES.taskDetail(task.id)}
@@ -61,6 +62,30 @@ export const TaskList = () => {
       )}
     </div>
   );
+};
+
+const sortByDateThenStatus = <
+  T extends { dailyReportDate: Date | null; status: TaskStatus },
+>(
+  tasks: T[],
+): T[] => {
+  return [...tasks].sort((a, b) => {
+    // NOTE: 日付がないタスクは末尾に配置する
+    if (!a.dailyReportDate && !b.dailyReportDate) return 0;
+    if (!a.dailyReportDate) return 1;
+    if (!b.dailyReportDate) return -1;
+
+    const dateDiff =
+      b.dailyReportDate.getTime() - a.dailyReportDate.getTime();
+    if (dateDiff !== 0) return dateDiff;
+
+    // NOTE: 同じ日付内では inactive（完了・中止・延期）を先に表示する
+    const aInactive = INACTIVE_STATUSES.has(a.status);
+    const bInactive = INACTIVE_STATUSES.has(b.status);
+    if (aInactive !== bInactive) return aInactive ? -1 : 1;
+
+    return 0;
+  });
 };
 
 const TaskCard = ({
