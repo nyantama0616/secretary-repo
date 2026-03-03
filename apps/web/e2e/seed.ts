@@ -19,25 +19,23 @@ const toUTCDate = (date: Date): Date => {
   return new Date(`${y}-${m}-${d}`);
 };
 
-const addDays = (date: Date, days: number): Date => {
-  const result = new Date(date);
+const addDays = (base: Date, days: number): Date => {
+  const result = new Date(base);
   result.setUTCDate(result.getUTCDate() + days);
   return result;
 };
 
-/** TODAY から遡って直近の月曜日を返す */
-const previousMonday = (from: Date): Date => {
-  const day = from.getUTCDay();
-  // NOTE: 日曜(0)は -6、月曜(1)は 0、火曜(2)は -1 … 土曜(6)は -5
-  const diff = day === 0 ? -6 : 1 - day;
-  return addDays(from, diff);
+// NOTE: 指定日以降の最初の月曜日を返す（指定日が月曜なら当日）
+const mondayOnOrAfter = (date: Date): Date => {
+  const day = date.getUTCDay();
+  if (day === 1) return date;
+  const diff = day === 0 ? 1 : 8 - day;
+  return addDays(date, diff);
 };
 
-/** TODAY の属する月の1日を返す */
 const startOfMonth = (from: Date): Date =>
   new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), 1));
 
-/** 前月の1日を返す */
 const previousMonthStart = (from: Date): Date =>
   new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth() - 1, 1));
 
@@ -50,35 +48,42 @@ export {
 
 export const TODAY = toUTCDate(new Date());
 const TOMORROW = addDays(TODAY, 1);
-export const DAYS_AGO_3 = addDays(TODAY, -3);
-export const DAYS_AGO_4 = addDays(TODAY, -4);
-export const DAYS_AGO_7 = addDays(TODAY, -7);
 export const TASK_DEADLINE = addDays(TODAY, 3);
 export const PROJECT_DEADLINE = addDays(TODAY, 120);
-export const THIS_MONDAY = previousMonday(TODAY);
-export const TWO_WEEKS_AGO_MONDAY = addDays(THIS_MONDAY, -14);
 export const THIS_MONTH_START = startOfMonth(TODAY);
 export const LAST_MONTH_START = previousMonthStart(TODAY);
 export const NEXT_MONTH_START = new Date(
   Date.UTC(TODAY.getUTCFullYear(), TODAY.getUTCMonth() + 1, 1),
 );
 
+// NOTE: 週報・日報を前月内に配置する。第2・第3月曜日は必ず同じ月に収まる
+const LAST_MONTH_FIRST_MONDAY = mondayOnOrAfter(LAST_MONTH_START);
+export const LAST_MONTH_MONDAY_A = addDays(LAST_MONTH_FIRST_MONDAY, 7);
+export const LAST_MONTH_MONDAY_B = addDays(LAST_MONTH_FIRST_MONDAY, 14);
+
+// NOTE: 週報B の週に属する日報用の日付（水・木曜日）
+export const LAST_MONTH_WED = addDays(LAST_MONTH_MONDAY_B, 2);
+const LAST_MONTH_THU = addDays(LAST_MONTH_MONDAY_B, 3);
+
+// NOTE: 日報の重複作成テスト用。既存の日報と被らない日付である
+export const UNUSED_DATE = addDays(LAST_MONTH_FIRST_MONDAY, 1);
+
 const SEED_DAILY_REPORTS = [
   // NOTE: 全フィールド入力済みの日報（詳細表示・タスク紐づき確認用）
   {
-    date: DAYS_AGO_4,
+    date: LAST_MONTH_WED,
     goal: '目標テキスト',
     summary: 'サマリーA',
-    wakeUpTime: new Date(DAYS_AGO_4.getTime() + 7 * 60 * 60 * 1000),
-    bedTime: new Date(DAYS_AGO_4.getTime() + 23 * 60 * 60 * 1000),
+    wakeUpTime: new Date(LAST_MONTH_WED.getTime() + 7 * 60 * 60 * 1000),
+    bedTime: new Date(LAST_MONTH_WED.getTime() + 23 * 60 * 60 * 1000),
     review: '振り返りテキスト',
   },
   // NOTE: 備考ありの日報（一覧表示確認用）
   {
-    date: DAYS_AGO_3,
+    date: LAST_MONTH_THU,
     goal: '目標テキスト',
     summary: 'サマリーB',
-    wakeUpTime: new Date(DAYS_AGO_3.getTime() + 6.5 * 60 * 60 * 1000),
+    wakeUpTime: new Date(LAST_MONTH_THU.getTime() + 6.5 * 60 * 60 * 1000),
     notes: '備考テキスト',
   },
   // NOTE: 今日の日報（ダッシュボード表示・編集テスト用）
@@ -98,13 +103,13 @@ const SEED_DAILY_REPORTS = [
 const SEED_WEEKLY_REPORTS = [
   // NOTE: 全フィールド入力済みの週報（詳細表示・編集プリフィル・月報紐づき確認用）
   {
-    startDate: TWO_WEEKS_AGO_MONDAY,
+    startDate: LAST_MONTH_MONDAY_A,
     goal: '週報の目標A',
     summary: 'サマリーテキスト',
   },
   // NOTE: 目標のみの週報（サマリー/振り返り非表示・日報紐づき確認用）
   {
-    startDate: THIS_MONDAY,
+    startDate: LAST_MONTH_MONDAY_B,
     goal: '週報の目標B',
   },
 ];
