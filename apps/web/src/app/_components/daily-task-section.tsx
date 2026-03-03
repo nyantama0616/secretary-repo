@@ -37,6 +37,7 @@ type TaskItem = {
   title: string;
   firstAction: string | null;
   status: TaskStatus;
+  sortOrder: number;
 };
 
 type DailyTaskSectionProps = {
@@ -76,10 +77,13 @@ export const DailyTaskSection = ({
     tasks: TaskItem[];
     dataUpdatedAt: number;
   } | null>(null);
+  const serverTasks = (tasks ?? []).toSorted(
+    (a, b) => a.sortOrder - b.sortOrder,
+  );
   const displayTasks = sortInactiveFirst(
     optimisticTasks?.dataUpdatedAt === dataUpdatedAt
       ? optimisticTasks.tasks
-      : (tasks ?? []),
+      : serverTasks,
   );
 
   const defaultSpotlightId = findNextTaskId(displayTasks);

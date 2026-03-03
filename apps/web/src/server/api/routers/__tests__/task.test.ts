@@ -186,6 +186,7 @@ describe('task.list', () => {
           title: t.title,
           firstAction: t.firstAction,
           status: t.status,
+          sortOrder: t.sortOrder,
           dailyReportDate: null,
         })),
       ),

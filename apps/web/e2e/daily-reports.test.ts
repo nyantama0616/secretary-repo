@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { DAYS_AGO_4, DAYS_AGO_7, seed, toDateStr } from './seed';
+import { LAST_MONTH_WED, seed, toDateStr, UNUSED_DATE } from './seed';
 
 test.beforeAll(seed);
 
@@ -96,7 +96,7 @@ test.describe('日報作成', () => {
     page,
   }) => {
     await page.goto('/daily-reports/new');
-    await page.getByLabel('日付').fill(toDateStr(DAYS_AGO_7));
+    await page.getByLabel('日付').fill(toDateStr(UNUSED_DATE));
     await page.getByLabel('目標').fill('リファクタリング');
     await page.getByRole('button', { name: '作成' }).click();
 
@@ -119,7 +119,7 @@ test.describe('日報作成', () => {
     page,
   }) => {
     await page.goto('/daily-reports/new');
-    await page.getByLabel('日付').fill(toDateStr(DAYS_AGO_4));
+    await page.getByLabel('日付').fill(toDateStr(LAST_MONTH_WED));
     await page.getByRole('button', { name: '作成' }).click();
 
     await expect(

@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { DAYS_AGO_4, formatDate, seed, TASK_DEADLINE } from './seed';
+import { formatDate, LAST_MONTH_WED, seed, TASK_DEADLINE } from './seed';
 
 test.beforeAll(seed);
 
@@ -19,7 +19,7 @@ test.describe('タスク一覧', () => {
 
     await expect(page.getByText('未着手').first()).toBeVisible();
     await expect(page.getByText('完了').first()).toBeVisible();
-    await expect(page.getByText(formatDate(DAYS_AGO_4))).toBeVisible();
+    await expect(page.getByText(formatDate(LAST_MONTH_WED))).toBeVisible();
   });
 
   test('ヘッダーのナビゲーションからタスク一覧に遷移できる', async ({
