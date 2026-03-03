@@ -18,6 +18,7 @@ type TaskListItem = {
   title: string;
   firstAction: string | null;
   status: TaskStatus;
+  sortOrder: number;
   dailyReportDate: Date | null;
 };
 
@@ -48,6 +49,7 @@ export class GetTasksUseCase {
       title: t.title,
       firstAction: t.firstAction,
       status: t.status,
+      sortOrder: t.sortOrder,
       dailyReportDate: t.dailyReportId
         ? (dateById.get(t.dailyReportId) ?? null)
         : null,
