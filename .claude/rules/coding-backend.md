@@ -13,3 +13,8 @@ globs: apps/*/src/server/**/*.ts
 3. Types / Interfaces: スキーマからの型推論、インターフェース定義
 4. Main Export: このファイルの主役（クラス、ルーター、ファクトリ関数など）
 5. Helpers: ファイル内でのみ使う変換関数やユーティリティ
+
+## 関数の定義スタイル
+
+- exportする関数はアロー関数で定義する（ESLintで強制される）
+- exportしない関数は `function` 宣言で定義する（hoistingにより、定義前に参照できる）

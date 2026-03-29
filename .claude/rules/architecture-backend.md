@@ -43,26 +43,30 @@ API → UseCase → Domain ← Infrastructure
 ### 各層のルール
 
 #### Domain 層
-- エンティティはクラスで定義する。`domain/project/project.ts` の `Project` クラスを実装の規範とする
-  - constructor は `private` にし、生成経路を static factory methods に限定する
-    - `create()` — 新規作成。ビジネスルール（初期値の設定など）を強制する。`id` と `createdAt` は UseCase から渡す
-    - `reconstruct()` — DB からの復元。全フィールドをそのまま受け取る
+- エンティティはクラスで定義する
+  - constructor は `private`。生成経路を `create()` / `reconstruct()` に限定する
+  - `create()` — 新規作成。ビジネスルール（初期値の設定など）を強制する。`id` と `createdAt` は UseCase から渡す
+- ID は `domain/id.ts` の `generateId()` で生成する（nanoid）。UUID は使わない
+  - `reconstruct()` — DB からの復元。全フィールドをそのまま受け取る
   - フィールドは `readonly` で公開する
-  - constructor 内で Valibot スキーマによるランタイム検証を行い、不正なデータの混入を防ぐ
+  - constructor 内で Valibot スキーマによるランタイム検証を行う
   - `update()` メソッドは新しいインスタンスを返す（不変パターン）
 - Repository はインターフェース（`interface`）として定義する
-  - メソッド名は操作の意図を明確にする（`create` / `update` / `findById` / `findAll`）
-- ID は `domain/id.ts` の `generateId()` で生成する（nanoid）。UUID は使わない
+- Repository のメソッド名は操作の意図を明確にする（`create` / `update` / `findById` / `findAll`）
 
 #### UseCase 層
 - クラスとして定義し、`execute()` メソッドで実行する
 - コンストラクタで Repository インターフェースを受け取る（コンストラクタインジェクション）
 - 入力スキーマは UseCase が Valibot で定義・export する。API 層はそのスキーマを import してバリデーションに使う
+- 更新系は Load-Mutate-Save パターンで実装する
+- `execute()` の戻り値は DTO（plain な type）で返す。Domain Entity をそのまま返さない
+  - DTO は `usecase/{domain}/{domain}-dto.ts` に `XxxDto` 型と `toXxxDto` 変換関数を定義する
+  - 変換関数はエンティティのフィールドを展開してプレーンオブジェクトにする
 
 #### Infrastructure 層
 - `di/container.ts` で UseCase とその依存を組み立てる
 - Repository の実装は `infrastructure/` 配下に置く
-- DB の行からエンティティへの変換は `toDomain` ヘルパーで行い、エンティティの `reconstruct()` を使う
+- DB の行からエンティティへの変換は `toDomain` ヘルパーで `reconstruct()` を使う
 
 #### API 層
 - tRPC ルーターは UseCase を呼び出すだけ。ビジネスロジックを持たない
